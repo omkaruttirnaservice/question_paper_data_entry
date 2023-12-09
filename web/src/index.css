@@ -1,0 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --white: #fff;
+    --black: #000;
+
+    --text-charcoal: #36454f;
+
+    --bg-gray: #d3d3d367;
+}
+
+input,
+select,
+textarea {
+    background-color: var(--bg-gray) !important;
+    border: none;
+    &:focus {
+        background-color: #fff !important;
+    }
+}
+
+body {
+    color: var(--text-charcoal);
+}
+
+.form-label {
+    font-weight: 500;
+}
