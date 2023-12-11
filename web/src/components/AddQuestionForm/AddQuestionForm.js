@@ -25,6 +25,41 @@ const AddQuestionForm = () => {
 
     const [topics, setTopics] = useState([]);
 
+    const [formData, setFormData] = useState({
+        subject_id: '-1',
+        topic_id: '-1',
+        question_content: '',
+        option_A: '',
+        option_B: '',
+        option_C: '',
+        option_D: '',
+        option_E: '',
+        correct_option: '',
+        explanation: '',
+    });
+
+    const handleChange = (e) => {
+        setFormData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
+    };
+
+    const handleSaveQuestion = async () => {
+        // Send data using Fetch API or any other method
+        await fetch('/questions/add-question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    };
+
     const handleAddInputField = (e) => {
         e.preventDefault();
         setShowNewInputField(!showNewInputField);
@@ -198,7 +233,10 @@ const AddQuestionForm = () => {
                                         <i className="fa-solid fa-plus"></i>
                                     </Button>
                                 </InputGroup.Text>
-                                <Form.Select name="subject-name" onChange={handleSubjectChange}>
+                                <Form.Select
+                                    id="subject-id"
+                                    name="subject_id"
+                                    onChange={handleSubjectChange}>
                                     <option value="-1" className="text-center">
                                         -- Select Subject --
                                     </option>
@@ -244,10 +282,22 @@ const AddQuestionForm = () => {
                         </div>
 
                         <div className="col-md-12 mt-4 mb-4">
-                            <label htmlFor="" className="form-label">
+                            <label htmlFor="question-content" className="form-label">
                                 Enter Question
                             </label>
-                            <CKEditor editor={ClassicEditor} />
+                            <CKEditor
+                                id="question-content"
+                                name="question_content"
+                                editor={ClassicEditor}
+                                onChange={(e, editor) => {
+                                    handleChange({
+                                        target: {
+                                            name: 'question_content',
+                                            value: editor.getData(),
+                                        },
+                                    });
+                                }}
+                            />
                         </div>
 
                         <div className="col-md-12">
@@ -264,97 +314,85 @@ const AddQuestionForm = () => {
                                 </span>
                             </div>
                             <div className="form-options">
-                                <div>
-                                    <label htmlFor="option-A">A</label>
-
-                                    {toggleOptions ? (
-                                        <div className="ckeditor">
-                                            <CKEditor editor={ClassicEditor} />
-                                        </div>
-                                    ) : (
-                                        <textarea
-                                            type="text"
-                                            className="form-control"
-                                            id="option-A"
-                                            name="option-A"
-                                        />
-                                    )}
-                                </div>
-                                <div>
-                                    <label htmlFor="option-B">B</label>
-                                    {toggleOptions ? (
-                                        <div className="ckeditor">
-                                            <CKEditor editor={ClassicEditor} />
-                                        </div>
-                                    ) : (
-                                        <textarea
-                                            type="text"
-                                            className="form-control"
-                                            id="option-B"
-                                            name="option-B"
-                                        />
-                                    )}
-                                </div>
-                                <div>
-                                    <label htmlFor="option-C">C</label>
-                                    {toggleOptions ? (
-                                        <div className="ckeditor">
-                                            <CKEditor editor={ClassicEditor} />
-                                        </div>
-                                    ) : (
-                                        <textarea
-                                            type="text"
-                                            className="form-control"
-                                            id="option-C"
-                                            name="option-C"
-                                        />
-                                    )}
-                                </div>
-                                <div>
-                                    <label htmlFor="option-D">D</label>
-                                    {toggleOptions ? (
-                                        <div className="ckeditor">
-                                            <CKEditor editor={ClassicEditor} />
-                                        </div>
-                                    ) : (
-                                        <textarea
-                                            type="text"
-                                            className="form-control"
-                                            id="option-D"
-                                            name="option-D"
-                                        />
-                                    )}
-                                </div>
+                                {['A', 'B', 'C', 'D'].map((option) => (
+                                    <div key={option}>
+                                        <label htmlFor={`option-${option}`}>{option}</label>
+                                        {toggleOptions ? (
+                                            <div className="ckeditor">
+                                                <CKEditor
+                                                    id={`option-${option}`}
+                                                    editor={ClassicEditor}
+                                                    onChange={(e, editor) =>
+                                                        handleChange({
+                                                            target: {
+                                                                name: `option_${option}`,
+                                                                value: editor.getData(),
+                                                            },
+                                                        })
+                                                    }
+                                                    data={formData[`option_${option}`]}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <textarea
+                                                type="text"
+                                                className="form-control"
+                                                id={`option-${option}`}
+                                                name={`option_${option}`}
+                                                onChange={(e) => handleChange(e)}
+                                                value={formData[`option_${option}`]}>
+                                                {formData[`option_${option}`]}
+                                            </textarea>
+                                        )}
+                                    </div>
+                                ))}
 
                                 {showNewInputField ? (
                                     <>
-                                        <div className="d-flex gap-2">
+                                        <div className="">
                                             <label htmlFor="option-E">E</label>
                                             {toggleOptions ? (
                                                 <div className="ckeditor">
-                                                    <CKEditor editor={ClassicEditor} />
+                                                    <CKEditor
+                                                        id={`option-E`}
+                                                        editor={ClassicEditor}
+                                                        onChange={(e, editor) =>
+                                                            handleChange({
+                                                                target: {
+                                                                    name: `option_E`,
+                                                                    value: editor.getData(),
+                                                                },
+                                                            })
+                                                        }
+                                                        data={formData[`option_E`]}
+                                                    />
                                                 </div>
                                             ) : (
                                                 <textarea
                                                     type="text"
                                                     className="form-control"
-                                                    id="option-E"
-                                                    name="option-E"
-                                                />
+                                                    id={`option-E`}
+                                                    name={`option_E`}
+                                                    onChange={(e) => handleChange(e)}
+                                                    value={formData[`option_E`]}>
+                                                    {formData[`option_E`]}
+                                                </textarea>
                                             )}
                                         </div>
                                         <button
                                             className="btn btn-danger"
                                             id="remove-new-option-btn"
-                                            onClick={handleAddInputField}>
-                                            Delete
+                                            onClick={() =>
+                                                setShowNewInputField(!showNewInputField)
+                                            }>
+                                            Remove
                                         </button>
                                     </>
                                 ) : (
                                     <button
                                         className="btn btn-secondary"
                                         id="add-new-option-btn"
-                                        onClick={handleAddInputField}>
+                                        onClick={() => setShowNewInputField(!showNewInputField)}>
                                         Add
                                     </button>
                                 )}
@@ -380,18 +418,29 @@ const AddQuestionForm = () => {
                                             className="accordion-button"
                                             type="button"
                                             data-bs-toggle="collapse"
-                                            data-bs-target="#collapse-1"
+                                            data-bs-target="#accordion-target-explanation"
                                             aria-expanded="true"
-                                            aria-controls="collapseOne">
+                                            aria-controls="accordion-target-explanation">
                                             Add Explanation
                                         </button>
                                     </h2>
                                     <div
-                                        id="collapse-1"
+                                        id="accordion-target-explanation"
                                         className="accordion-collapse collapse show"
                                         data-bs-parent="#add-explanation-accordion">
                                         <div className="accordion-body">
-                                            <CKEditor editor={ClassicEditor} />
+                                            <CKEditor
+                                                id={``}
+                                                editor={ClassicEditor}
+                                                onChange={(e, editor) =>
+                                                    handleChange({
+                                                        target: {
+                                                            name: `explantion`,
+                                                            value: editor.getData(),
+                                                        },
+                                                    })
+                                                }
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -403,7 +452,10 @@ const AddQuestionForm = () => {
                         type="button"
                         className="btn btn-primary mt-2"
                         id="save-new-question-btn"
-                        onClick={() => setQuestionCount(questionCount + 1)}>
+                        onClick={() => {
+                            setQuestionCount(questionCount + 1);
+                            handleSaveQuestion();
+                        }}>
                         Save
                     </button>
                 </form>
