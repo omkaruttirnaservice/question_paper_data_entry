@@ -4,6 +4,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import RootComponent from './components/RootComponent/RootComponent';
 import Dashboard from './components/Dashboard/Dashboard';
 import AddNewTestForm from './components/AddNewTestForm/AddNewTestForm';
+import QuestionsList from './components/QuestionsList/QuestionsList';
+import SubjectsList from './components/SubjectsList/SubjectsList';
 
 const router = createBrowserRouter([
     {
@@ -13,6 +15,8 @@ const router = createBrowserRouter([
             { path: '/', element: <Dashboard /> },
             { path: '/add-question-form', element: <AddQuestionForm /> },
             { path: '/add-new-test-form', element: <AddNewTestForm /> },
+            { path: '/questions-list', element: <QuestionsList /> },
+            { path: '/subjects-list', element: <SubjectsList /> },
         ],
     },
 ]);

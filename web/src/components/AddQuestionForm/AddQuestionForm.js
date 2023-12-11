@@ -12,7 +12,8 @@ const AddQuestionForm = () => {
     const topicNameRef = useRef();
     const [selectedSubject, setSelectedSubject] = useState('');
 
-    const [showModal, setShowModal] = useState(false);
+    const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
+    const [showAddTopicModal, setShowAddTopicModal] = useState(false);
 
     const [showNewInputField, setShowNewInputField] = useState(false);
 
@@ -22,23 +23,37 @@ const AddQuestionForm = () => {
 
     const [subjects, setSubjects] = useState([]);
 
-    const topics = ['Topic1', 'Topic2', 'Topic3'];
+    const [topics, setTopics] = useState([]);
 
     const handleAddInputField = (e) => {
         e.preventDefault();
         setShowNewInputField(!showNewInputField);
     };
 
-    const handleAddSubjectModal = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
+    const handleAddSubjectModal = () => setShowAddSubjectModal(true);
+    const handleClose = () => setShowAddSubjectModal(false);
+    const handleCloseAddTopicModal = () => setShowAddTopicModal(false);
 
     const getSubjectList = async () => {
         let response = await fetch('/get-subject-list');
         let { success, data } = await response.json();
+
         if (success === 1) {
-            setSubjects(data);
+            console.log(data[0], 'subjects array');
+            setSubjects(data[0]);
         }
-        console.log(data, 'subject list');
+    };
+
+    const getTopicList = async () => {
+        let response = await fetch('/get-topic-list', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subjectId: selectedSubject.id }),
+        });
+        let { data } = await response.json();
+        setTopics(data);
     };
 
     const handleSubjectAdd = async () => {
@@ -58,7 +73,7 @@ const AddQuestionForm = () => {
         let { success } = await response.json();
 
         if (success === 1) {
-            setShowModal(false);
+            setShowAddSubjectModal(false);
             alert('Subject added successfully');
             getSubjectList();
         } else {
@@ -70,48 +85,105 @@ const AddQuestionForm = () => {
         getSubjectList();
     }, []);
 
+    const handleSubjectChange = (e) => {
+        subjects.forEach((subject) => {
+            console.log(subject.id === +e.target.value);
+            if (+subject.id === +e.target.value) {
+                setSelectedSubject(subject);
+            }
+        });
+    };
+
+    useEffect(() => {
+        getTopicList();
+    }, [selectedSubject]);
+
     const handleTopicAddModal = () => {
-        console.log(selectedSubject);
         if (selectedSubject === '') {
             alert('Please select subject');
             return;
         }
-        setShowModal(true);
+        setShowAddTopicModal(true);
+    };
+
+    const handleAddTopic = async () => {
+        console.log(selectedSubject.id, topicNameRef.current.value);
+
+        let subjectId = selectedSubject.id;
+        let topicName = topicNameRef.current.value;
+
+        if (topicName === '') {
+            alert('Please enter topic name');
+            return;
+        }
+
+        let response = await fetch('/add-topic', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subjectId, topicName }),
+        });
+
+        let data = await response.json();
+        console.log(data, 'after adding topic');
+        if (data.success === 1) {
+            alert('Successfully added new topic');
+            setShowAddTopicModal(false);
+            getTopicList();
+            return;
+        } else {
+            alert('Something went wrong');
+        }
     };
     return (
         <>
-            <Modal show={showModal} onHide={handleClose}>
+            {/* ADD SUBJECT MODAL */}
+            <Modal show={showAddSubjectModal} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    {!selectedSubject && <Modal.Title>Add Subject</Modal.Title>}
-                    {selectedSubject && <Modal.Title>Add Topic</Modal.Title>}
+                    <Modal.Title>Add Subject</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {!selectedSubject && (
-                        <Form action="">
-                            <InputGroup>
-                                <InputGroup.Text>Subject Name</InputGroup.Text>
-                                <Form.Control type="text" ref={subjectNameRef} />
-                            </InputGroup>
-                            <Button className="mt-3" variant="primary" onClick={handleSubjectAdd}>
-                                Submit
-                            </Button>
-                        </Form>
-                    )}
-                    {selectedSubject && (
-                        <Form>
-                            <InputGroup>
-                                <InputGroup.Text>Selected Subject</InputGroup.Text>
-                                <Form.Control type="text" value={selectedSubject} readOnly />
-                            </InputGroup>
-                            <InputGroup className='mt-3'>
-                                <InputGroup.Text>Topic Name</InputGroup.Text>
-                                <Form.Control type="text" ref={topicNameRef} />
-                            </InputGroup>
-                            <Button variant="primary" className="mt-3" type="button">
-                                Submit
-                            </Button>
-                        </Form>
-                    )}
+                    <Form action="">
+                        <InputGroup>
+                            <InputGroup.Text>Subject Name</InputGroup.Text>
+                            <Form.Control type="text" ref={subjectNameRef} />
+                        </InputGroup>
+                        <Button className="mt-3" variant="primary" onClick={handleSubjectAdd}>
+                            Submit
+                        </Button>
+                    </Form>
+                </Modal.Body>
+            </Modal>
+
+            {/* ADD TOPIC MODAL */}
+
+            <Modal show={showAddTopicModal} onHide={handleCloseAddTopicModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Topic</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <InputGroup>
+                            <InputGroup.Text>Selected Subject</InputGroup.Text>
+                            <Form.Control
+                                type="text"
+                                value={selectedSubject.subject_name}
+                                readOnly
+                            />
+                        </InputGroup>
+                        <InputGroup className="mt-3">
+                            <InputGroup.Text>Topic Name</InputGroup.Text>
+                            <Form.Control type="text" ref={topicNameRef} />
+                        </InputGroup>
+                        <Button
+                            variant="primary"
+                            className="mt-3"
+                            type="button"
+                            onClick={handleAddTopic}>
+                            Submit
+                        </Button>
+                    </Form>
                 </Modal.Body>
             </Modal>
 
@@ -119,59 +191,60 @@ const AddQuestionForm = () => {
                 <form id="add-question-form" className="">
                     <div className="row">
                         <div className="col-12 col-sm-6 col-lg-3">
-                            <label htmlFor="" className="form-label">
-                                <span>Select Subject</span>
-                                <button
-                                    className="btn"
-                                    type="button"
-                                    onClick={handleAddSubjectModal}>
-                                    <i className="fa-solid fa-plus"></i>
-                                </button>
-                            </label>
-                            <select
-                                className="form-control"
-                                name="subject-name"
-                                onChange={(e) => setSelectedSubject(e.target.value)}>
-                                <option value="-1" className="text-center">
-                                    -- Select Subject --
-                                </option>
-                                {subjects?.map((subject) => (
-                                    <option value={subject}>{subject}</option>
-                                ))}
-                            </select>
+                            <InputGroup>
+                                <InputGroup.Text>
+                                    <Button
+                                        className="btn p-0 px-1 btn-secondary btn-sm"
+                                        onClick={handleAddSubjectModal}>
+                                        <i className="fa-solid fa-plus"></i>
+                                    </Button>
+                                </InputGroup.Text>
+                                <Form.Select name="subject-name" onChange={handleSubjectChange}>
+                                    <option value="-1" className="text-center">
+                                        -- Select Subject --
+                                    </option>
+                                    {subjects?.map((subject) => (
+                                        <option value={subject.id}>{subject.subject_name}</option>
+                                    ))}
+                                </Form.Select>
+                            </InputGroup>
                         </div>
 
                         <div className="col-12 col-sm-6 col-lg-3">
-                            <label htmlFor="" className="form-label">
-                                Select Topic
-                                <button className="btn" type="button" onClick={handleTopicAddModal}>
-                                    <i className="fa-solid fa-plus"></i>
-                                </button>
-                            </label>
-                            <select className="form-control" name="topic-name" id="">
-                                <option value="-1" className="text-center">
-                                    -- Select topic --
-                                </option>
-                                {topics?.map((topic) => (
-                                    <option value={topic}>{topic}</option>
-                                ))}
-                            </select>
+                            <InputGroup>
+                                <InputGroup.Text>
+                                    <Button
+                                        className="btn p-0 px-1 btn-secondary btn-sm"
+                                        onClick={handleTopicAddModal}>
+                                        <i className="fa-solid fa-plus"></i>
+                                    </Button>
+                                </InputGroup.Text>
+                                <Form.Select>
+                                    <option value="-1" className="text-center">
+                                        -- Select topic --
+                                    </option>
+                                    {topics?.map((topic) => (
+                                        <option value={topic.id}>{topic.topic_name}</option>
+                                    ))}
+                                </Form.Select>
+                            </InputGroup>
                         </div>
 
                         <div className="col-12 col-sm-6 col-lg-3">
-                            <label htmlFor="" className="form-label">
-                                Publication Name
-                            </label>
-                            <input type="text" className="form-control" id="" />
+                            <InputGroup>
+                                <InputGroup.Text>Pub. Name</InputGroup.Text>
+                                <Form.Control type="text"></Form.Control>
+                            </InputGroup>
                         </div>
 
                         <div className="col-12 col-sm-6 col-lg-3">
-                            <label htmlFor="" className="form-label">
-                                Question Number
-                            </label>
-                            <div className="">{questionCount + 1}</div>
+                            <InputGroup>
+                                <InputGroup.Text>Question Number</InputGroup.Text>
+                                <Form.Control value={questionCount + 1} readOnly></Form.Control>
+                            </InputGroup>
                         </div>
-                        <div className="col-md-12">
+
+                        <div className="col-md-12 mt-4 mb-4">
                             <label htmlFor="" className="form-label">
                                 Enter Question
                             </label>
@@ -288,16 +361,14 @@ const AddQuestionForm = () => {
                                 )}
                             </div>
                         </div>
-                        <div className="col-md-2">
-                            <label htmlFor="correct-option" className="form-label">
-                                Correct Option
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="correct-option"
-                                name="correct-option"
-                            />
+                        <div className="col-md-3">
+                            <InputGroup>
+                                <InputGroup.Text>Correct Option</InputGroup.Text>
+                                <Form.Control
+                                    type="text"
+                                    id="correct-option"
+                                    name="correct-option"></Form.Control>
+                            </InputGroup>
                         </div>
 
                         <div className="col-md-12 mt-3">
@@ -328,6 +399,7 @@ const AddQuestionForm = () => {
                             </div>
                         </div>
                     </div>
+
                     <button
                         type="button"
                         className="btn btn-primary mt-2"

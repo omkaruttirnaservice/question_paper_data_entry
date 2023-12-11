@@ -1,6 +1,7 @@
 import sequelize from '../application/config/db-connect-migration.js';
 import subject from '../application/Migration_Scripts/subject.js';
 import topic from '../application/Migration_Scripts/topic.js';
+import question from '../application/Migration_Scripts/question.js';
 
 const getSync = () => {
     sequelize

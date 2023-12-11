@@ -27,7 +27,7 @@ input:focus {
 
    
 
-    & .fa-plus {
+    /* & .fa-plus {
         margin-left: 0.4rem;
         border: 1px solid var(--bg-gray);
         padding: 0.01rem;
@@ -35,7 +35,7 @@ input:focus {
         background-color: var(--text-charcoal);
         color: var(--white);
         cursor: pointer;
-    }
+    } */
 
     & .toggle-options-editor {
         font-size: 1rem;

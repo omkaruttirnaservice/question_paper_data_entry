@@ -1,12 +1,9 @@
 import subjectModel from '../model/subjectModel.js';
-
+import { sendSuccess, sendError } from '../utils/commonFunctions.js';
 const subjectController = {
     getSubjectList: async (_, res) => {
         try {
-            let response = await subjectModel.getSubjectList();
-            response = response[0].map((subject) => {
-                return subject.subject_name;
-            });
+            const response = await subjectModel.getSubjectList();
             sendSuccess(res, response);
         } catch (error) {
             sendError(res, error);
@@ -14,8 +11,8 @@ const subjectController = {
     },
     addSubject: async (req, res) => {
         try {
-            let { subjectName } = req.body;
-            let response = await subjectModel.addSubject(subjectName);
+            const { subjectName } = req.body;
+            const response = await subjectModel.addSubject(subjectName);
             if (response[0].affectedRows === 1) {
                 sendSuccess(res);
             } else {
@@ -25,19 +22,50 @@ const subjectController = {
             sendError(res, error);
         }
     },
+
+    postEditSubjectName: async (req, res) => {
+        try {
+            const { newSubjectName, subjectId } = req.body;
+            const response = await subjectModel.postEditSubjectName(newSubjectName, subjectId);
+            if (response[0].affectedRows === 1) {
+                sendSuccess(res);
+            }
+        } catch (error) {
+            sendError(res, error);
+        }
+    },
+
+    deleteSubject: async function (req, res) {
+        try {
+            const { subjectId } = req.body;
+            const response = await subjectModel.deleteSubject(subjectId);
+            if (response[0].affectedRows === 1) {
+                sendSuccess(res);
+            }
+        } catch (error) {
+            sendError(res, error);
+        }
+    },
+
+    getTopicList: async function (req, res) {
+        try {
+            const subjectId = req.body.subjectId;
+            const response = await subjectModel.getTopicList(subjectId);
+            sendSuccess(res, response[0]);
+        } catch (error) {
+            sendError(res, error);
+        }
+    },
+
+    addTopic: async function (req, res) {
+        try {
+            const data = req.body;
+            const response = await subjectModel.addTopic(data);
+            sendSuccess(res, response[0]);
+        } catch (error) {
+            sendError(res, error);
+        }
+    },
 };
 
-function sendSuccess(res, data = '') {
-    res.status(200).json({
-        success: 1,
-        data,
-    });
-}
-
-function sendError(res, error) {
-    res.status(500).json({
-        success: 0,
-        error,
-    });
-}
 export default subjectController;
