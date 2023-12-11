@@ -13,17 +13,17 @@ function MenuBar() {
 
     return (
         <>
+<<<<<<< HEAD
             <div className="menu-button-list">
                 {menuButtons.map((el) => {
-                    return (
                         <NavLink
                             to={el.path}
                             className={({ isActive }) =>
                                 isActive ? 'menu-button-item active' : 'menu-button-item'
                             }>
-                            <i className={el.icon}></i>
-                            <span>{el.name}</span>
-                        </NavLink>
+=======
+            <div className='menu-button-list'>
+                {menuButtons?.map((el, index) => {
                     );
                 })}
             </div>

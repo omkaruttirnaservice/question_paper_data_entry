@@ -11,7 +11,6 @@ const getSync = () => {
                 '"\x1b[47m", \x1b[30m%s\x1b[0m',
                 'Database has been migrated successfully, you can now start the server.'
             );
-            process.exit();
         })
         .catch((error) => console.log(error));
 };

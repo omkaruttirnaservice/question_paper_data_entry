@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'
 import express, { json, urlencoded } from 'express';
 import cookieParser from 'cookie-parser';
 import upload from 'express-fileupload';

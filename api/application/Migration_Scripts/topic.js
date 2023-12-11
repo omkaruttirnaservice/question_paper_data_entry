@@ -1,5 +1,6 @@
 import { BIGINT, STRING } from 'sequelize';
 import sequelize from '../config/db-connect-migration.js';
+import subject from './subject.js';
 
 const topic = sequelize.define(
     'topic',
@@ -13,6 +14,8 @@ const topic = sequelize.define(
         subject_id: {
             type: BIGINT,
             allowNull: false,
+            // references: 'subject',
+            // referencesKey: 'id',
         },
         topic_name: {
             type: STRING(255),

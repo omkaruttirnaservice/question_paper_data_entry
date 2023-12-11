@@ -1,5 +1,4 @@
 import questionModel from '../model/questionModel.js';
-import { sendError, sendSuccess } from '../utils/commonFunctions.js';
 import customValidate from '../utils/customValidate.js';
 
 const { isNonEmptyNullString, isNumber } = customValidate;
@@ -89,9 +88,14 @@ const questionController = {
                 success: 1,
                 message: `Question deleted successfully`,
             });
+<<<<<<< HEAD
             
         } catch (err) {
             sendError(res, err);
+=======
+        } catch (err) {
+            console.log();
+>>>>>>> main
         }
     },
 
@@ -107,8 +111,19 @@ const questionController = {
             }
 
             const questionList = await questionModel.getQuestionList({ subject_id, topic_id });
+<<<<<<< HEAD
             sendSuccess(res, questionList[0]);
         } catch (err) {
+=======
+
+            return res.status(200).json({
+                success: 1,
+                message: `Questions sent successfullly`,
+                questionList: questionList[0],
+            });
+        } catch (err) {
+            console.log('Error whlie fetching the questions: ', err);
+>>>>>>> main
             return res.status(500).json({
                 success: 0,
                 message: 'Internal server error',
