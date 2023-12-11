@@ -25,39 +25,9 @@ const AddQuestionForm = () => {
 
     const [topics, setTopics] = useState([]);
 
-    const [formData, setFormData] = useState({
-        subject_id: '-1',
-        topic_id: '-1',
-        question_content: '',
-        option_A: '',
-        option_B: '',
-        option_C: '',
-        option_D: '',
-        option_E: '',
-        correct_option: '',
-        explanation: '',
-    });
-
-    const handleSaveQuestion = async () => {
-        // Send data using Fetch API or any other method
-        await fetch('/questions/add-question', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    };
-
-    const handleChange = (e) => {
-        setFormData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
+    const handleAddInputField = (e) => {
+        e.preventDefault();
+        setShowNewInputField(!showNewInputField);
     };
 
     const handleAddSubjectModal = () => setShowAddSubjectModal(true);
@@ -69,6 +39,7 @@ const AddQuestionForm = () => {
         let { success, data } = await response.json();
 
         if (success === 1) {
+            console.log(data[0], 'subjects array');
             setSubjects(data[0]);
         }
     };
@@ -115,7 +86,16 @@ const AddQuestionForm = () => {
     }, []);
 
     const handleSubjectChange = (e) => {
+<<<<<<< HEAD
+        subjects.forEach((subject) => {
+            console.log(subject.id === +e.target.value);
+            if (+subject.id === +e.target.value) {
+                setSelectedSubject(subject);
+            }
+        });
+=======
         setSelectedSubject(subjects[e.target.value - 1]);
+>>>>>>> main
     };
 
     useEffect(() => {
@@ -140,6 +120,10 @@ const AddQuestionForm = () => {
             alert('Please enter topic name');
             return;
         }
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
         let response = await fetch('/add-topic', {
             method: 'POST',
             headers: {
@@ -167,12 +151,21 @@ const AddQuestionForm = () => {
                     <Modal.Title>Add Subject</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+<<<<<<< HEAD
+                    <Form action="">
+                        <InputGroup>
+                            <InputGroup.Text>Subject Name</InputGroup.Text>
+                            <Form.Control type="text" ref={subjectNameRef} />
+                        </InputGroup>
+                        <Button className="mt-3" variant="primary" onClick={handleSubjectAdd}>
+=======
                     <Form action=''>
                         <InputGroup>
                             <InputGroup.Text>Subject Name</InputGroup.Text>
                             <Form.Control type='text' ref={subjectNameRef} />
                         </InputGroup>
                         <Button className='mt-3' variant='primary' onClick={handleSubjectAdd}>
+>>>>>>> main
                             Submit
                         </Button>
                     </Form>
@@ -190,11 +183,26 @@ const AddQuestionForm = () => {
                         <InputGroup>
                             <InputGroup.Text>Selected Subject</InputGroup.Text>
                             <Form.Control
+<<<<<<< HEAD
+                                type="text"
+=======
                                 type='text'
+>>>>>>> main
                                 value={selectedSubject.subject_name}
                                 readOnly
                             />
                         </InputGroup>
+<<<<<<< HEAD
+                        <InputGroup className="mt-3">
+                            <InputGroup.Text>Topic Name</InputGroup.Text>
+                            <Form.Control type="text" ref={topicNameRef} />
+                        </InputGroup>
+                        <Button
+                            variant="primary"
+                            className="mt-3"
+                            type="button"
+                            onClick={handleAddTopic}>
+=======
                         <InputGroup className='mt-3'>
                             <InputGroup.Text>Topic Name</InputGroup.Text>
                             <Form.Control type='text' ref={topicNameRef} />
@@ -205,12 +213,177 @@ const AddQuestionForm = () => {
                             type='button'
                             onClick={handleAddTopic}
                         >
+>>>>>>> main
                             Submit
                         </Button>
                     </Form>
                 </Modal.Body>
             </Modal>
 
+<<<<<<< HEAD
+            <div className="container">
+                <form id="add-question-form" className="">
+                    <div className="row">
+                        <div className="col-12 col-sm-6 col-lg-3">
+                            <InputGroup>
+                                <InputGroup.Text>
+                                    <Button
+                                        className="btn p-0 px-1 btn-secondary btn-sm"
+                                        onClick={handleAddSubjectModal}>
+                                        <i className="fa-solid fa-plus"></i>
+                                    </Button>
+                                </InputGroup.Text>
+                                <Form.Select name="subject-name" onChange={handleSubjectChange}>
+                                    <option value="-1" className="text-center">
+                                        -- Select Subject --
+                                    </option>
+                                    {subjects?.map((subject) => (
+                                        <option value={subject.id}>{subject.subject_name}</option>
+                                    ))}
+                                </Form.Select>
+                            </InputGroup>
+                        </div>
+
+                        <div className="col-12 col-sm-6 col-lg-3">
+                            <InputGroup>
+                                <InputGroup.Text>
+                                    <Button
+                                        className="btn p-0 px-1 btn-secondary btn-sm"
+                                        onClick={handleTopicAddModal}>
+                                        <i className="fa-solid fa-plus"></i>
+                                    </Button>
+                                </InputGroup.Text>
+                                <Form.Select>
+                                    <option value="-1" className="text-center">
+                                        -- Select topic --
+                                    </option>
+                                    {topics?.map((topic) => (
+                                        <option value={topic.id}>{topic.topic_name}</option>
+                                    ))}
+                                </Form.Select>
+                            </InputGroup>
+                        </div>
+
+                        <div className="col-12 col-sm-6 col-lg-3">
+                            <InputGroup>
+                                <InputGroup.Text>Pub. Name</InputGroup.Text>
+                                <Form.Control type="text"></Form.Control>
+                            </InputGroup>
+                        </div>
+
+                        <div className="col-12 col-sm-6 col-lg-3">
+                            <InputGroup>
+                                <InputGroup.Text>Question Number</InputGroup.Text>
+                                <Form.Control value={questionCount + 1} readOnly></Form.Control>
+                            </InputGroup>
+                        </div>
+
+                        <div className="col-md-12 mt-4 mb-4">
+                            <label htmlFor="" className="form-label">
+                                Enter Question
+                            </label>
+                            <CKEditor editor={ClassicEditor} />
+                        </div>
+
+                        <div className="col-md-12">
+                            <div className="mt-2 d-flex align-items-center gap-2">
+                                Text Editor{' '}
+                                <span
+                                    className="toggle-options-editor"
+                                    onClick={() => setToggleOptions(!toggleOptions)}>
+                                    {toggleOptions ? (
+                                        <i className="fa-solid fa-toggle-on"></i>
+                                    ) : (
+                                        <i className="fa-solid fa-toggle-off"></i>
+                                    )}
+                                </span>
+                            </div>
+                            <div className="form-options">
+                                <div>
+                                    <label htmlFor="option-A">A</label>
+
+                                    {toggleOptions ? (
+                                        <div className="ckeditor">
+                                            <CKEditor editor={ClassicEditor} />
+                                        </div>
+                                    ) : (
+                                        <textarea
+                                            type="text"
+                                            className="form-control"
+                                            id="option-A"
+                                            name="option-A"
+                                        />
+                                    )}
+                                </div>
+                                <div>
+                                    <label htmlFor="option-B">B</label>
+                                    {toggleOptions ? (
+                                        <div className="ckeditor">
+                                            <CKEditor editor={ClassicEditor} />
+                                        </div>
+                                    ) : (
+                                        <textarea
+                                            type="text"
+                                            className="form-control"
+                                            id="option-B"
+                                            name="option-B"
+                                        />
+                                    )}
+                                </div>
+                                <div>
+                                    <label htmlFor="option-C">C</label>
+                                    {toggleOptions ? (
+                                        <div className="ckeditor">
+                                            <CKEditor editor={ClassicEditor} />
+                                        </div>
+                                    ) : (
+                                        <textarea
+                                            type="text"
+                                            className="form-control"
+                                            id="option-C"
+                                            name="option-C"
+                                        />
+                                    )}
+                                </div>
+                                <div>
+                                    <label htmlFor="option-D">D</label>
+                                    {toggleOptions ? (
+                                        <div className="ckeditor">
+                                            <CKEditor editor={ClassicEditor} />
+                                        </div>
+                                    ) : (
+                                        <textarea
+                                            type="text"
+                                            className="form-control"
+                                            id="option-D"
+                                            name="option-D"
+                                        />
+                                    )}
+                                </div>
+
+                                {showNewInputField ? (
+                                    <>
+                                        <div className="d-flex gap-2">
+                                            <label htmlFor="option-E">E</label>
+                                            {toggleOptions ? (
+                                                <div className="ckeditor">
+                                                    <CKEditor editor={ClassicEditor} />
+                                                </div>
+                                            ) : (
+                                                <textarea
+                                                    type="text"
+                                                    className="form-control"
+                                                    id="option-E"
+                                                    name="option-E"
+                                                />
+                                            )}
+                                        </div>
+                                        <button
+                                            className="btn btn-danger"
+                                            id="remove-new-option-btn"
+                                            onClick={handleAddInputField}>
+                                            Delete
+=======
             <div className='container'>
                 <form id='add-question-form' className=''>
                     <div className='row'>
@@ -389,19 +562,51 @@ const AddQuestionForm = () => {
                                             onClick={() => setShowNewInputField(!showNewInputField)}
                                         >
                                             Remove
+>>>>>>> main
                                         </button>
                                     </>
                                 ) : (
                                     <button
+<<<<<<< HEAD
+                                        className="btn btn-secondary"
+                                        id="add-new-option-btn"
+                                        onClick={handleAddInputField}>
+=======
                                         className='btn btn-secondary'
                                         id='add-new-option-btn'
                                         onClick={() => setShowNewInputField(!showNewInputField)}
                                     >
+>>>>>>> main
                                         Add
                                     </button>
                                 )}
                             </div>
                         </div>
+<<<<<<< HEAD
+                        <div className="col-md-3">
+                            <InputGroup>
+                                <InputGroup.Text>Correct Option</InputGroup.Text>
+                                <Form.Control
+                                    type="text"
+                                    id="correct-option"
+                                    name="correct-option"></Form.Control>
+                            </InputGroup>
+                        </div>
+
+                        <div className="col-md-12 mt-3">
+                            <div
+                                className="accordion accordion-flush"
+                                id="add-explanation-accordion">
+                                <div className="accordion-item">
+                                    <h2 className="accordion-header">
+                                        <button
+                                            className="accordion-button"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapse-1"
+                                            aria-expanded="true"
+                                            aria-controls="collapseOne">
+=======
                         <div className='col-md-2'>
                             <label htmlFor='correct-option' className='form-label'>
                                 Correct Option
@@ -429,10 +634,18 @@ const AddQuestionForm = () => {
                                             aria-expanded='true'
                                             aria-controls='accordion-target-explanation'
                                         >
+>>>>>>> main
                                             Add Explanation
                                         </button>
                                     </h2>
                                     <div
+<<<<<<< HEAD
+                                        id="collapse-1"
+                                        className="accordion-collapse collapse show"
+                                        data-bs-parent="#add-explanation-accordion">
+                                        <div className="accordion-body">
+                                            <CKEditor editor={ClassicEditor} />
+=======
                                         id='accordion-target-explanation'
                                         className='accordion-collapse collapse show'
                                         data-bs-parent='#add-explanation-accordion'
@@ -450,6 +663,7 @@ const AddQuestionForm = () => {
                                                     })
                                                 }
                                             />
+>>>>>>> main
                                         </div>
                                     </div>
                                 </div>
@@ -458,11 +672,18 @@ const AddQuestionForm = () => {
                     </div>
 
                     <button
+<<<<<<< HEAD
+                        type="button"
+                        className="btn btn-primary mt-2"
+                        id="save-new-question-btn"
+                        onClick={() => setQuestionCount(questionCount + 1)}>
+=======
                         type='button'
                         className='btn btn-primary mt-2'
                         id='save-new-question-btn'
                         onClick={handleSaveQuestion}
                     >
+>>>>>>> main
                         Save
                     </button>
                 </form>

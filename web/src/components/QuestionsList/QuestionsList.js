@@ -70,58 +70,69 @@ function QuestionsList() {
             body: JSON.stringify({ subjectId, topicId }),
         });
         let { success, data } = await response.json();
+        if (success === 1) {
+            setQuestionsList(data);
+        }
     }
 
     return (
         <>
-            <div className="row">
-                <div className="col-md-2">
-                    {/* SUBJECT LIST */}
-                    <select name="" className="form-control" onChange={handleSubjectChange}>
-                        <option value="">-- Select Subject --</option>
-                        {subjects?.map((subject) => (
-                            <option value={subject.id}>{subject.subject_name}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="col-md-2">
-                    {/* TOPIC LIST */}
-                    <select name="" className="form-control" onChange={handleTopicChange}>
-                        <option value="">-- Select Topic --</option>
-                        {topics?.map((topic) => (
-                            <option value={topic.id}>{topic.topic_name}</option>
-                        ))}
-                    </select>
+            <div className="container mt-4">
+                <div className="row mb-4">
+                    <div className="col-md-2">
+                        {/* SUBJECT LIST */}
+                        <select name="" className="form-control" onChange={handleSubjectChange}>
+                            <option value="">-- Select Subject --</option>
+                            {subjects?.map((subject) => (
+                                <option value={subject.id}>{subject.subject_name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="col-md-2">
+                        {/* TOPIC LIST */}
+                        <select name="" className="form-control" onChange={handleTopicChange}>
+                            <option value="">-- Select Topic --</option>
+                            {topics?.map((topic) => (
+                                <option value={topic.id}>{topic.topic_name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="col-md-2">
+                        <Button verient="primary" onClick={handleSearchQuestions}>
+                            Search
+                        </Button>
+                    </div>
                 </div>
 
-                <div className="col-md-2">
-                    <Button verient="primary" onClick={handleSearchQuestions}>
-                        Search
-                    </Button>
-                </div>
-            </div>
-
-            <Table bordered>
-                <thead>
-                    <tr>
-                        <th width="8%">SR NO</th>
-                        <th>Question</th>
-                        <th width="8%">Topic</th>
-                        <th width="8%">Subject</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {questionsList?.map((question) => {
+                <Table bordered>
+                    <thead>
                         <tr>
-                            <td>1</td>
-                            <td>Tset question 1</td>
-                            <td>Living organism</td>
-                            <td>Biology</td>
-                        </tr>;
-                    })}
-                </tbody>
-            </Table>
+                            <th width="8%">SR NO</th>
+                            <th>Question</th>
+                            <th width="8%">Topic</th>
+                            <th width="8%">Subject</th>
+                            <th width="5%">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {questionsList?.map((question) => {
+                            <tr>
+                                <td>1</td>
+                                <td>Tset question 1</td>
+                                <td>Living organism</td>
+                                <td>Biology</td>
+                                <td className="text-center">
+                                    <i
+                                        type="button"
+                                        className="btn text-danger btn-sm fa-solid fa-trash"></i>
+                                </td>
+                            </tr>;
+                        })}
+                    </tbody>
+                </Table>
+            </div>
         </>
     );
 }

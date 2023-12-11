@@ -8,23 +8,22 @@ function MenuBar() {
         { name: 'Dashboard', icon: 'fa-solid fa-house', path: '/' },
         { name: 'New Test', icon: 'fa-solid fa-square-plus', path: '/add-new-test-form' },
         { name: 'Questions List', icon: 'fa-solid fa-circle-question', path: '/questions-list' },
+        { name: 'Subjects List', icon: 'fa-solid fa-book', path: '/subjects-list' },
     ];
 
     return (
         <>
-            <div className='menu-button-list'>
-                {menuButtons?.map((el, index) => {
-                    return (
+<<<<<<< HEAD
+            <div className="menu-button-list">
+                {menuButtons.map((el) => {
                         <NavLink
-                            key={index}
                             to={el.path}
                             className={({ isActive }) =>
                                 isActive ? 'menu-button-item active' : 'menu-button-item'
-                            }
-                        >
-                            <i className={el.icon}></i>
-                            <span>{el.name}</span>
-                        </NavLink>
+                            }>
+=======
+            <div className='menu-button-list'>
+                {menuButtons?.map((el, index) => {
                     );
                 })}
             </div>

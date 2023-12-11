@@ -1,14 +1,17 @@
 import React from 'react';
-import DOM from 'react-dom';
 
 import './loader.css';
 
-const LoaderHTML = (props) => {
-    return <div className='loader'></div>;
-};
-
 const Loader = () => {
-    return <>{DOM.createPortal(<LoaderHTML />, document.getElementById('loader'))}</>;
+    return (
+        <>
+            <div className="d-flex justify-content-center">
+                <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default Loader;

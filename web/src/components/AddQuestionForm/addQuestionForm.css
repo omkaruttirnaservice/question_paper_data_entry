@@ -39,15 +39,6 @@ input:focus {
 
     & .toggle-options-editor {
         font-size: 1rem;
-        transition: color 0.3s ease; 
-
-        & .fa-toggle-on {
-            color: #5cb85c; /* Change to the desired color for the "on" state */
-        }
-        
-        & .fa-toggle-off {
-            color: #E52B50; /* Change to the desired color for the "off" state */
-        }
     }
 
     & .form-options {
@@ -88,8 +79,11 @@ input:focus {
         border: 1px solid paleturquoise;
     }
 }
+<<<<<<< HEAD
+=======
 
 
 .ck.ck-editor__editable {
     background-color: var(--bg-gray) !important;
 }
+>>>>>>> main

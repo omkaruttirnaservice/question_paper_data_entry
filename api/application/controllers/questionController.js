@@ -88,8 +88,14 @@ const questionController = {
                 success: 1,
                 message: `Question deleted successfully`,
             });
+<<<<<<< HEAD
+            
+        } catch (err) {
+            sendError(res, err);
+=======
         } catch (err) {
             console.log();
+>>>>>>> main
         }
     },
 
@@ -105,6 +111,10 @@ const questionController = {
             }
 
             const questionList = await questionModel.getQuestionList({ subject_id, topic_id });
+<<<<<<< HEAD
+            sendSuccess(res, questionList[0]);
+        } catch (err) {
+=======
 
             return res.status(200).json({
                 success: 1,
@@ -113,6 +123,7 @@ const questionController = {
             });
         } catch (err) {
             console.log('Error whlie fetching the questions: ', err);
+>>>>>>> main
             return res.status(500).json({
                 success: 0,
                 message: 'Internal server error',
