@@ -10,7 +10,10 @@ function SubjectsList() {
     const [subjectsList, setSubjectsList] = useState([]);
     const [isSubjectNameEdit, setIsSubjectNameEdit] = useState(false);
     const [editId, setEditId] = useState('');
-    const [alert, setAlert] = useState(false);
+    const [notification, setNotification] = useState({
+        show: false,
+        message: '',
+    });
 
     const getSubjectList = async () => {
         let response = await fetch('/get-subject-list');
@@ -64,17 +67,29 @@ function SubjectsList() {
         let { success, data } = await response.json();
 
         if (success === 1) {
-            // alert('Successfully updated data');
+            showNotification('Successfully updated data');
             setIsSubjectNameEdit(false);
             getSubjectList();
-            return <Alert_om type="success">Successfully updated!</Alert_om>;
+            return;
         } else {
             alert('Something went wrong');
         }
     };
 
+    function showNotification(message) {
+        setNotification({
+            show: true,
+            message,
+        });
+
+        setTimeout(() => {
+            setNotification(false);
+        }, 1500);
+    }
+
     return (
         <>
+            {notification.show && <Alert_om type="success">{notification.message}</Alert_om>}
             <div className="container mt-4">
                 <Table bordered>
                     <thead>

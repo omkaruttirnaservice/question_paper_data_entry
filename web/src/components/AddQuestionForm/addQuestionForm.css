@@ -79,11 +79,8 @@ input:focus {
         border: 1px solid paleturquoise;
     }
 }
-<<<<<<< HEAD
-=======
 
 
 .ck.ck-editor__editable {
     background-color: var(--bg-gray) !important;
 }
->>>>>>> main
