@@ -1,0 +1,95 @@
+input:focus {
+    background-color: #fff !important;
+}
+
+#add-question-form {
+    padding: 2rem 0;
+
+    & .form-control {
+        background-color: var(--bg-gray);
+        border: none;
+    }
+
+    & .form-control:focus {
+        border: none;
+    }
+
+    & #add-new-option-btn,
+    #remove-new-option-btn {
+        display: block;
+        width: fit-content;
+        margin-right: auto;
+        padding: 0.3rem 1.4rem;
+        border-radius: 1.2rem;
+        font-weight: 500;
+        letter-spacing: 1px;
+    }
+
+   
+
+    /* & .fa-plus {
+        margin-left: 0.4rem;
+        border: 1px solid var(--bg-gray);
+        padding: 0.01rem;
+        border-radius: 50%;
+        background-color: var(--text-charcoal);
+        color: var(--white);
+        cursor: pointer;
+    } */
+
+    & .toggle-options-editor {
+        font-size: 1rem;
+        transition: color 0.3s ease; 
+
+        & .fa-toggle-on {
+            color: #5cb85c; /* Change to the desired color for the "on" state */
+        }
+        
+        & .fa-toggle-off {
+            color: #E52B50; /* Change to the desired color for the "off" state */
+        }
+    }
+
+    & .form-options {
+        margin: 2rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        & div {
+            position: relative;
+
+            & label {
+                position: absolute;
+                top: 2px;
+                left: 0;
+                font-weight: 600;
+                background-color: #add8e6;
+                padding: 0.25rem 0.6rem;
+                border-radius: 50%;
+            }
+
+            & textarea, input,
+            .ckeditor {
+                margin-left: 2.4rem;
+                width: 80%;
+                resize: vertical;
+            }
+        }
+    }
+
+    & .accordion-button {
+        background-color: #f3f5f7;
+        border: none;
+    }
+
+    & .accordion-button:focus {
+        box-shadow: none;
+        border: 1px solid paleturquoise;
+    }
+}
+
+
+.ck.ck-editor__editable {
+    background-color: var(--bg-gray) !important;
+}
