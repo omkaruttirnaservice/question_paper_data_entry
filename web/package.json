@@ -2,7 +2,7 @@
   "name": "master-panel-th",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://192.168.1.4:3025",
+  "proxy": "http://192.168.1.13:3025",
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^40.1.0",
     "@ckeditor/ckeditor5-react": "^6.2.0",
