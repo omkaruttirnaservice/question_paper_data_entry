@@ -79,13 +79,3 @@ export const checkResult = {
         });
     },
 };
-export const table_list = [
-    'tm_final_student_question_paper',
-    'tm_final_student_test_list',
-    'tm_publish_test_list',
-    'tm_student_question_paper',
-    'tm_student_test_list',
-    'tm_test_question_sets',
-    'tn_main_student_list',
-    'tn_student_list',
-];

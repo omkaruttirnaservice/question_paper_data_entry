@@ -30,3 +30,9 @@ body {
 .form-label {
     font-weight: 500;
 }
+
+/* CK EDITOR POWERD BY WATERMARK REMOVE */
+
+.ck.ck-balloon-panel.ck-balloon-panel_position_border-side_right.ck-powered-by-balloon {
+    display: none !important;
+}

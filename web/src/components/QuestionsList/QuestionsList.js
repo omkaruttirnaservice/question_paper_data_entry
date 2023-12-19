@@ -2,13 +2,16 @@ import react, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Table } from 'react-bootstrap';
 import './questionsList.css';
-
+import Loader from '../UI/Loader/Loader';
 function QuestionsList() {
     const [subjects, setSubjects] = useState([]);
     const [topics, setTopics] = useState([]);
     const [questionsList, setQuestionsList] = useState([]);
+
     const [selectedSubject, setSelectedSubject] = useState('');
-    const [selectedTopic, setSelectedTopic] = useState([]);
+    const [selectedTopic, setSelectedTopic] = useState('');
+
+    const [loader, setLoader] = useState(false);
 
     const getSubjectList = async () => {
         let response = await fetch('/get-subject-list');
@@ -18,13 +21,14 @@ function QuestionsList() {
             setSubjects(data[0]);
         }
     };
+
     const getTopicList = async () => {
         let response = await fetch('/get-topic-list', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ subjectId: selectedSubject.id }),
+            body: JSON.stringify({ subjectId: selectedSubject }),
         });
         let { data } = await response.json();
         setTopics(data);
@@ -39,11 +43,11 @@ function QuestionsList() {
     }, [selectedSubject]);
 
     const handleSubjectChange = (e) => {
-        setSelectedSubject(subjects[e.target.value - 1]);
+        setSelectedSubject(e.target.value);
     };
 
     const handleTopicChange = (e) => {
-        setSelectedTopic(topics[e.target.value - 1]);
+        setSelectedTopic(e.target.value);
     };
 
     const handleSearchQuestions = (e) => {
@@ -58,22 +62,51 @@ function QuestionsList() {
             return;
         }
 
-        getQuestionsList(selectedSubject.id, selectedTopic.id);
+        getQuestionsList(selectedSubject, selectedTopic);
     };
 
     async function getQuestionsList(subjectId, topicId) {
-        let response = await fetch('/get-question-list', {
+        setLoader(true);
+        let response = await fetch('/questions/get-question-list', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ subjectId, topicId }),
         });
+
         let { success, data } = await response.json();
+
         if (success === 1) {
             setQuestionsList(data);
+            setLoader(false);
         }
     }
+
+    const handleDeleteQuestion = async (questionId) => {
+        try {
+            let response = await fetch('/questions/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                bodya: JSON.stringify({ questionId }),
+            });
+            let { success, data } = await response.json();
+            if (success === 1) {
+                // TODO (OMKAR): SHOW NOTIFICATION AFTER SUCCESSFUL DELETION
+                setQuestionsList(
+                    questionsList.filter((que) => {
+                        return que.id !== questionId;
+                    })
+                );
+            } else {
+                throw new Error('Something went wrong');
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
 
     return (
         <>
@@ -117,21 +150,32 @@ function QuestionsList() {
                     </thead>
 
                     <tbody>
-                        {questionsList?.map((question) => {
-                            <tr>
-                                <td>1</td>
-                                <td>Tset question 1</td>
-                                <td>Living organism</td>
-                                <td>Biology</td>
-                                <td className="text-center">
-                                    <i
-                                        type="button"
-                                        className="btn text-danger btn-sm fa-solid fa-trash"></i>
-                                </td>
-                            </tr>;
+                        {questionsList.map((question, i) => {
+                            return (
+                                <tr>
+                                    <td>{i + 1}</td>
+                                    <td>{question.question_content}</td>
+                                    <td>{question.subject_name}</td>
+                                    <td>{question.topic_name}</td>
+                                    <td className="text-center">
+                                        <i
+                                            type="button"
+                                            className="btn text-danger btn-sm fa-solid fa-trash"
+                                            onClick={() => {
+                                                handleDeleteQuestion.bind(null, question.id);
+                                            }}></i>
+                                    </td>
+                                </tr>
+                            );
                         })}
                     </tbody>
                 </Table>
+                {selectedSubject !== '' && selectedTopic !== '' && questionsList.length === 0 && (
+                    <p>Nothing but crickets. </p>
+                )}
+                {selectedSubject === '' && <p>Please select the subject</p>}
+                {selectedSubject !== '' && selectedTopic === '' && <p>Please select the topic</p>}
+                {loader && <Loader />}
             </div>
         </>
     );

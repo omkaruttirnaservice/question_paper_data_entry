@@ -1,23 +1,31 @@
 import { useState, useRef, useEffect } from 'react';
 import { Modal, Button, InputGroup, Form } from 'react-bootstrap';
-
+import { notificationActions, notificationSlice } from '../../Store/notification-slice';
+import { useSelector, useDispatch } from 'react-redux';
 // CSS IMPORT
 import './addQuestionForm.css';
 
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import Notification from '../Notification/Notification';
+import useHttp from '../Hooks/use-http';
 
 const AddQuestionForm = () => {
     const subjectNameRef = useRef();
     const topicNameRef = useRef();
-    const [selectedSubject, setSelectedSubject] = useState('');
+
+    // CUSTOM HOOK
+    const { sendRequest } = useHttp();
+    // NOTIFICATION
+    const showNoti = useSelector((state) => state.show);
+    const dispatch = useDispatch();
+
+    const [questionNumber, setQuestionNumber] = useState('');
 
     const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
     const [showAddTopicModal, setShowAddTopicModal] = useState(false);
 
     const [showNewInputField, setShowNewInputField] = useState(false);
-
-    const [questionCount, setQuestionCount] = useState(0);
 
     const [toggleOptions, setToggleOptions] = useState(false);
 
@@ -25,9 +33,23 @@ const AddQuestionForm = () => {
 
     const [topics, setTopics] = useState([]);
 
-    const handleAddInputField = (e) => {
-        e.preventDefault();
-        setShowNewInputField(!showNewInputField);
+    const [formData, setFormData] = useState({
+        subject_id: '',
+        topic_id: '',
+        question_content: '',
+        option_A: '',
+        option_B: '',
+        option_C: '',
+        option_D: '',
+        option_E: '',
+        correct_option: '',
+        explanation: '',
+        pub_name: '',
+        pg_no: '',
+    });
+
+    const handleChange = (e) => {
+        setFormData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
     };
 
     const handleAddSubjectModal = () => setShowAddSubjectModal(true);
@@ -39,104 +61,128 @@ const AddQuestionForm = () => {
         let { success, data } = await response.json();
 
         if (success === 1) {
-            console.log(data[0], 'subjects array');
             setSubjects(data[0]);
-        }
-    };
-
-    const getTopicList = async () => {
-        let response = await fetch('/get-topic-list', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ subjectId: selectedSubject.id }),
-        });
-        let { data } = await response.json();
-        setTopics(data);
-    };
-
-    const handleSubjectAdd = async () => {
-        let subjectName = subjectNameRef.current.value;
-        if (subjectName === '') {
-            alert('Please enter subject name');
-            return;
-        }
-        let response = await fetch('/add-subject', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ subjectName }),
-        });
-
-        let { success } = await response.json();
-
-        if (success === 1) {
-            setShowAddSubjectModal(false);
-            alert('Subject added successfully');
-            getSubjectList();
-        } else {
-            alert('Something went wrong');
         }
     };
 
     useEffect(() => {
         getSubjectList();
-    }, []);
+    }, [formData.topic_id]);
 
-    const handleSubjectChange = (e) => {
-        subjects.forEach((subject) => {
-            console.log(subject.id === +e.target.value);
-            if (+subject.id === +e.target.value) {
-                setSelectedSubject(subject);
-            }
+    const getTopicList = async () => {
+        const requestData = {
+            url: '/get-topic-list',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subjectId: formData.subject_id }),
+        };
+        sendRequest(requestData, (data) => {
+            setTopics(data.data);
         });
     };
 
     useEffect(() => {
         getTopicList();
-    }, [selectedSubject]);
+    }, [formData.subject_id]);
+
+    const getQuestionNumber = async () => {
+        let response = await fetch('/questions/get-question-number');
+        let { data } = await response.json();
+        setQuestionNumber(data.total_questions);
+    };
+
+    useEffect(() => {
+        getQuestionNumber();
+    }, []);
+
+    const handleSubjectAdd = async () => {
+        let subjectName = subjectNameRef.current.value;
+        if (subjectName === '') {
+            dispatch(notificationActions.showNotification('Please enter subject name'));
+            return;
+        }
+
+        const requestData = {
+            url: '/add-subject',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subjectName }),
+        };
+        sendRequest(requestData, (data) => {
+            if (data.success === 1) {
+                setShowAddSubjectModal(false);
+                dispatch(notificationActions.showNotification('Subject added successfully'));
+                getSubjectList();
+            } else {
+                dispatch(notificationActions.showNotification('Something went wrong'));
+            }
+        });
+    };
 
     const handleTopicAddModal = () => {
-        if (selectedSubject === '') {
-            alert('Please select subject');
+        if (formData.subject_id === '') {
+            dispatch(notificationActions.showNotification('Please select subject'));
             return;
         }
         setShowAddTopicModal(true);
     };
 
     const handleAddTopic = async () => {
-        console.log(selectedSubject.id, topicNameRef.current.value);
-
-        let subjectId = selectedSubject.id;
+        let subjectId = formData.subject_id;
         let topicName = topicNameRef.current.value;
 
         if (topicName === '') {
-            alert('Please enter topic name');
+            dispatch(notificationActions.showNotification('Please enter topic name'));
             return;
         }
-        let response = await fetch('/add-topic', {
+
+        const requestData = {
+            url: '/add-topic',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ subjectId, topicName }),
+        };
+        sendRequest(requestData, (data) => {
+            if (data.success === 1) {
+                dispatch(notificationActions.showNotification('Successfully added new topic'));
+                setShowAddTopicModal(false);
+                getTopicList();
+            } else {
+                dispatch(notificationActions.showNotification('Something went wrong'));
+            }
         });
+    };
 
-        let data = await response.json();
-        console.log(data, 'after adding topic');
-        if (data.success === 1) {
-            alert('Successfully added new topic');
-            setShowAddTopicModal(false);
-            getTopicList();
-            return;
-        } else {
-            alert('Something went wrong');
+    const handleSaveQuestion = async () => {
+        // Send data using Fetch API or any other method
+        try {
+            let response = await fetch('/questions/add-question', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            let { success, data } = await response.json();
+            if (success === 0) {
+                throw new Error(data);
+            }
+            alert('Successfully submitted question');
+        } catch (error) {
+            alert(error.message);
         }
     };
+
     return (
         <>
+            {showNoti && <Notification />}
+
             {/* ADD SUBJECT MODAL */}
             <Modal show={showAddSubjectModal} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -165,11 +211,7 @@ const AddQuestionForm = () => {
                     <Form>
                         <InputGroup>
                             <InputGroup.Text>Selected Subject</InputGroup.Text>
-                            <Form.Control
-                                type="text"
-                                value={selectedSubject.subject_name}
-                                readOnly
-                            />
+                            <Form.Control type="text" value={formData.subject_id} readOnly />
                         </InputGroup>
                         <InputGroup className="mt-3">
                             <InputGroup.Text>Topic Name</InputGroup.Text>
@@ -188,7 +230,7 @@ const AddQuestionForm = () => {
 
             <div className="container">
                 <form id="add-question-form" className="">
-                    <div className="row">
+                    <div className="row g-3">
                         <div className="col-12 col-sm-6 col-lg-3">
                             <InputGroup>
                                 <InputGroup.Text>
@@ -198,12 +240,14 @@ const AddQuestionForm = () => {
                                         <i className="fa-solid fa-plus"></i>
                                     </Button>
                                 </InputGroup.Text>
-                                <Form.Select name="subject-name" onChange={handleSubjectChange}>
+                                <Form.Select name="subject_id" onChange={handleChange}>
                                     <option value="-1" className="text-center">
                                         -- Select Subject --
                                     </option>
-                                    {subjects?.map((subject) => (
-                                        <option value={subject.id}>{subject.subject_name}</option>
+                                    {subjects?.map((subject, i) => (
+                                        <option key={i} value={subject.id}>
+                                            {subject.subject_name}
+                                        </option>
                                     ))}
                                 </Form.Select>
                             </InputGroup>
@@ -218,28 +262,45 @@ const AddQuestionForm = () => {
                                         <i className="fa-solid fa-plus"></i>
                                     </Button>
                                 </InputGroup.Text>
-                                <Form.Select>
+                                <Form.Select name="topic_id" onChange={handleChange}>
                                     <option value="-1" className="text-center">
                                         -- Select topic --
                                     </option>
-                                    {topics?.map((topic) => (
-                                        <option value={topic.id}>{topic.topic_name}</option>
+                                    {topics?.map((topic, i) => (
+                                        <option key={i} value={topic.id}>
+                                            {topic.topic_name}
+                                        </option>
                                     ))}
                                 </Form.Select>
                             </InputGroup>
                         </div>
 
-                        <div className="col-12 col-sm-6 col-lg-3">
+                        <div className="col-12 col-sm-6 col-lg-6">
                             <InputGroup>
                                 <InputGroup.Text>Pub. Name</InputGroup.Text>
-                                <Form.Control type="text"></Form.Control>
+                                <Form.Control
+                                    type="text"
+                                    onChange={handleChange}
+                                    name="pub_name"></Form.Control>
+                            </InputGroup>
+                        </div>
+
+                        <div className="col-12 col-sm-6 col-lg-2">
+                            <InputGroup>
+                                <InputGroup.Text>Pg No</InputGroup.Text>
+                                <Form.Control
+                                    type="number"
+                                    onChange={handleChange}
+                                    name="pg_no"></Form.Control>
                             </InputGroup>
                         </div>
 
                         <div className="col-12 col-sm-6 col-lg-3">
                             <InputGroup>
                                 <InputGroup.Text>Question Number</InputGroup.Text>
-                                <Form.Control value={questionCount + 1} readOnly></Form.Control>
+                                <Form.Control
+                                    value={questionNumber ? questionNumber + 1 : 0}
+                                    readOnly></Form.Control>
                             </InputGroup>
                         </div>
 
@@ -247,7 +308,19 @@ const AddQuestionForm = () => {
                             <label htmlFor="" className="form-label">
                                 Enter Question
                             </label>
-                            <CKEditor editor={ClassicEditor} />
+                            <CKEditor
+                                id="question-content"
+                                name="question_content"
+                                editor={ClassicEditor}
+                                onChange={(e, editor) => {
+                                    handleChange({
+                                        target: {
+                                            name: 'question_content',
+                                            value: editor.getData(),
+                                        },
+                                    });
+                                }}
+                            />
                         </div>
 
                         <div className="col-md-12">
@@ -264,97 +337,85 @@ const AddQuestionForm = () => {
                                 </span>
                             </div>
                             <div className="form-options">
-                                <div>
-                                    <label htmlFor="option-A">A</label>
-
-                                    {toggleOptions ? (
-                                        <div className="ckeditor">
-                                            <CKEditor editor={ClassicEditor} />
-                                        </div>
-                                    ) : (
-                                        <textarea
-                                            type="text"
-                                            className="form-control"
-                                            id="option-A"
-                                            name="option-A"
-                                        />
-                                    )}
-                                </div>
-                                <div>
-                                    <label htmlFor="option-B">B</label>
-                                    {toggleOptions ? (
-                                        <div className="ckeditor">
-                                            <CKEditor editor={ClassicEditor} />
-                                        </div>
-                                    ) : (
-                                        <textarea
-                                            type="text"
-                                            className="form-control"
-                                            id="option-B"
-                                            name="option-B"
-                                        />
-                                    )}
-                                </div>
-                                <div>
-                                    <label htmlFor="option-C">C</label>
-                                    {toggleOptions ? (
-                                        <div className="ckeditor">
-                                            <CKEditor editor={ClassicEditor} />
-                                        </div>
-                                    ) : (
-                                        <textarea
-                                            type="text"
-                                            className="form-control"
-                                            id="option-C"
-                                            name="option-C"
-                                        />
-                                    )}
-                                </div>
-                                <div>
-                                    <label htmlFor="option-D">D</label>
-                                    {toggleOptions ? (
-                                        <div className="ckeditor">
-                                            <CKEditor editor={ClassicEditor} />
-                                        </div>
-                                    ) : (
-                                        <textarea
-                                            type="text"
-                                            className="form-control"
-                                            id="option-D"
-                                            name="option-D"
-                                        />
-                                    )}
-                                </div>
+                                {['A', 'B', 'C', 'D'].map((option) => (
+                                    <div key={option}>
+                                        <label htmlFor={`option-${option}`}>{option}</label>
+                                        {toggleOptions ? (
+                                            <div className="ckeditor">
+                                                <CKEditor
+                                                    id={`option-${option}`}
+                                                    editor={ClassicEditor}
+                                                    onChange={(e, editor) =>
+                                                        handleChange({
+                                                            target: {
+                                                                name: `option_${option}`,
+                                                                value: editor.getData(),
+                                                            },
+                                                        })
+                                                    }
+                                                    data={formData[`option_${option}`]}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <textarea
+                                                type="text"
+                                                className="form-control"
+                                                id={`option-${option}`}
+                                                name={`option_${option}`}
+                                                onChange={(e) => handleChange(e)}
+                                                value={formData[`option_${option}`]}>
+                                                {formData[`option_${option}`]}
+                                            </textarea>
+                                        )}
+                                    </div>
+                                ))}
 
                                 {showNewInputField ? (
                                     <>
-                                        <div className="d-flex gap-2">
+                                        <div className="">
                                             <label htmlFor="option-E">E</label>
                                             {toggleOptions ? (
                                                 <div className="ckeditor">
-                                                    <CKEditor editor={ClassicEditor} />
+                                                    <CKEditor
+                                                        id={`option-E`}
+                                                        editor={ClassicEditor}
+                                                        onChange={(e, editor) =>
+                                                            handleChange({
+                                                                target: {
+                                                                    name: `option_E`,
+                                                                    value: editor.getData(),
+                                                                },
+                                                            })
+                                                        }
+                                                        data={formData[`option_E`]}
+                                                    />
                                                 </div>
                                             ) : (
                                                 <textarea
                                                     type="text"
                                                     className="form-control"
-                                                    id="option-E"
-                                                    name="option-E"
-                                                />
+                                                    id={`option-E`}
+                                                    name={`option_E`}
+                                                    onChange={(e) => handleChange(e)}
+                                                    value={formData[`option_E`]}>
+                                                    {formData[`option_E`]}
+                                                </textarea>
                                             )}
                                         </div>
                                         <button
                                             className="btn btn-danger"
                                             id="remove-new-option-btn"
-                                            onClick={handleAddInputField}>
-                                            Delete
+                                            onClick={() =>
+                                                setShowNewInputField(!showNewInputField)
+                                            }>
+                                            Remove
                                         </button>
                                     </>
                                 ) : (
                                     <button
                                         className="btn btn-secondary"
                                         id="add-new-option-btn"
-                                        onClick={handleAddInputField}>
+                                        onClick={() => setShowNewInputField(!showNewInputField)}>
                                         Add
                                     </button>
                                 )}
@@ -366,7 +427,9 @@ const AddQuestionForm = () => {
                                 <Form.Control
                                     type="text"
                                     id="correct-option"
-                                    name="correct-option"></Form.Control>
+                                    name="correct-option"
+                                    onChange={handleChange}
+                                    maxLength="1"></Form.Control>
                             </InputGroup>
                         </div>
 
@@ -380,18 +443,29 @@ const AddQuestionForm = () => {
                                             className="accordion-button"
                                             type="button"
                                             data-bs-toggle="collapse"
-                                            data-bs-target="#collapse-1"
+                                            data-bs-target="#accordion-target-explanation"
                                             aria-expanded="true"
-                                            aria-controls="collapseOne">
+                                            aria-controls="accordion-target-explanation">
                                             Add Explanation
                                         </button>
                                     </h2>
                                     <div
-                                        id="collapse-1"
+                                        id="accordion-target-explanation"
                                         className="accordion-collapse collapse show"
                                         data-bs-parent="#add-explanation-accordion">
                                         <div className="accordion-body">
-                                            <CKEditor editor={ClassicEditor} />
+                                            <CKEditor
+                                                id={``}
+                                                editor={ClassicEditor}
+                                                onChange={(e, editor) =>
+                                                    handleChange({
+                                                        target: {
+                                                            name: `explantion`,
+                                                            value: editor.getData(),
+                                                        },
+                                                    })
+                                                }
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -403,7 +477,9 @@ const AddQuestionForm = () => {
                         type="button"
                         className="btn btn-primary mt-2"
                         id="save-new-question-btn"
-                        onClick={() => setQuestionCount(questionCount + 1)}>
+                        onClick={() => {
+                            handleSaveQuestion();
+                        }}>
                         Save
                     </button>
                 </form>
