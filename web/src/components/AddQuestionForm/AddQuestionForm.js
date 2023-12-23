@@ -38,8 +38,10 @@ const AddQuestionForm = () => {
     const [topics, setTopics] = useState([]);
 
     const [formData, setFormData] = useState({
-        subject_id: '',
-        topic_id: '',
+ 
+        subject_id: '-1',
+        topic_id: '-1',
+ 
         question_content: '',
         option_A: '',
         option_B: '',
@@ -48,12 +50,39 @@ const AddQuestionForm = () => {
         option_E: '',
         correct_option: '',
         explanation: '',
+ 
         pub_name: '',
         pg_no: '',
+ 
     });
 
     const handleChange = (e) => {
         setFormData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
+ 
+    };
+
+    const handleSaveQuestion = async () => {
+        // Send data using Fetch API or any other method
+        await fetch('/questions/add-question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    };
+
+    const handleAddInputField = (e) => {
+        e.preventDefault();
+        setShowNewInputField(!showNewInputField);
+ 
     };
 
     const handleAddSubjectModal = () => {
@@ -227,7 +256,14 @@ const AddQuestionForm = () => {
                                         <i className="fa-solid fa-plus"></i>
                                     </Button>
                                 </InputGroup.Text>
+ 
+                                <Form.Select
+                                    id="subject-id"
+                                    name="subject_id"
+                                    onChange={handleSubjectChange}>
+ 
                                 <Form.Select name="subject_id" onChange={handleChange}>
+ 
                                     <option value="-1" className="text-center">
                                         -- Select Subject --
                                     </option>
@@ -292,7 +328,7 @@ const AddQuestionForm = () => {
                         </div>
 
                         <div className="col-md-12 mt-4 mb-4">
-                            <label htmlFor="" className="form-label">
+                            <label htmlFor="question-content" className="form-label">
                                 Enter Question
                             </label>
                             <CKEditor
@@ -464,7 +500,9 @@ const AddQuestionForm = () => {
                         type="button"
                         className="btn btn-primary mt-2"
                         id="save-new-question-btn"
+ 
                         onClick={handleSaveQuestion}>
+ 
                         Save
                     </button>
                 </form>
