@@ -1,37 +1,22 @@
-import { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import DOM from 'react-dom';
-function ModalUI(props) {
-    const [show, setShow] = useState(true);
-    const handleClose = () => setShow(false);
-
+import { useSelector, useDispatch } from 'react-redux';
+import { modalActions } from '../../Store/modal-slice';
+function ModalComponent(props) {
+    console.log(props);
+    // const title = useSelector((state) => state.modal.title);
+    // const modalBody = useSelector((state) => state.modal.modalBody);
+    // const dispatch = useDispatch();
+    const handleClose = () => {
+        // dispatch(modalActions.closeModal());
+    };
     return (
         <>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={props.show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>{props.title}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={handleClose}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
+                <Modal.Body>{props.modalBody}</Modal.Body>
             </Modal>
-        </>
-    );
-}
-
-function ModalComponent(handleShow) {
-    return (
-        <>
-            {DOM.createPortal(
-                <ModalUI handleShow={handleShow} />,
-                document.getElementById('modal')
-            )}
         </>
     );
 }

@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Modal, Button, InputGroup, Form } from 'react-bootstrap';
+import { notificationActions } from '../../Store/notification-slice';
+import { modalActions } from '../../Store/modal-slice';
+
+import { useSelector, useDispatch } from 'react-redux';
 
 // CSS IMPORT
 import './addQuestionForm.css';
@@ -7,17 +11,25 @@ import './addQuestionForm.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
+import useHttp from '../Hooks/use-http';
+import ModalComponent from '../Modal/ModalComponent';
+
 const AddQuestionForm = () => {
     const subjectNameRef = useRef();
     const topicNameRef = useRef();
-    const [selectedSubject, setSelectedSubject] = useState('');
+
+    // CUSTOM HOOK
+    const { sendRequest } = useHttp();
+
+    // NOTIFICATION
+    const dispatch = useDispatch();
+
+    const [questionNumber, setQuestionNumber] = useState('');
 
     const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
     const [showAddTopicModal, setShowAddTopicModal] = useState(false);
 
     const [showNewInputField, setShowNewInputField] = useState(false);
-
-    const [questionCount, setQuestionCount] = useState(0);
 
     const [toggleOptions, setToggleOptions] = useState(false);
 
@@ -26,8 +38,10 @@ const AddQuestionForm = () => {
     const [topics, setTopics] = useState([]);
 
     const [formData, setFormData] = useState({
+ 
         subject_id: '-1',
         topic_id: '-1',
+ 
         question_content: '',
         option_A: '',
         option_B: '',
@@ -36,10 +50,15 @@ const AddQuestionForm = () => {
         option_E: '',
         correct_option: '',
         explanation: '',
+ 
+        pub_name: '',
+        pg_no: '',
+ 
     });
 
     const handleChange = (e) => {
         setFormData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
+ 
     };
 
     const handleSaveQuestion = async () => {
@@ -63,167 +82,171 @@ const AddQuestionForm = () => {
     const handleAddInputField = (e) => {
         e.preventDefault();
         setShowNewInputField(!showNewInputField);
+ 
     };
 
-    const handleAddSubjectModal = () => setShowAddSubjectModal(true);
-    const handleClose = () => setShowAddSubjectModal(false);
-    const handleCloseAddTopicModal = () => setShowAddTopicModal(false);
+    const handleAddSubjectModal = () => {
+        console.log('add subject modal');
+        const modalBody = (
+            <Form action="">
+                <InputGroup>
+                    <InputGroup.Text>Subject Name</InputGroup.Text>
+                    <Form.Control type="text" ref={subjectNameRef} />
+                </InputGroup>
+                <Button className="mt-3" variant="primary" onClick={handleSubjectAdd}>
+                    Submit
+                </Button>
+            </Form>
+        );
+        return <ModalComponent show={true} title={'Add subject'} modalBody={modalBody} />
+        // dispatch(modalActions.openModal());
+    };
+
+    const handleTopicAddModal = () => {
+        let subjectId = formData.subject_id;
+        if (subjectId === '' || subjectId === '-1') {
+            dispatch(notificationActions.showNotification('Please select subject'));
+            return;
+        }
+        // const modalBody = (
+        //     <Form>
+        //         <InputGroup>
+        //             <InputGroup.Text>Selected Subject</InputGroup.Text>
+        //             <Form.Control type="text" value={formData.subject_id} readOnly />
+        //         </InputGroup>
+        //         <InputGroup className="mt-3">
+        //             <InputGroup.Text>Topic Name</InputGroup.Text>
+        //             <Form.Control type="text" ref={topicNameRef} />
+        //         </InputGroup>
+        //         <Button variant="primary" className="mt-3" type="button" onClick={handleAddTopic}>
+        //             Submit
+        //         </Button>
+        //     </Form>
+        // );
+        // dispatch(modalActions.openModal());
+    };
 
     const getSubjectList = async () => {
         let response = await fetch('/get-subject-list');
         let { success, data } = await response.json();
 
         if (success === 1) {
-            console.log(data[0], 'subjects array');
             setSubjects(data[0]);
-        }
-    };
-
-    const getTopicList = async () => {
-        let response = await fetch('/get-topic-list', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ subjectId: selectedSubject.id }),
-        });
-        let { data } = await response.json();
-        setTopics(data);
-    };
-
-    const handleSubjectAdd = async () => {
-        let subjectName = subjectNameRef.current.value;
-        if (subjectName === '') {
-            alert('Please enter subject name');
-            return;
-        }
-        let response = await fetch('/add-subject', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ subjectName }),
-        });
-
-        let { success } = await response.json();
-
-        if (success === 1) {
-            setShowAddSubjectModal(false);
-            alert('Subject added successfully');
-            getSubjectList();
-        } else {
-            alert('Something went wrong');
         }
     };
 
     useEffect(() => {
         getSubjectList();
-    }, []);
+    }, [formData.topic_id]);
 
-    const handleSubjectChange = (e) => {
-        subjects.forEach((subject) => {
-            console.log(subject.id === +e.target.value);
-            if (+subject.id === +e.target.value) {
-                setSelectedSubject(subject);
-            }
+    const getTopicList = async () => {
+        const requestData = {
+            url: '/get-topic-list',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subjectId: formData.subject_id }),
+        };
+        sendRequest(requestData, (data) => {
+            setTopics(data.data);
         });
     };
 
     useEffect(() => {
         getTopicList();
-    }, [selectedSubject]);
+    }, [formData.subject_id]);
 
-    const handleTopicAddModal = () => {
-        if (selectedSubject === '') {
-            alert('Please select subject');
+    const getQuestionNumber = async () => {
+        let response = await fetch('/questions/get-question-number');
+        let { data } = await response.json();
+        setQuestionNumber(data.total_questions);
+    };
+
+    useEffect(() => {
+        getQuestionNumber();
+    }, []);
+
+    const handleSubjectAdd = async () => {
+        let subjectName = subjectNameRef.current.value;
+        if (subjectName === '') {
+            dispatch(notificationActions.showNotification('Please enter subject name'));
             return;
         }
-        setShowAddTopicModal(true);
+
+        const requestData = {
+            url: '/add-subject',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subjectName }),
+        };
+        sendRequest(requestData, (data) => {
+            if (data.success === 1) {
+                setShowAddSubjectModal(false);
+                dispatch(notificationActions.showNotification('Subject added successfully'));
+                getSubjectList();
+            } else {
+                dispatch(notificationActions.showNotification('Something went wrong'));
+            }
+        });
     };
 
     const handleAddTopic = async () => {
-        console.log(selectedSubject.id, topicNameRef.current.value);
-
-        let subjectId = selectedSubject.id;
+        let subjectId = formData.subject_id;
         let topicName = topicNameRef.current.value;
 
         if (topicName === '') {
-            alert('Please enter topic name');
+            dispatch(notificationActions.showNotification('Please enter topic name'));
             return;
         }
-        let response = await fetch('/add-topic', {
+
+        const requestData = {
+            url: '/add-topic',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ subjectId, topicName }),
+        };
+        sendRequest(requestData, (data) => {
+            if (data.success === 1) {
+                dispatch(notificationActions.showNotification('Successfully added new topic'));
+                setShowAddTopicModal(false);
+                getTopicList();
+            } else {
+                dispatch(notificationActions.showNotification('Something went wrong'));
+            }
         });
+    };
 
-        let data = await response.json();
-        console.log(data, 'after adding topic');
-        if (data.success === 1) {
-            alert('Successfully added new topic');
-            setShowAddTopicModal(false);
-            getTopicList();
-            return;
-        } else {
-            alert('Something went wrong');
+    const handleSaveQuestion = async () => {
+        // Send data using Fetch API or any other method
+        try {
+            let response = await fetch('/questions/add-question', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            let { success, data } = await response.json();
+            if (success === 0) {
+                throw new Error(data);
+            }
+            dispatch(notificationActions.showNotification('Successfully submitted question'));
+        } catch (error) {
+            alert(error.message);
         }
     };
+
     return (
         <>
-            {/* ADD SUBJECT MODAL */}
-            <Modal show={showAddSubjectModal} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Subject</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form action="">
-                        <InputGroup>
-                            <InputGroup.Text>Subject Name</InputGroup.Text>
-                            <Form.Control type="text" ref={subjectNameRef} />
-                        </InputGroup>
-                        <Button className="mt-3" variant="primary" onClick={handleSubjectAdd}>
-                            Submit
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
-            {/* ADD TOPIC MODAL */}
-
-            <Modal show={showAddTopicModal} onHide={handleCloseAddTopicModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Topic</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <InputGroup>
-                            <InputGroup.Text>Selected Subject</InputGroup.Text>
-                            <Form.Control
-                                type="text"
-                                value={selectedSubject.subject_name}
-                                readOnly
-                            />
-                        </InputGroup>
-                        <InputGroup className="mt-3">
-                            <InputGroup.Text>Topic Name</InputGroup.Text>
-                            <Form.Control type="text" ref={topicNameRef} />
-                        </InputGroup>
-                        <Button
-                            variant="primary"
-                            className="mt-3"
-                            type="button"
-                            onClick={handleAddTopic}>
-                            Submit
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
+            {/* {openModal && <ModalComponent show={openModal} title={title} modalBody={modalBody} />} */}
             <div className="container">
                 <form id="add-question-form" className="">
-                    <div className="row">
+                    <div className="row g-3">
                         <div className="col-12 col-sm-6 col-lg-3">
                             <InputGroup>
                                 <InputGroup.Text>
@@ -233,15 +256,21 @@ const AddQuestionForm = () => {
                                         <i className="fa-solid fa-plus"></i>
                                     </Button>
                                 </InputGroup.Text>
+ 
                                 <Form.Select
                                     id="subject-id"
                                     name="subject_id"
                                     onChange={handleSubjectChange}>
+ 
+                                <Form.Select name="subject_id" onChange={handleChange}>
+ 
                                     <option value="-1" className="text-center">
                                         -- Select Subject --
                                     </option>
-                                    {subjects?.map((subject) => (
-                                        <option value={subject.id}>{subject.subject_name}</option>
+                                    {subjects?.map((subject, i) => (
+                                        <option key={i} value={subject.id}>
+                                            {subject.subject_name}
+                                        </option>
                                     ))}
                                 </Form.Select>
                             </InputGroup>
@@ -256,28 +285,45 @@ const AddQuestionForm = () => {
                                         <i className="fa-solid fa-plus"></i>
                                     </Button>
                                 </InputGroup.Text>
-                                <Form.Select>
+                                <Form.Select name="topic_id" onChange={handleChange}>
                                     <option value="-1" className="text-center">
                                         -- Select topic --
                                     </option>
-                                    {topics?.map((topic) => (
-                                        <option value={topic.id}>{topic.topic_name}</option>
+                                    {topics?.map((topic, i) => (
+                                        <option key={i} value={topic.id}>
+                                            {topic.topic_name}
+                                        </option>
                                     ))}
                                 </Form.Select>
                             </InputGroup>
                         </div>
 
-                        <div className="col-12 col-sm-6 col-lg-3">
+                        <div className="col-12 col-sm-6 col-lg-6">
                             <InputGroup>
                                 <InputGroup.Text>Pub. Name</InputGroup.Text>
-                                <Form.Control type="text"></Form.Control>
+                                <Form.Control
+                                    type="text"
+                                    onChange={handleChange}
+                                    name="pub_name"></Form.Control>
+                            </InputGroup>
+                        </div>
+
+                        <div className="col-12 col-sm-6 col-lg-2">
+                            <InputGroup>
+                                <InputGroup.Text>Pg No</InputGroup.Text>
+                                <Form.Control
+                                    type="number"
+                                    onChange={handleChange}
+                                    name="pg_no"></Form.Control>
                             </InputGroup>
                         </div>
 
                         <div className="col-12 col-sm-6 col-lg-3">
                             <InputGroup>
                                 <InputGroup.Text>Question Number</InputGroup.Text>
-                                <Form.Control value={questionCount + 1} readOnly></Form.Control>
+                                <Form.Control
+                                    value={questionNumber ? questionNumber + 1 : 0}
+                                    readOnly></Form.Control>
                             </InputGroup>
                         </div>
 
@@ -404,7 +450,9 @@ const AddQuestionForm = () => {
                                 <Form.Control
                                     type="text"
                                     id="correct-option"
-                                    name="correct-option"></Form.Control>
+                                    name="correct-option"
+                                    onChange={handleChange}
+                                    maxLength="1"></Form.Control>
                             </InputGroup>
                         </div>
 
@@ -452,10 +500,9 @@ const AddQuestionForm = () => {
                         type="button"
                         className="btn btn-primary mt-2"
                         id="save-new-question-btn"
-                        onClick={() => {
-                            setQuestionCount(questionCount + 1);
-                            handleSaveQuestion();
-                        }}>
+ 
+                        onClick={handleSaveQuestion}>
+ 
                         Save
                     </button>
                 </form>

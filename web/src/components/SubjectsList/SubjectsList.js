@@ -2,26 +2,34 @@ import react, { useEffect, useState, useRef } from 'react';
 import { Table } from 'react-bootstrap';
 import './SubjectsList.css';
 import Loader from '../UI/Loader/Loader';
-import Alert_om from '../UI/AlertComponent/Alert_om';
-
+import { notificationActions } from '../../Store/notification-slice';
+import { useSelector, useDispatch } from 'react-redux';
+import useHttp from '../Hooks/use-http';
+import { loaderActions } from '../../Store/loader-slice';
 function SubjectsList() {
     const editedSubjectName = useRef();
+
+    // REDUX
+    const dispatch = useDispatch();
+    const isLoading = useSelector((state) => state.loader.isLoading);
+    const { sendRequest } = useHttp();
 
     const [subjectsList, setSubjectsList] = useState([]);
     const [isSubjectNameEdit, setIsSubjectNameEdit] = useState(false);
     const [editId, setEditId] = useState('');
-    const [notification, setNotification] = useState({
-        show: false,
-        message: '',
-    });
 
     const getSubjectList = async () => {
-        let response = await fetch('/get-subject-list');
-        let { success, data } = await response.json();
-        console.log(data[0]);
-        if (success === 1) {
-            setSubjectsList(data[0]);
-        }
+        dispatch(loaderActions.showLoader());
+        const requestData = {
+            url: '/get-subject-list',
+        };
+        sendRequest(requestData, (data) => {
+            if (data.success === 1) {
+                console.log(data);
+                setSubjectsList(data.data[0]);
+                dispatch(loaderActions.hideLoader());
+            }
+        });
     };
 
     useEffect(() => {
@@ -39,14 +47,14 @@ function SubjectsList() {
 
         let { success, data } = await response.json();
         if (success === 1) {
-            alert('Successfully deleted');
             setSubjectsList(
                 subjectsList.filter((subject) => {
                     return subject.id !== subjectId;
                 })
             );
+            dispatch(notificationActions.showNotification('Successfully deleted subject.'));
         } else {
-            alert('Something went wrong!');
+            dispatch(notificationActions.showNotification('Something went wrong!'));
         }
     }
 
@@ -67,7 +75,6 @@ function SubjectsList() {
         let { success, data } = await response.json();
 
         if (success === 1) {
-            showNotification('Successfully updated data');
             setIsSubjectNameEdit(false);
             getSubjectList();
             return;
@@ -76,20 +83,8 @@ function SubjectsList() {
         }
     };
 
-    function showNotification(message) {
-        setNotification({
-            show: true,
-            message,
-        });
-
-        setTimeout(() => {
-            setNotification(false);
-        }, 1500);
-    }
-
     return (
         <>
-            {notification.show && <Alert_om type="success">{notification.message}</Alert_om>}
             <div className="container mt-4">
                 <Table bordered>
                     <thead>
@@ -151,7 +146,7 @@ function SubjectsList() {
                     </tbody>
                 </Table>
 
-                {subjectsList.length == 0 && <Loader />}
+                {isLoading && <Loader />}
             </div>
         </>
     );

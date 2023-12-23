@@ -1,3 +1,4 @@
+import { myDate } from '../config/_responderSet.js';
 import db from '../config/db.connect.js';
 const subjectModel = {
     getSubjectList: function () {
@@ -5,9 +6,10 @@ const subjectModel = {
     },
 
     addSubject: function (subjectName) {
-        return db.query(`INSERT INTO subject (subject_name, updatedAt) VALUES(?, ?)`, [
+        console.log('subject name in modal', subjectName);
+        return db.query(`INSERT INTO subject (subject_name, created_at ) VALUES(?, ?)`, [
             subjectName,
-            new Date(),
+            myDate.getDate(),
         ]);
     },
 
@@ -27,10 +29,10 @@ const subjectModel = {
     },
 
     addTopic: function (data) {
-        return db.query(`INSERT INTO topic (subject_id, topic_name, updatedAt) VALUES(?, ?, ?)`, [
+        return db.query(`INSERT INTO topic (subject_id, topic_name, created_at) VALUES(?, ?, ?)`, [
             data.subjectId,
             data.topicName,
-            new Date(),
+            myDate.getDate(),
         ]);
     },
 };

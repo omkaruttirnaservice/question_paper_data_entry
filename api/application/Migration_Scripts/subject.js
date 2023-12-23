@@ -1,24 +1,20 @@
-import { BIGINT, STRING } from 'sequelize';
+import { BIGINT, STRING, DATEONLY } from 'sequelize';
 import sequelize from '../config/db-connect-migration.js';
 
-const subject = sequelize.define(
-    'subject',
-    {
-        id: {
-            type: BIGINT,
-            allowNull: false,
-            primaryKey: true,
-            autoIncrement: true,
-        },
-        subject_name: {
-            type: STRING,
-            allowNull: false,
-        },
+const subject = sequelize.define('subject', {
+    id: {
+        type: BIGINT,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
     },
-    {
-        createdAt: false,
-        modifiedAt: false,
-    }
-);
+    subject_name: {
+        type: STRING,
+        allowNull: false,
+    },
+    created_at: {
+        type: DATEONLY,
+    },
+});
 
 export default subject;

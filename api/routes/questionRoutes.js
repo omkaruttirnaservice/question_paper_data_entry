@@ -1,11 +1,14 @@
-import express from "express";
-import questionController from "../application/controllers/questionController.js";
+import express from 'express';
+import questionController from '../application/controllers/questionController.js';
 
 const router = express.Router();
 
 router.post('/add-question', questionController.addNewQuestion);
 
-router.get('/get-question-list', questionController.getQuestionList)
+router.post('/get-question-list', questionController.getQuestionList);
+
+router.get('/get-question-number', questionController.getQuestionNumber);
+
+router.post('/delete', questionController.deleteQuestion)
 
 export default router;
-

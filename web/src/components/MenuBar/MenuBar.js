@@ -7,6 +7,7 @@ function MenuBar() {
     const menuButtons = [
         { name: 'Dashboard', icon: 'fa-solid fa-house', path: '/' },
         { name: 'New Test', icon: 'fa-solid fa-square-plus', path: '/add-new-test-form' },
+        { name: 'Add Questions', icon: 'fa-solid fa-square-plus', path: '/add-question-form' },
         { name: 'Questions List', icon: 'fa-solid fa-circle-question', path: '/questions-list' },
         { name: 'Subjects List', icon: 'fa-solid fa-book', path: '/subjects-list' },
     ];
