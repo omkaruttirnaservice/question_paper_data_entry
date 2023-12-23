@@ -1,8 +1,11 @@
-import react, { useEffect, useState } from 'react';
+import react, { useCallback, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Table } from 'react-bootstrap';
 import './questionsList.css';
 import Loader from '../UI/Loader/Loader';
+import { useDispatch, useSelector } from 'react-redux';
+import { loaderActions } from '../../Store/loader-slice';
+import { notificationActions } from '../../Store/notification-slice';
 function QuestionsList() {
     const [subjects, setSubjects] = useState([]);
     const [topics, setTopics] = useState([]);
@@ -11,7 +14,10 @@ function QuestionsList() {
     const [selectedSubject, setSelectedSubject] = useState('');
     const [selectedTopic, setSelectedTopic] = useState('');
 
-    const [loader, setLoader] = useState(false);
+    // REDUX STATES
+    const loader = useSelector((state) => state.loader.isLoading);
+
+    const dispatch = useDispatch();
 
     const getSubjectList = async () => {
         let response = await fetch('/get-subject-list');
@@ -36,7 +42,7 @@ function QuestionsList() {
 
     useEffect(() => {
         getSubjectList();
-    }, []);
+    }, [subjects]);
 
     useEffect(() => {
         getTopicList();
@@ -66,7 +72,7 @@ function QuestionsList() {
     };
 
     async function getQuestionsList(subjectId, topicId) {
-        setLoader(true);
+        dispatch(loaderActions.showLoader());
         let response = await fetch('/questions/get-question-list', {
             method: 'POST',
             headers: {
@@ -79,7 +85,7 @@ function QuestionsList() {
 
         if (success === 1) {
             setQuestionsList(data);
-            setLoader(false);
+            dispatch(loaderActions.hideLoader());
         }
     }
 
@@ -95,6 +101,7 @@ function QuestionsList() {
             let { success, data } = await response.json();
             if (success === 1) {
                 // TODO (OMKAR): SHOW NOTIFICATION AFTER SUCCESSFUL DELETION
+
                 setQuestionsList(
                     questionsList.filter((que) => {
                         return que.id !== questionId;

@@ -5,7 +5,7 @@ import { notificationActions } from '../../Store/notification-slice';
 function Notification() {
     const dispatch = useDispatch();
 
-    const notiMsg = useSelector((state) => state.message);
+    const notiMsg = useSelector((state) => state.notification.message);
     setTimeout(() => {
         dispatch(notificationActions.hideNotification());
     }, 2000);
