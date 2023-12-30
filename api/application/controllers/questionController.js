@@ -7,33 +7,33 @@ import { sendError, sendSuccess } from '../utils/commonFunctions.js';
 const questionController = {
     addNewQuestion: async (req, res) => {
         try {
-            const {
-                question_content,
-                option_A,
-                option_B,
-                option_C,
-                option_D,
-                option_E,
-                correct_option,
-                explanation,
-                subject_id,
-                topic_id,
-            } = req.body;
-            if (
-                !isNonEmptyNullString(question_content) ||
-                !isNonEmptyNullString(option_A) ||
-                !isNonEmptyNullString(option_B) ||
-                !isNonEmptyNullString(option_C) ||
-                !isNonEmptyNullString(option_D) ||
-                !isNonEmptyNullString(correct_option) ||
-                !isNumber(subject_id) ||
-                !isNumber(topic_id)
-            ) {
-                return res.status(400).json({
-                    success: 0,
-                    message: `Bad Request. All fields are required`,
-                });
-            }
+            // const {
+            //     question_content,
+            //     option_A,
+            //     option_B,
+            //     option_C,
+            //     option_D,
+            //     option_E,
+            //     correct_option,
+            //     explanation,
+            //     subject_id,
+            //     topic_id,
+            // } = req.body;
+            // if (
+            //     !isNonEmptyNullString(question_content) ||
+            //     !isNonEmptyNullString(option_A) ||
+            //     !isNonEmptyNullString(option_B) ||
+            //     !isNonEmptyNullString(option_C) ||
+            //     !isNonEmptyNullString(option_D) ||
+            //     !isNonEmptyNullString(correct_option) ||
+            //     !isNumber(subject_id) ||
+            //     !isNumber(topic_id)
+            // ) {
+            //     return res.status(400).json({
+            //         success: 0,
+            //         message: `Bad Request. All fields are required`,
+            //     });
+            // }
 
             let response = await questionModel.addNewQuestion(req.body);
 
@@ -72,18 +72,13 @@ const questionController = {
     getQuestionDetails: async (req, res) => {
         try {
             const { questionId } = req.query;
-
-            console.log('Bro i am in a conroller of question details');
-
             if (isNumber(questionId)) {
                 return res.status(400).json({
                     success: false,
                     message: 'Empty question id',
                 });
             }
-
             const response = await questionModel.getQuestionDetails(questionId);
-
             return sendSuccess(res, response[0][0])
         } catch (err) {
             return sendError(res, err);
@@ -92,9 +87,7 @@ const questionController = {
 
     getQuestionNumber: async (req, res) => {
         try {
-            // console.log('getting question number');
             let response = await questionModel.getQuestionNumber();
-            // console.log(response[0], 'question number');
             if (response[0].length !== 0) {
                 return sendSuccess(res, response[0][0]);
             }
@@ -106,10 +99,7 @@ const questionController = {
     getQuestionList: async (req, res) => {
         try {
             const { subjectId, topicId } = req.body;
-
             const questionList = await questionModel.getQuestionList(+subjectId, +topicId);
-
-            // console.log(questionList[0]);
             return sendSuccess(res, questionList[0]);
         } catch (err) {
             console.log('Error whlie fetching the questions: ', err);

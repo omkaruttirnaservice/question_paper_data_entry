@@ -1,14 +1,11 @@
-import react from 'react';
 import { Outlet } from 'react-router-dom';
 import MenuBar from '../MenuBar/MenuBar';
 import { useDispatch, useSelector } from 'react-redux';
 import Notification from '../Notification/Notification';
 import './RootComponent.css';
-import ModalComponent from '../Modal/ModalComponent';
 
 function RootComponent() {
     const showNoti = useSelector((state) => state.notification.show);
-    const openModal = useSelector((state) => state.modal.isOpen);
     return (
         <>
             <div className="row p-0 m-0 vh-100">

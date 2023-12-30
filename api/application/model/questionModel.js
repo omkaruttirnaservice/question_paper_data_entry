@@ -2,6 +2,7 @@ import db from '../config/db.connect.js';
 import { myDate } from '../config/_responderSet.js';
 const questionModel = {
     addNewQuestion: (data) => {
+        console.log(data, 'save question data.')
         return db.query(
             `INSERT INTO question 
                         (question_content,

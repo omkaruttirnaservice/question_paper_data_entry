@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon app.js",
-    "dbMigrate": "node ./bin/dbmigrate"
+    "dbMigrate": "node ./bin/dbMigrate"
   },
   "nodemonConfig": {
     "ignore": [

@@ -4,7 +4,6 @@ const useHttp = () => {
     const dispatch = useDispatch();
 
     const sendRequest = async (requestData, callback) => {
-        console.log(requestData);
         try {
             let res = await fetch(requestData.url, {
                 method: requestData.method ? requestData.method : 'GET',
