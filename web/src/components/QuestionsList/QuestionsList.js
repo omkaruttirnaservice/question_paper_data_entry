@@ -98,23 +98,23 @@ function QuestionsList() {
     };
 
     const handleDeleteQuestion = async (questionId) => {
+        console.log(questionId, 'que id delete')
         try {
             let response = await fetch('/questions/delete', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                bodya: JSON.stringify({ questionId }),
+                body: JSON.stringify({ questionId }),
             });
             let { success, data } = await response.json();
             if (success === 1) {
-                // TODO (OMKAR): SHOW NOTIFICATION AFTER SUCCESSFUL DELETION
-
                 setQuestionsList(
                     questionsList.filter((que) => {
                         return que.id !== questionId;
                     })
                 );
+                dispatch(notificationActions.showNotification('Successfully deleted question.'))
             } else {
                 throw new Error('Something went wrong');
             }

@@ -39,6 +39,7 @@ const questionModel = {
     },
 
     deleteQuestion: (id) => {
+        console.log(id, 'delete que id')
         const q = `DELETE FROM question WHERE id = ?`;
         return db.query(q, [id]);
     },
