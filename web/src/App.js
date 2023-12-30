@@ -13,7 +13,7 @@ const router = createBrowserRouter([
         element: <RootComponent />,
         children: [
             { path: '/', element: <Dashboard /> },
-            { path: '/add-question-form', element: <AddQuestionForm /> },
+            { path: '/question-form', element: <AddQuestionForm /> },
             { path: '/add-new-test-form', element: <AddNewTestForm /> },
             { path: '/questions-list', element: <QuestionsList /> },
             { path: '/subjects-list', element: <SubjectsList /> },

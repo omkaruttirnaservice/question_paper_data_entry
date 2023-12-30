@@ -100,7 +100,7 @@ function AddNewTestForm() {
                         </button>
 
                         <button
-                            onClick={() => navigate('/add-question-form')}
+                            onClick={() => navigate('/question-form')}
                             className="btn btn-primary">
                             <i className="fa-solid fa-plus"></i>
                             <span>Add Questions</span>

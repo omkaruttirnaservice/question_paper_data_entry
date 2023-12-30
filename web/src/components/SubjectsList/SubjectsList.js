@@ -106,7 +106,7 @@ function SubjectsList() {
                     <tbody>
                         {subjectsList?.map((subject, i) => {
                             return (
-                                <tr>
+                                <tr key={subject.id}>
                                     <td className="text-center">{i + 1}</td>
                                     <td className="text-center">{subject.id}</td>
                                     <td>

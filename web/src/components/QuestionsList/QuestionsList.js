@@ -1,12 +1,16 @@
+import './questionsList.css';
+
 import react, { useCallback, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Table } from 'react-bootstrap';
-import './questionsList.css';
 import Loader from '../UI/Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { loaderActions } from '../../Store/loader-slice';
 import { notificationActions } from '../../Store/notification-slice';
+import { useNavigate } from 'react-router-dom';
+
 function QuestionsList() {
+    const navigate = useNavigate();
     const [subjects, setSubjects] = useState([]);
     const [topics, setTopics] = useState([]);
     const [questionsList, setQuestionsList] = useState([]);
@@ -89,6 +93,10 @@ function QuestionsList() {
         }
     }
 
+    const handleEditQuestion = (questionId) => {
+        navigate(`/question-form?forUpdate=true&questionId=${questionId}`)
+    };
+
     const handleDeleteQuestion = async (questionId) => {
         try {
             let response = await fetch('/questions/delete', {
@@ -124,7 +132,12 @@ function QuestionsList() {
                         <select name="" className="form-control" onChange={handleSubjectChange}>
                             <option value="">-- Select Subject --</option>
                             {subjects?.map((subject) => (
-                                <option value={subject.id}>{subject.subject_name}</option>
+                                <option
+                                    key={subject.id}
+                                    value={subject.id}
+                                    data-subject_name={subject.subject_name}>
+                                    {subject.subject_name}
+                                </option>
                             ))}
                         </select>
                     </div>
@@ -133,7 +146,12 @@ function QuestionsList() {
                         <select name="" className="form-control" onChange={handleTopicChange}>
                             <option value="">-- Select Topic --</option>
                             {topics?.map((topic) => (
-                                <option value={topic.id}>{topic.topic_name}</option>
+                                <option
+                                    key={topic.id}
+                                    value={topic.id}
+                                    data-topic_name={topic.topic_name}>
+                                    {topic.topic_name}
+                                </option>
                             ))}
                         </select>
                     </div>
@@ -152,14 +170,15 @@ function QuestionsList() {
                             <th>Question</th>
                             <th width="8%">Topic</th>
                             <th width="8%">Subject</th>
-                            <th width="5%">Action</th>
+                            <th width="5%">Edit</th>
+                            <th width="5%">Delete</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        {questionsList.map((question, i) => {
+                        {questionsList?.map((question, i) => {
                             return (
-                                <tr>
+                                <tr key={question.id}>
                                     <td>{i + 1}</td>
                                     <td>{question.question_content}</td>
                                     <td>{question.subject_name}</td>
@@ -167,9 +186,16 @@ function QuestionsList() {
                                     <td className="text-center">
                                         <i
                                             type="button"
+                                            className="fa-solid fa-pen-to-square btn-sm text-success"
+                                            onClick={() => handleEditQuestion(question.id)}></i>
+                                    </td>
+                                    <td className="text-center">
+                                        <i
+                                            type="button"
                                             className="btn text-danger btn-sm fa-solid fa-trash"
                                             onClick={() => {
-                                                handleDeleteQuestion.bind(null, question.id);
+                                                // handleDeleteQuestion.bind(null, question.id);
+                                                handleDeleteQuestion(question.id);
                                             }}></i>
                                     </td>
                                 </tr>
@@ -178,10 +204,14 @@ function QuestionsList() {
                     </tbody>
                 </Table>
                 {selectedSubject !== '' && selectedTopic !== '' && questionsList.length === 0 && (
-                    <p>Nothing but crickets. </p>
+                    <p className="text-center fw-bold text-danger">Nothing but crickets. </p>
                 )}
-                {selectedSubject === '' && <p>Please select the subject</p>}
-                {selectedSubject !== '' && selectedTopic === '' && <p>Please select the topic</p>}
+                {selectedSubject === '' && (
+                    <p className="text-center fw-bold text-danger">Please select the subject</p>
+                )}
+                {selectedSubject !== '' && selectedTopic === '' && (
+                    <p className="text-center fw-bold text-danger">Please select the topic</p>
+                )}
                 {loader && <Loader />}
             </div>
         </>

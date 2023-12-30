@@ -13,13 +13,21 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import useHttp from '../Hooks/use-http';
 import ModalComponent from '../Modal/ModalComponent';
+import { useSearchParams, useLocation } from 'react-router-dom';
 
-const AddQuestionForm = () => {
+const AddQuestionForm = ({ isForUpdate }) => {
+    // const location = useLocation();
+    const searchParams = new URLSearchParams(document.location.search);
+
+    // Extracting query parameters
+    const forUpdate = searchParams.get('forUpdate');
+    const questionId = searchParams.get('questionId');
+    console.log('Params: ', forUpdate, questionId);
+
+    const { sendRequest } = useHttp();
+
     const subjectNameRef = useRef();
     const topicNameRef = useRef();
-
-    // CUSTOM HOOK
-    const { sendRequest } = useHttp();
 
     // NOTIFICATION
     const dispatch = useDispatch();
@@ -37,11 +45,12 @@ const AddQuestionForm = () => {
 
     const [topics, setTopics] = useState([]);
 
+    const [selectedSubject, setSelectedSubject] = useState('');
+
     const [formData, setFormData] = useState({
- 
         subject_id: '-1',
         topic_id: '-1',
- 
+
         question_content: '',
         option_A: '',
         option_B: '',
@@ -50,39 +59,59 @@ const AddQuestionForm = () => {
         option_E: '',
         correct_option: '',
         explanation: '',
- 
+
         pub_name: '',
         pg_no: '',
- 
     });
 
+    const [questionDetailsToUpdate, setQuestionDetailsToUpdate] = useState({
+        subject_id: '-1',
+        topic_id: '-1',
+        subject_name: '',
+        topic_name: '',
+
+        question_content: '',
+        option_A: '',
+        option_B: '',
+        option_C: '',
+        option_D: '',
+        option_E: '',
+        correct_option: '',
+        explanation: '',
+
+        pub_name: '',
+        pg_no: '',
+    });
+
+    useEffect(() => {
+        const handleGetQuestionDetails = async (questionId) => {
+            const reqDetails = {
+                url: `/questions/get-question-details?questionId=${questionId}`,
+            };
+            sendRequest(reqDetails, (questionData) => {
+                const { data } = questionData;
+                console.log('DATA ', data);
+                // setFormData(data);
+                // console.log("Form Dataaa", formData)
+                setQuestionDetailsToUpdate(data);
+                setFormData({...questionDetailsToUpdate})
+                console.log('DATA to use 1', questionDetailsToUpdate);
+            });
+        };
+        handleGetQuestionDetails(questionId);
+
+        console.log(2222);
+    }, [forUpdate, questionId]);
+
+
+    console.log('DATA to use2222', questionDetailsToUpdate);
+    console.log('DATA to 333', formData);
     const handleChange = (e) => {
         setFormData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
- 
     };
 
-    const handleSaveQuestion = async () => {
-        // Send data using Fetch API or any other method
-        await fetch('/questions/add-question', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    };
-
-    const handleAddInputField = (e) => {
-        e.preventDefault();
-        setShowNewInputField(!showNewInputField);
- 
+    const handleSubjectChange = (e) => {
+        setSelectedSubject(e.target.value);
     };
 
     const handleAddSubjectModal = () => {
@@ -98,7 +127,7 @@ const AddQuestionForm = () => {
                 </Button>
             </Form>
         );
-        return <ModalComponent show={true} title={'Add subject'} modalBody={modalBody} />
+        return <ModalComponent show={true} title={'Add subject'} modalBody={modalBody} />;
         // dispatch(modalActions.openModal());
     };
 
@@ -221,6 +250,8 @@ const AddQuestionForm = () => {
         });
     };
 
+    const handleUpdateQuestion = async () => {};
+
     const handleSaveQuestion = async () => {
         // Send data using Fetch API or any other method
         try {
@@ -234,6 +265,7 @@ const AddQuestionForm = () => {
             let { success, data } = await response.json();
             if (success === 0) {
                 throw new Error(data);
+                console.log(data);
             }
             dispatch(notificationActions.showNotification('Successfully submitted question'));
         } catch (error) {
@@ -256,22 +288,30 @@ const AddQuestionForm = () => {
                                         <i className="fa-solid fa-plus"></i>
                                     </Button>
                                 </InputGroup.Text>
- 
+
                                 <Form.Select
                                     id="subject-id"
                                     name="subject_id"
-                                    onChange={handleSubjectChange}>
- 
-                                <Form.Select name="subject_id" onChange={handleChange}>
- 
-                                    <option value="-1" className="text-center">
-                                        -- Select Subject --
-                                    </option>
-                                    {subjects?.map((subject, i) => (
-                                        <option key={i} value={subject.id}>
-                                            {subject.subject_name}
+                                    onChange={() => {
+                                        handleChange();
+                                        handleSubjectChange();
+                                    }}>
+                                    {forUpdate ? (
+                                        <option value={questionDetailsToUpdate.subject_id}>
+                                            {questionDetailsToUpdate.subject_name}
                                         </option>
-                                    ))}
+                                    ) : (
+                                        <>
+                                            <option value="-1" className="text-center">
+                                                -- Select Subject --
+                                            </option>
+                                            {subjects?.map((subject, i) => (
+                                                <option key={i} value={subject.id}>
+                                                    {subject.subject_name}
+                                                </option>
+                                            ))}
+                                        </>
+                                    )}
                                 </Form.Select>
                             </InputGroup>
                         </div>
@@ -286,14 +326,22 @@ const AddQuestionForm = () => {
                                     </Button>
                                 </InputGroup.Text>
                                 <Form.Select name="topic_id" onChange={handleChange}>
-                                    <option value="-1" className="text-center">
-                                        -- Select topic --
-                                    </option>
-                                    {topics?.map((topic, i) => (
-                                        <option key={i} value={topic.id}>
-                                            {topic.topic_name}
+                                    {forUpdate ? (
+                                        <option value={questionDetailsToUpdate.topic_id} className="text-center">
+                                            {questionDetailsToUpdate.topic_name}
                                         </option>
-                                    ))}
+                                    ) : (
+                                        <>
+                                            <option value="-1" className="text-center">
+                                                -- Select topic --
+                                            </option>
+                                            {topics?.map((topic, i) => (
+                                                <option key={i} value={topic.id}>
+                                                    {topic.topic_name}
+                                                </option>
+                                            ))}
+                                        </>
+                                    )}
                                 </Form.Select>
                             </InputGroup>
                         </div>
@@ -304,7 +352,7 @@ const AddQuestionForm = () => {
                                 <Form.Control
                                     type="text"
                                     onChange={handleChange}
-                                    name="pub_name"></Form.Control>
+                                    name="pub_name" value={forUpdate && questionDetailsToUpdate.pub_name}></Form.Control>
                             </InputGroup>
                         </div>
 
@@ -314,7 +362,7 @@ const AddQuestionForm = () => {
                                 <Form.Control
                                     type="number"
                                     onChange={handleChange}
-                                    name="pg_no"></Form.Control>
+                                    name="pg_no" value={forUpdate && questionDetailsToUpdate.pg_no}></Form.Control>
                             </InputGroup>
                         </div>
 
@@ -322,7 +370,7 @@ const AddQuestionForm = () => {
                             <InputGroup>
                                 <InputGroup.Text>Question Number</InputGroup.Text>
                                 <Form.Control
-                                    value={questionNumber ? questionNumber + 1 : 0}
+                                    value={!forUpdate && questionNumber ? questionNumber + 1 : 0}
                                     readOnly></Form.Control>
                             </InputGroup>
                         </div>
@@ -353,7 +401,7 @@ const AddQuestionForm = () => {
                                     className="toggle-options-editor"
                                     onClick={() => setToggleOptions(!toggleOptions)}>
                                     {toggleOptions ? (
-                                        <i className="fa-solid fa-toggle-on"></i>
+                                        <i className="fa-solid fa-toggle-on text-success"></i>
                                     ) : (
                                         <i className="fa-solid fa-toggle-off"></i>
                                     )}
@@ -385,9 +433,9 @@ const AddQuestionForm = () => {
                                                 className="form-control"
                                                 id={`option-${option}`}
                                                 name={`option_${option}`}
-                                                onChange={(e) => handleChange(e)}
+                                                onChange={handleChange}
                                                 value={formData[`option_${option}`]}>
-                                                {formData[`option_${option}`]}
+                                                {formData[`option_${option}`]} 
                                             </textarea>
                                         )}
                                     </div>
@@ -439,7 +487,7 @@ const AddQuestionForm = () => {
                                         className="btn btn-secondary"
                                         id="add-new-option-btn"
                                         onClick={() => setShowNewInputField(!showNewInputField)}>
-                                        Add
+                                        Add option
                                     </button>
                                 )}
                             </div>
@@ -450,8 +498,10 @@ const AddQuestionForm = () => {
                                 <Form.Control
                                     type="text"
                                     id="correct-option"
-                                    name="correct-option"
+                                    className="text-uppercase"
+                                    name="correct_option"
                                     onChange={handleChange}
+                                    value={formData.correct_option}
                                     maxLength="1"></Form.Control>
                             </InputGroup>
                         </div>
@@ -496,15 +546,25 @@ const AddQuestionForm = () => {
                         </div>
                     </div>
 
-                    <button
-                        type="button"
-                        className="btn btn-primary mt-2"
-                        id="save-new-question-btn"
- 
-                        onClick={handleSaveQuestion}>
- 
-                        Save
-                    </button>
+                    {console.log(`Is for update : ${forUpdate}`)}
+
+                    {forUpdate == 'true' ? (
+                        <button
+                            type="button"
+                            className="btn btn-success mt-2"
+                            id="update-question-btn"
+                            onClick={handleUpdateQuestion}>
+                            Update
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            className="btn btn-primary mt-2"
+                            id="save-new-question-btn"
+                            onClick={handleSaveQuestion}>
+                            Save
+                        </button>
+                    )}
                 </form>
             </div>
         </>
