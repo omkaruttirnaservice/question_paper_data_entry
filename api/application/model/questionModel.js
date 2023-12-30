@@ -47,6 +47,24 @@ const questionModel = {
         return db.query(q, [id]);
     },
 
+    getQuestionDetails: (id) =>{
+        const q = `
+                    SELECT
+                        q.*,
+                        s.*,
+                        t.*
+                        FROM
+                        question q
+                        JOIN
+                        subject s ON q.subject_id = s.id
+                        JOIN
+                        topic t ON q.topic_id = t.id
+                        WHERE
+                        q.id = ?;
+                    `
+        return db.query(q, [id])
+    },
+
     getQuestionNumber: () => {
         return db.query(`SELECT COUNT(id) AS total_questions FROM question;`);
     },

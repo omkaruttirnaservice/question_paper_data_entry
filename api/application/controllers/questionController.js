@@ -19,28 +19,28 @@ const questionController = {
                 subject_id,
                 topic_id,
             } = req.body;
-            // if (
-            //     !isNonEmptyNullString(question_content) ||
-            //     !isNonEmptyNullString(option_A) ||
-            //     !isNonEmptyNullString(option_B) ||
-            //     !isNonEmptyNullString(option_C) ||
-            //     !isNonEmptyNullString(option_D) ||
-            //     !isNonEmptyNullString(correct_option) ||
-            //     !isNumber(subject_id) ||
-            //     !isNumber(topic_id)
-            // ) {
-            //     return res.status(400).json({
-            //         success: 0,
-            //         message: `Bad Request. All fields are required`,
-            //     });
-            // }
+            if (
+                !isNonEmptyNullString(question_content) ||
+                !isNonEmptyNullString(option_A) ||
+                !isNonEmptyNullString(option_B) ||
+                !isNonEmptyNullString(option_C) ||
+                !isNonEmptyNullString(option_D) ||
+                !isNonEmptyNullString(correct_option) ||
+                !isNumber(subject_id) ||
+                !isNumber(topic_id)
+            ) {
+                return res.status(400).json({
+                    success: 0,
+                    message: `Bad Request. All fields are required`,
+                });
+            }
 
             let response = await questionModel.addNewQuestion(req.body);
 
             if (response[0].affectedRows === 0) throw new Error('Question was not saved');
-            sendSuccess(res);
+            return sendSuccess(res);
         } catch (err) {
-            sendError(res, err);
+            return sendError(res, err);
         }
     },
 
@@ -53,32 +53,53 @@ const questionController = {
                     message: 'Empty question id',
                 });
             }
-            // const existingQuestion = await questionModel.getQuestion(questionId);
+            const existingQuestion = await questionModel.getQuestion(questionId);
 
-            // if (!existingQuestion) {
-            //     return res.status(404).json({
-            //         success: 0,
-            //         message: 'Question not found',
-            //     });
-            // }
+            if (!existingQuestion) {
+                return res.status(404).json({
+                    success: 0,
+                    message: 'Question not found',
+                });
+            }
 
             await questionModel.deleteQuestion(questionId);
-            sendSuccess(res);
+            return sendSuccess(res);
         } catch (err) {
             sendError(res, err);
         }
     },
 
+    getQuestionDetails: async (req, res) => {
+        try {
+            const { questionId } = req.query;
+
+            console.log('Bro i am in a conroller of question details');
+
+            if (isNumber(questionId)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Empty question id',
+                });
+            }
+
+            const response = await questionModel.getQuestionDetails(questionId);
+
+            return sendSuccess(res, response[0][0])
+        } catch (err) {
+            return sendError(res, err);
+        }
+    },
+
     getQuestionNumber: async (req, res) => {
         try {
-            console.log('getting question number');
+            // console.log('getting question number');
             let response = await questionModel.getQuestionNumber();
-            console.log(response[0], 'question number');
+            // console.log(response[0], 'question number');
             if (response[0].length !== 0) {
-                sendSuccess(res, response[0][0]);
+                return sendSuccess(res, response[0][0]);
             }
-        } catch (error) {
-            sendError(res, error);
+        } catch (err) {
+            return sendError(res, err);
         }
     },
 
@@ -88,8 +109,8 @@ const questionController = {
 
             const questionList = await questionModel.getQuestionList(+subjectId, +topicId);
 
-            console.log(questionList[0]);
-            sendSuccess(res, questionList[0]);
+            // console.log(questionList[0]);
+            return sendSuccess(res, questionList[0]);
         } catch (err) {
             console.log('Error whlie fetching the questions: ', err);
             return res.status(500).json({
