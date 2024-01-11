@@ -44,7 +44,6 @@ const AddQuestionForm = ({ isForUpdate }) => {
 
 	const [formData, setFormData] = useState({
 		subject_id: '-1',
-
 		topic_id: '-1',
 
 		question_content: '',
