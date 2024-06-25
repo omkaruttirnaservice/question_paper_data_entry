@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { QuestionFormActions } from '../../Store/question-form-slice.js';
 
-let isInitial = true;
 function ExplanationInput({ showNewInputField, setShowNewInputField }) {
 	const { data: _formData } = useSelector((state) => state.questionForm);
 	const dispatch = useDispatch();
@@ -10,18 +9,14 @@ function ExplanationInput({ showNewInputField, setShowNewInputField }) {
 		/**
 		 * Replace function replaces the textarea element with ck editor instance
 		 * */
-		// let explanationInstance = window.CKEDITOR.instances['explanation'];
+		let explanationInstance = window.CKEDITOR.instances['explanation'];
 
-		// if (explanationInstance) {
-		// 	explanationInstance.destroy(true);
-		// }
-		if (isInitial) {
-			isInitial = false;
-			return;
+		if (explanationInstance) {
+			explanationInstance.destroy(true);
 		}
 
 		window.CKEDITOR.replace(`explanation`, {
-			height: 50,
+			height: 100,
 		});
 
 		/**

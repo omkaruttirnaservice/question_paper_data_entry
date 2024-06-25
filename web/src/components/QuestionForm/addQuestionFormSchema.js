@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 
 const addQuestionFormSchema = Yup.object().shape({
+	question_content: Yup.string().required('Enter question'),
 	subject_id: Yup.number().required('Select subject'),
 	topic_id: Yup.number().required('Select topic'),
 	pub_name: Yup.string().required('Enter publication name'),

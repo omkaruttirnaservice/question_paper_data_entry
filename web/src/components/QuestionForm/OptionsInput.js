@@ -37,22 +37,22 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 		}
 
 		window.CKEDITOR.replace(`question_content`, {
-			height: 50,
+			height: 100,
 		});
 
 		window.CKEDITOR.replace(`option_A`, {
-			height: 50,
+			height: 100,
 		});
 
 		window.CKEDITOR.replace(`option_B`, {
-			height: 50,
+			height: 100,
 		});
 		window.CKEDITOR.replace(`option_C`, {
-			height: 50,
+			height: 100,
 		});
 
 		window.CKEDITOR.replace(`option_D`, {
-			height: 50,
+			height: 100,
 		});
 
 		/**
@@ -138,6 +138,9 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 					Question
 				</label>
 			</div>
+			{errors.question_content && (
+				<div className=" error">{errors.question_content}</div>
+			)}
 
 			<div className="mb-16">
 				<textarea

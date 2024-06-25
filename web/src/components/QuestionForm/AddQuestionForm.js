@@ -45,17 +45,17 @@ const AddQuestionForm = () => {
 			})
 		);
 
-		try {
-			await addQuestionFormSchema.validate(_formData, { abortEarly: false });
-		} catch (error) {
-			console.log(error.inner, '==error.inner==');
+		// try {
+		// 	await addQuestionFormSchema.validate(_formData, { abortEarly: false });
+		// } catch (error) {
+		// 	console.log(error.inner, '==error.inner==');
 
-			const errorsObj = {};
-			error.inner.forEach((el) => {
-				errorsObj[el.path] = el.message;
-			});
-			dispatch(QuestionFormActions.setErrors(errorsObj));
-		}
+		// 	const errorsObj = {};
+		// 	error.inner.forEach((el) => {
+		// 		errorsObj[el.path] = el.message;
+		// 	});
+		// 	dispatch(QuestionFormActions.setErrors(errorsObj));
+		// }
 	};
 
 	const getSubjectList = async () => {
