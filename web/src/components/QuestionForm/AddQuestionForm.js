@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
+import { Button, Form, InputGroup } from 'react-bootstrap';
 import { notificationActions } from '../../Store/notification-slice';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,19 +7,17 @@ import { useDispatch, useSelector } from 'react-redux';
 // CSS IMPORT
 import './addQuestionForm.css';
 
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-
 import { ModalActions } from '../../Store/modal-slice.js';
-import useHttp from '../Hooks/use-http';
-import CModal from '../UI/CModal.js';
-import CButton from '../UI/CButton.js';
 import {
 	QuestionFormActions,
 	getSubjectsListThunk,
 	getTopicsListThunk,
 } from '../../Store/question-form-slice.js';
+import useHttp from '../Hooks/use-http';
+import CButton from '../UI/CButton.js';
+import CModal from '../UI/CModal.js';
 import InputCkEditor from './InputCkEditor.js';
+import OptionsInput from './OptionsInput.js';
 
 const AddQuestionForm = () => {
 	let {
@@ -317,25 +315,6 @@ const AddQuestionForm = () => {
 							</InputGroup>
 						</div>
 
-						<div className="col-md-12 mt-4 mb-4">
-							<label htmlFor="question-content" className="form-label">
-								Enter Question
-							</label>
-							<CKEditor
-								id="question-content"
-								name="question_content"
-								editor={ClassicEditor}
-								onChange={(e, editor) => {
-									handleChange({
-										target: {
-											name: 'question_content',
-											value: editor.getData(),
-										},
-									});
-								}}
-							/>
-						</div>
-
 						<div className="col-md-12">
 							{/* <div className="mt-2 d-flex align-items-center gap-2">
 								Text Editor{' '}
@@ -351,39 +330,11 @@ const AddQuestionForm = () => {
 								</span>
 							</div> */}
 							<div className="form-options">
-								{['A', 'B', 'C', 'D'].map((option) => (
-									<InputCkEditor
-										option={option}
-										handleChange={handleChange}
-										_formData={_formData}
-									/>
-								))}
-
-								{showNewInputField ? (
-									<>
-										<InputCkEditor
-											option={'E'}
-											handleChange={handleChange}
-											_formData={_formData}
-										/>
-
-										<button
-											className="btn btn-danger"
-											id="remove-new-option-btn"
-											onClick={() => setShowNewInputField(!showNewInputField)}
-										>
-											Remove
-										</button>
-									</>
-								) : (
-									<button
-										className="btn btn-secondary"
-										id="add-new-option-btn"
-										onClick={() => setShowNewInputField(!showNewInputField)}
-									>
-										Add option
-									</button>
-								)}
+								<OptionsInput
+									_formData={_formData}
+									showNewInputField={showNewInputField}
+									setShowNewInputField={setShowNewInputField}
+								/>
 							</div>
 						</div>
 						<div className="col-md-3">
@@ -425,7 +376,7 @@ const AddQuestionForm = () => {
 										data-bs-parent="#add-explanation-accordion"
 									>
 										<div className="accordion-body">
-											<CKEditor
+											{/* <CKEditor
 												id={`explanation`}
 												editor={ClassicEditor}
 												onChange={(e, editor) =>
@@ -436,7 +387,7 @@ const AddQuestionForm = () => {
 														},
 													})
 												}
-											/>
+											/> */}
 										</div>
 									</div>
 								</div>

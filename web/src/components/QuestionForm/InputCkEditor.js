@@ -1,32 +1,49 @@
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import React from 'react';
+// import React, { useEffect, useRef, useState } from 'react';
+// import { useDispatch } from 'react-redux';
+// import { QuestionFormActions } from '../../Store/question-form-slice.js';
 
-function InputCkEditor({ option, handleChange, _formData }) {
-	return (
-		<>
-			<div key={option}>
-				<label htmlFor={`option-${option}`}>{option}</label>
+// function InputCkEditor({ option, _formData }) {
+// 	const dispatch = useDispatch();
+// 	const [isInitial, setIsInitial] = useState(true);
 
-				<div className="ckeditor">
-					<CKEditor
-						id={`option-${option}`}
-						editor={ClassicEditor}
-						onChange={(e, editor) => {
-							console.log(editor, '==editor==');
-							handleChange({
-								target: {
-									name: `option_${option}`,
-									value: editor.getData(),
-								},
-							});
-						}}
-						data={_formData[`option_${option}`]}
-					/>
-				</div>
-			</div>
-		</>
-	);
-}
+// 	useEffect(() => {
+// 		if (isInitial) {
+// 			setIsInitial(false);
+// 			return;
+// 		}
+// 		window.CKEDITOR.replace(option);
+// 		/**
+// 		 * Replace function replaces the textarea element with ck editor instance
+// 		 * */
 
-export default InputCkEditor;
+// 		/**
+// 		 * Get value of the editor by listening to change event
+// 		 * Value is available by calling .getData() function
+// 		 * */
+// 		window.CKEDITOR.instances[option].on('change', function () {
+// 			dispatch(
+// 				QuestionFormActions.handleInputChange({
+// 					key: option,
+// 					value: window.CKEDITOR.instances[option].getData(),
+// 				})
+// 			);
+// 		});
+// 		setIsInitial(true);
+// 	}, [isInitial]);
+
+// 	return (
+// 		<>
+// 			<div>
+// 				{/* <label htmlFor={`${option}`}>{option}</label> */}
+
+// 				<textarea
+// 					name={option}
+// 					id={option}
+// 					value={_formData.question_content}
+// 				></textarea>
+// 			</div>
+// 		</>
+// 	);
+// }
+
+// export default InputCkEditor;
