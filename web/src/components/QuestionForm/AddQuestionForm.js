@@ -19,6 +19,7 @@ import CModal from '../UI/CModal.js';
 import OptionsInput from './OptionsInput.js';
 import addQuestionFormSchema from './addQuestionFormSchema.js';
 import ExplanationInput from './ExplanationInput.js';
+import { loaderActions } from '../../Store/loader-slice.js';
 
 const AddQuestionForm = () => {
 	let {
@@ -145,7 +146,9 @@ const AddQuestionForm = () => {
 		e.preventDefault();
 		try {
 			await addQuestionFormSchema.validate(_formData, { abortEarly: false });
-			postQuestionData(e);
+			postQuestionData();
+
+			dispatch(QuestionFormActions.setErrors({}));
 		} catch (error) {
 			console.log(error.inner, '==error.inner==');
 
@@ -157,9 +160,10 @@ const AddQuestionForm = () => {
 		}
 	};
 
-	async function postQuestionData(e) {
+	async function postQuestionData() {
 		// Send data using Fetch API or any other method
 		try {
+			dispatch(loaderActions.showLoader());
 			let response = await fetch('/questions/add-question', {
 				method: 'POST',
 				headers: {
@@ -174,8 +178,12 @@ const AddQuestionForm = () => {
 			dispatch(
 				notificationActions.showNotification('Successfully submitted question')
 			);
+
+			dispatch(loaderActions.hideLoader());
 		} catch (error) {
 			alert(error.message);
+
+			dispatch(loaderActions.hideLoader());
 		}
 	}
 	const handleTopicAddModal = () => {
@@ -367,13 +375,12 @@ const AddQuestionForm = () => {
 						<ExplanationInput />
 					</div>
 
-					<button
+					<CButton
 						type="submit"
-						className="btn btn-primary mt-2"
-						id="save-new-question-btn"
+						isLoading={useSelector((state) => state.loader.isLoading)}
 					>
 						Save
-					</button>
+					</CButton>
 				</form>
 			</div>
 		</>
