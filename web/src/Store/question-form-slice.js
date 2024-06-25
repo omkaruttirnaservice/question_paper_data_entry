@@ -7,6 +7,8 @@ let initialState = {
 	data: {
 		subject_id: null,
 		topic_id: null,
+		pub_name: null,
+		pg_no: null,
 		question_content: null,
 		option_A: null,
 		option_B: null,
@@ -15,12 +17,11 @@ let initialState = {
 		option_E: null,
 		correct_option: null,
 		explanation: null,
-		pub_name: null,
-		pg_no: null,
 	},
 	subjectsList: [],
 	topicsList: [],
 	questionNumber: null,
+	errors: {},
 };
 const QuestionFormSlice = createSlice({
 	name: 'question-form-slice',
@@ -44,6 +45,11 @@ const QuestionFormSlice = createSlice({
 
 		setQuestionNumber(state, action) {
 			state.questionNumber = action.payload;
+		},
+
+		setErrors(state, action) {
+			state.errors = {};
+			state.errors = action.payload;
 		},
 	},
 });

@@ -16,8 +16,9 @@ import {
 import useHttp from '../Hooks/use-http';
 import CButton from '../UI/CButton.js';
 import CModal from '../UI/CModal.js';
-import InputCkEditor from './InputCkEditor.js';
 import OptionsInput from './OptionsInput.js';
+import addQuestionFormSchema from './addQuestionFormSchema.js';
+import ExplanationInput from './ExplanationInput.js';
 
 const AddQuestionForm = () => {
 	let {
@@ -25,6 +26,7 @@ const AddQuestionForm = () => {
 		subjectsList,
 		topicsList,
 		questionNumber,
+		errors,
 	} = useSelector((state) => state.questionForm);
 	const dispatch = useDispatch();
 
@@ -35,13 +37,25 @@ const AddQuestionForm = () => {
 
 	const [showNewInputField, setShowNewInputField] = useState(false);
 
-	const handleChange = (e) => {
+	const handleChange = async (e) => {
 		dispatch(
 			QuestionFormActions.handleInputChange({
 				key: e.target.name,
 				value: e.target.value,
 			})
 		);
+
+		try {
+			await addQuestionFormSchema.validate(_formData, { abortEarly: false });
+		} catch (error) {
+			console.log(error.inner, '==error.inner==');
+
+			const errorsObj = {};
+			error.inner.forEach((el) => {
+				errorsObj[el.path] = el.message;
+			});
+			dispatch(QuestionFormActions.setErrors(errorsObj));
+		}
 	};
 
 	const getSubjectList = async () => {
@@ -127,39 +141,23 @@ const AddQuestionForm = () => {
 		});
 	};
 
-	const handleSaveQuestion = async () => {
-		checkFormDetailsEmpty(_formData, (data) => {
-			if (data === true) {
-				postQuestionData();
-			}
-		});
-	};
+	const handleSaveQuestion = async (e) => {
+		e.preventDefault();
+		try {
+			await addQuestionFormSchema.validate(_formData, { abortEarly: false });
+			postQuestionData(e);
+		} catch (error) {
+			console.log(error.inner, '==error.inner==');
 
-	const checkFormDetailsEmpty = (data, cb) => {
-		if (data.subject_id === '-1') {
-			dispatch(notificationActions.showNotification(`Please select subject`));
-		} else if (data.topic_id === '-1') {
-			dispatch(notificationActions.showNotification(`Please select topic`));
-		} else if (data.question_content === '') {
-			dispatch(notificationActions.showNotification(`Please enter question`));
-		} else if (data.option_A === '') {
-			dispatch(notificationActions.showNotification(`Please enter option A`));
-		} else if (data.option_B === '') {
-			dispatch(notificationActions.showNotification(`Please enter option B`));
-		} else if (data.option_C === '') {
-			dispatch(notificationActions.showNotification(`Please enter option C`));
-		} else if (data.option_D === '') {
-			dispatch(notificationActions.showNotification(`Please enter option D`));
-		} else if (data.correct_option === '') {
-			dispatch(
-				notificationActions.showNotification(`Please enter correct option`)
-			);
-		} else {
-			cb(true);
+			const errorsObj = {};
+			error.inner.forEach((el) => {
+				errorsObj[el.path] = el.message;
+			});
+			dispatch(QuestionFormActions.setErrors(errorsObj));
 		}
 	};
 
-	async function postQuestionData() {
+	async function postQuestionData(e) {
 		// Send data using Fetch API or any other method
 		try {
 			let response = await fetch('/questions/add-question', {
@@ -229,7 +227,7 @@ const AddQuestionForm = () => {
 			</CModal>
 
 			<div className="container">
-				<form id="add-question-form" className="">
+				<form id="add-question-form" className="" onSubmit={handleSaveQuestion}>
 					<div className="row g-3">
 						<div className="col-12 col-sm-6 col-lg-3">
 							<InputGroup>
@@ -249,7 +247,7 @@ const AddQuestionForm = () => {
 									name="subject_id"
 									onChange={handleChange}
 								>
-									<option value="-1" className="text-center">
+									<option value="-1" className="text-center" name="subject_id">
 										-- Select Subject --
 									</option>
 									{subjectsList?.map((subject, i) => (
@@ -259,6 +257,9 @@ const AddQuestionForm = () => {
 									))}
 								</Form.Select>
 							</InputGroup>
+							{errors.subject_id && (
+								<div className=" error">{errors.subject_id}</div>
+							)}
 						</div>
 
 						<div className="col-12 col-sm-6 col-lg-3">
@@ -282,6 +283,9 @@ const AddQuestionForm = () => {
 									))}
 								</Form.Select>
 							</InputGroup>
+							{errors.topic_id && (
+								<div className=" error">{errors.topic_id}</div>
+							)}
 						</div>
 
 						<div className="col-12 col-sm-6 col-lg-6">
@@ -294,6 +298,10 @@ const AddQuestionForm = () => {
 									value={_formData.pub_name}
 								></Form.Control>
 							</InputGroup>
+
+							{errors.pub_name && (
+								<div className=" error">{errors.pub_name}</div>
+							)}
 						</div>
 
 						<div className="col-12 col-sm-6 col-lg-2">
@@ -306,6 +314,7 @@ const AddQuestionForm = () => {
 									value={_formData.pg_no}
 								></Form.Control>
 							</InputGroup>
+							{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
 						</div>
 
 						<div className="col-12 col-sm-6 col-lg-3">
@@ -331,7 +340,6 @@ const AddQuestionForm = () => {
 							</div> */}
 							<div className="form-options">
 								<OptionsInput
-									_formData={_formData}
 									showNewInputField={showNewInputField}
 									setShowNewInputField={setShowNewInputField}
 								/>
@@ -350,56 +358,19 @@ const AddQuestionForm = () => {
 									maxLength="1"
 								></Form.Control>
 							</InputGroup>
+
+							{errors.correct_option && (
+								<div className="error">{errors.correct_option}</div>
+							)}
 						</div>
 
-						<div className="col-md-12 mt-3">
-							<div
-								className="accordion accordion-flush"
-								id="add-explanation-accordion"
-							>
-								<div className="accordion-item">
-									<h2 className="accordion-header">
-										<button
-											className="accordion-button"
-											type="button"
-											data-bs-toggle="collapse"
-											data-bs-target="#accordion-target-explanation"
-											aria-expanded="true"
-											aria-controls="accordion-target-explanation"
-										>
-											Add Explanation
-										</button>
-									</h2>
-									<div
-										id="accordion-target-explanation"
-										className="accordion-collapse collapse show"
-										data-bs-parent="#add-explanation-accordion"
-									>
-										<div className="accordion-body">
-											{/* <CKEditor
-												id={`explanation`}
-												editor={ClassicEditor}
-												onChange={(e, editor) =>
-													handleChange({
-														target: {
-															name: `explantion`,
-															value: editor.getData(),
-														},
-													})
-												}
-											/> */}
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+						<ExplanationInput />
 					</div>
 
 					<button
-						type="button"
+						type="submit"
 						className="btn btn-primary mt-2"
 						id="save-new-question-btn"
-						onClick={handleSaveQuestion}
 					>
 						Save
 					</button>

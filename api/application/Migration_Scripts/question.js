@@ -1,4 +1,4 @@
-import { INTEGER, BIGINT, STRING, DATEONLY } from 'sequelize';
+import { INTEGER, BIGINT, STRING, DATEONLY, TEXT } from 'sequelize';
 import sequelize from '../config/db-connect-migration.js';
 
 const question = sequelize.define('question', {
@@ -9,29 +9,28 @@ const question = sequelize.define('question', {
 		autoIncrement: true,
 	},
 	question_content: {
-		type: STRING,
+		type: TEXT('long'),
 		allowNull: false,
 	},
 
 	option_A: {
-		type: STRING,
+		type: TEXT('long'),
 		allowNull: false,
 	},
 	option_B: {
-		type: STRING,
+		type: TEXT('long'),
 		allowNull: false,
 	},
 	option_C: {
-		type: STRING,
+		type: TEXT('long'),
 		allowNull: false,
 	},
 	option_D: {
-		type: STRING,
+		type: TEXT('long'),
 		allowNull: false,
 	},
 	option_E: {
-		type: STRING,
-		defaultValue: '0',
+		type: TEXT('long'),
 	},
 
 	correct_option: {
@@ -40,7 +39,7 @@ const question = sequelize.define('question', {
 	},
 
 	explanation: {
-		type: STRING,
+		type: TEXT('long'),
 		defaultValue: '',
 	},
 

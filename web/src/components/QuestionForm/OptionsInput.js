@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { QuestionFormActions } from '../../Store/question-form-slice.js';
 
-function OptionsInput({ _formData, showNewInputField, setShowNewInputField }) {
+function OptionsInput({ showNewInputField, setShowNewInputField }) {
+	const { data: _formData, errors } = useSelector(
+		(state) => state.questionForm
+	);
 	const dispatch = useDispatch();
 	useEffect(() => {
 		/**
@@ -147,6 +150,7 @@ function OptionsInput({ _formData, showNewInputField, setShowNewInputField }) {
 					A
 				</label>
 			</div>
+			{errors.option_A && <div className=" error">{errors.option_A}</div>}
 
 			<div className="mb-16">
 				<textarea
@@ -159,6 +163,7 @@ function OptionsInput({ _formData, showNewInputField, setShowNewInputField }) {
 					B
 				</label>
 			</div>
+			{errors.option_B && <div className=" error">{errors.option_B}</div>}
 
 			<div className="mb-16">
 				<textarea
@@ -171,6 +176,7 @@ function OptionsInput({ _formData, showNewInputField, setShowNewInputField }) {
 					C
 				</label>
 			</div>
+			{errors.option_C && <div className=" error">{errors.option_C}</div>}
 
 			<div className="mb-16">
 				<textarea
@@ -183,6 +189,7 @@ function OptionsInput({ _formData, showNewInputField, setShowNewInputField }) {
 					D
 				</label>
 			</div>
+			{errors.option_D && <div className=" error">{errors.option_D}</div>}
 
 			{showNewInputField ? (
 				<>
@@ -197,6 +204,9 @@ function OptionsInput({ _formData, showNewInputField, setShowNewInputField }) {
 							D
 						</label>
 					</div>
+					{errors.option_E && (
+						<div className="!top-[1rem]">{errors.option_E}</div>
+					)}
 					<button
 						className="btn btn-danger"
 						id="remove-new-option-btn"
