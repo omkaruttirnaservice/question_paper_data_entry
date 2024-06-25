@@ -188,33 +188,39 @@ function QuestionsList() {
 					</thead>
 
 					<tbody>
-						{questionsList?.map((question, i) => {
-							return (
-								<tr key={question.id}>
-									<td>{i + 1}</td>
-									<td>{question.question_content}</td>
-									<td>{question.subject_name}</td>
-									<td>{question.topic_name}</td>
-									<td className="text-center">
-										<i
-											type="button"
-											className="fa-solid fa-pen-to-square btn-sm text-success"
-											onClick={() => handleEditQuestion(question.id)}
-										></i>
-									</td>
-									<td className="text-center">
-										<i
-											type="button"
-											className="btn text-danger btn-sm fa-solid fa-trash"
-											onClick={() => {
-												// handleDeleteQuestion.bind(null, question.id);
-												handleDeleteQuestion(question.id);
+						{questionsList.length >= 1 &&
+							questionsList?.map((question, i) => {
+								return (
+									<tr key={question.id}>
+										<td>{i + 1}</td>
+										{/* <td>{question.question_content}</td> */}
+										<td
+											dangerouslySetInnerHTML={{
+												__html: question.question_content,
 											}}
-										></i>
-									</td>
-								</tr>
-							);
-						})}
+										></td>
+										<td>{question.subject_name}</td>
+										<td>{question.topic_name}</td>
+										<td className="text-center">
+											<i
+												type="button"
+												className="fa-solid fa-pen-to-square btn-sm text-success"
+												onClick={() => handleEditQuestion(question.id)}
+											></i>
+										</td>
+										<td className="text-center">
+											<i
+												type="button"
+												className="btn text-danger btn-sm fa-solid fa-trash"
+												onClick={() => {
+													// handleDeleteQuestion.bind(null, question.id);
+													handleDeleteQuestion(question.id);
+												}}
+											></i>
+										</td>
+									</tr>
+								);
+							})}
 					</tbody>
 				</Table>
 				{selectedSubject !== '' &&
