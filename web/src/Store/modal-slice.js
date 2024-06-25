@@ -1,16 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const modalSlice = createSlice({
-    name: 'modal-slice',
-    initialState: { isOpen: false, title: null, modalBody: null },
-    reducers: {
-        openModal(state, action) {
-            state.isOpen = true;
-        },
-        closeModal(state, action) {
-            state.isOpen = false;
-        },
-    },
+const modalSlice = createSlice({
+	name: 'modal-slice',
+	initialState: {},
+	reducers: {
+		toggleModal(state, action) {
+			let key = action.payload;
+			if (key === undefined || key === null) {
+				console.error('No modal id passed to toggleModal() reducer');
+				return;
+			}
+			state[key] = !state[key];
+		},
+	},
 });
 
-export const modalActions = modalSlice.actions;
+export const ModalActions = modalSlice.actions;
+export default modalSlice;
