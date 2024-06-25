@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { notificationActions } from './notification-slice.js';
-import useHttp from '../components/Hooks/use-http.js';
 import { loaderActions } from './loader-slice.js';
+import { notificationActions } from './notification-slice.js';
 
 let initialState = {
 	data: {
@@ -29,7 +28,6 @@ const QuestionFormSlice = createSlice({
 	reducers: {
 		handleInputChange(state, action) {
 			let { key, value } = action.payload;
-			console.log(key, value, '==key,value==');
 			state.data[key] = value;
 		},
 
@@ -44,7 +42,7 @@ const QuestionFormSlice = createSlice({
 		},
 
 		setQuestionNumber(state, action) {
-			state.questionNumber = action.payload;
+			state.questionNumber = +action.payload + 1;
 		},
 
 		setErrors(state, action) {
