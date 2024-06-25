@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loaderActions } from '../../Store/loader-slice';
 import { notificationActions } from '../../Store/notification-slice';
 import { useNavigate } from 'react-router-dom';
+import CButton from '../UI/CButton.js';
 
 function QuestionsList() {
 	const navigate = useNavigate();
@@ -89,6 +90,7 @@ function QuestionsList() {
 
 		if (success === 1) {
 			setQuestionsList(data);
+			console.log(data, '==data==');
 			dispatch(loaderActions.hideLoader());
 		}
 	}
@@ -169,9 +171,9 @@ function QuestionsList() {
 					</div>
 
 					<div className="col-md-2">
-						<Button verient="primary" onClick={handleSearchQuestions}>
+						<CButton isLoading={loader} onClick={handleSearchQuestions}>
 							Search
-						</Button>
+						</CButton>
 					</div>
 				</div>
 
@@ -180,6 +182,11 @@ function QuestionsList() {
 						<tr>
 							<th width="8%">SR NO</th>
 							<th>Question</th>
+							<th>Option A</th>
+							<th>Option B</th>
+							<th>Option C</th>
+							<th>Option D</th>
+							<th>Correct Option</th>
 							<th width="8%">Topic</th>
 							<th width="8%">Subject</th>
 							<th width="5%">Edit</th>
@@ -193,12 +200,25 @@ function QuestionsList() {
 								return (
 									<tr key={question.id}>
 										<td>{i + 1}</td>
-										{/* <td>{question.question_content}</td> */}
 										<td
 											dangerouslySetInnerHTML={{
 												__html: question.question_content,
 											}}
 										></td>
+										<td
+											dangerouslySetInnerHTML={{ __html: question.option_A }}
+										></td>
+										<td
+											dangerouslySetInnerHTML={{ __html: question.option_B }}
+										></td>
+										<td
+											dangerouslySetInnerHTML={{ __html: question.option_C }}
+										></td>
+
+										<td
+											dangerouslySetInnerHTML={{ __html: question.option_D }}
+										></td>
+										<td>{question.correct_option}</td>
 										<td>{question.subject_name}</td>
 										<td>{question.topic_name}</td>
 										<td className="text-center">
