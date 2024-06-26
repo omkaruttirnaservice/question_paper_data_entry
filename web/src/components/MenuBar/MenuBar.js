@@ -21,14 +21,14 @@ function MenuBar() {
 
 	return (
 		<>
-			<div className="menu-button-list">
+			<div className="flex p-2">
 				{menuButtons?.map((el, index) => {
 					return (
 						<NavLink
 							key={index}
 							to={el.path}
 							className={({ isActive }) =>
-								isActive ? 'menu-button-item active' : 'menu-button-item'
+								isActive ? 'menu-item active' : 'menu-item'
 							}
 						>
 							<i className={el.icon}></i>

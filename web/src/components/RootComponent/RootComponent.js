@@ -8,11 +8,11 @@ function RootComponent() {
 	const showNoti = useSelector((state) => state.notification.show);
 	return (
 		<>
-			<div className="row p-0 m-0 vh-100">
-				<div className="col-md-2 menubar p-0">
+			<div className="">
+				<div className=" menubar ">
 					<MenuBar />
 				</div>
-				<div className="col-md-10 ">
+				<div className="">
 					{showNoti && <Notification />}
 					<Outlet />
 				</div>
