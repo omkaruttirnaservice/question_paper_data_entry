@@ -91,8 +91,8 @@ function QuestionsList() {
 		if (success === 1) {
 			setQuestionsList(data);
 			console.log(data, '==data==');
-			dispatch(loaderActions.hideLoader());
 		}
+		dispatch(loaderActions.hideLoader());
 	}
 
 	const handleEditQuestion = (questionId) => {

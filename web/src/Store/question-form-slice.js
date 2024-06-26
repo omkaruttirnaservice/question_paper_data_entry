@@ -62,6 +62,8 @@ export const getSubjectsListThunk = () => {
 			if (success === 1) {
 				dispatch(QuestionFormActions.setSubjectsList(data[0]));
 			}
+
+			dispatch(loaderActions.hideLoader());
 		} catch (error) {
 			dispatch(loaderActions.hideLoader());
 			dispatch(

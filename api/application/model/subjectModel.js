@@ -1,7 +1,16 @@
 import db from '../config/db.connect.js';
 const subjectModel = {
 	getSubjectList: function () {
-		return db.query('SELECT id, subject_name FROM subject');
+		return db.query(`
+			SELECT 
+				sub.id id, 
+				subject_name, 
+				count(que.id) que_count
+			FROM subject sub
+			LEFT JOIN question que
+			ON sub.id = que.subject_id
+			GROUP BY sub.id;	
+			`);
 	},
 
 	addSubject: function (subjectName) {
