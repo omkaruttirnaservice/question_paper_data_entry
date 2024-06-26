@@ -16,10 +16,9 @@ import {
 import useHttp from '../Hooks/use-http';
 import CButton from '../UI/CButton.js';
 import CModal from '../UI/CModal.js';
+import ExplanationInput from './ExplanationInput.js';
 import OptionsInput from './OptionsInput.js';
 import addQuestionFormSchema from './addQuestionFormSchema.js';
-import ExplanationInput from './ExplanationInput.js';
-import { loaderActions } from '../../Store/loader-slice.js';
 
 const AddQuestionForm = () => {
 	let {
@@ -45,18 +44,6 @@ const AddQuestionForm = () => {
 				value: e.target.value,
 			})
 		);
-
-		// try {
-		// 	await addQuestionFormSchema.validate(_formData, { abortEarly: false });
-		// } catch (error) {
-		// 	console.log(error.inner, '==error.inner==');
-
-		// 	const errorsObj = {};
-		// 	error.inner.forEach((el) => {
-		// 		errorsObj[el.path] = el.message;
-		// 	});
-		// 	dispatch(QuestionFormActions.setErrors(errorsObj));
-		// }
 	};
 
 	const getSubjectList = async () => {
@@ -150,8 +137,6 @@ const AddQuestionForm = () => {
 
 			dispatch(QuestionFormActions.setErrors({}));
 		} catch (error) {
-			console.log(error.inner, '==error.inner==');
-
 			const errorsObj = {};
 			error.inner.forEach((el) => {
 				errorsObj[el.path] = el.message;
@@ -161,30 +146,18 @@ const AddQuestionForm = () => {
 	};
 
 	async function postQuestionData() {
-		// Send data using Fetch API or any other method
-		try {
-			dispatch(loaderActions.showLoader());
-			let response = await fetch('/questions/add-question', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(_formData),
-			});
-			let { success, data } = await response.json();
-			if (success === 0) {
-				throw new Error(data);
+		let reqData = {
+			url: '/questions/add-question',
+			method: 'POST',
+			body: JSON.stringify(_formData),
+		};
+		sendRequest(reqData, (data) => {
+			if (data.success == 1) {
+				dispatch(
+					notificationActions.showNotification('Successfully added question')
+				);
 			}
-			dispatch(
-				notificationActions.showNotification('Successfully submitted question')
-			);
-
-			dispatch(loaderActions.hideLoader());
-		} catch (error) {
-			alert(error.message);
-
-			dispatch(loaderActions.hideLoader());
-		}
+		});
 	}
 	const handleTopicAddModal = () => {
 		if (_formData.subject_id === '-1' || _formData.subject_id === null) {
