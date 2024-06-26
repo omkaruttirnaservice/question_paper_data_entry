@@ -21,7 +21,7 @@ function MenuBar() {
 
 	return (
 		<>
-			<div className="flex p-2">
+			<div className="flex p-2 gap-2 justify-start">
 				{menuButtons?.map((el, index) => {
 					return (
 						<NavLink

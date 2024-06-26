@@ -16,7 +16,7 @@
 	}
 
 	.menu-item {
-		@apply text-gray-200 flex items-center gap-2 p-2 rounded-md;
+		@apply text-gray-200 flex items-center gap-2 p-2 rounded-md text-sm;
 	}
 
 	.menu-item.active {
