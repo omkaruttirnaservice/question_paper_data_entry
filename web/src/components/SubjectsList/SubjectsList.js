@@ -1,15 +1,11 @@
-import react, { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Table } from 'react-bootstrap';
-import './SubjectsList.css';
-import Loader from '../UI/Loader/Loader';
+import { useDispatch, useSelector } from 'react-redux';
 import { notificationActions } from '../../Store/notification-slice';
-import { useSelector, useDispatch } from 'react-redux';
+import { getSubjectsListThunk } from '../../Store/question-form-slice.js';
 import useHttp from '../Hooks/use-http';
-import { loaderActions } from '../../Store/loader-slice';
-import {
-	QuestionFormActions,
-	getSubjectsListThunk,
-} from '../../Store/question-form-slice.js';
+import Loader from '../UI/Loader/Loader';
+import './SubjectsList.css';
 function SubjectsList() {
 	const editedSubjectName = useRef();
 
@@ -127,7 +123,7 @@ function SubjectsList() {
 												</>
 											)}
 										</td>
-										<td className="text-center">3</td>
+										<td className="text-center">{subject.que_count}</td>
 										<td className="text-center">
 											<i
 												type="button"

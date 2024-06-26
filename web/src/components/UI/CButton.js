@@ -1,5 +1,4 @@
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { useSelector } from 'react-redux';
 export default function CButton({
 	children,
 	className,

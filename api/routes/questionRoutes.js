@@ -9,8 +9,10 @@ router.post('/get-question-list', questionController.getQuestionList);
 
 router.get('/get-question-number', questionController.getQuestionNumber);
 
-router.post('/delete', questionController.deleteQuestion)
+router.post('/delete', questionController.deleteQuestion);
 
-router.get('/get-question-details', questionController.getQuestionDetails)
+router.get('/get-question-details', questionController.getQuestionDetails);
+
+router.put('/edit-question', questionController.editQuestion);
 
 export default router;

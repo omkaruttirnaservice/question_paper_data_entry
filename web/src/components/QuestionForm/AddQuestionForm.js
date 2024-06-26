@@ -107,7 +107,7 @@ const AddQuestionForm = () => {
 				);
 				getSubjectList();
 			} else {
-				dispatch(notificationActions.showNotification('Something went wrong'));
+				dispatch(notificationActions.showNotification('Something went wrong1'));
 			}
 		});
 	};
@@ -137,7 +137,7 @@ const AddQuestionForm = () => {
 				);
 				getTopicList();
 			} else {
-				dispatch(notificationActions.showNotification('Something went wrong'));
+				dispatch(notificationActions.showNotification('Something went wrong2'));
 			}
 		});
 	};
