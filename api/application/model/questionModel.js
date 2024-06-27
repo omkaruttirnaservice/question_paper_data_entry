@@ -47,7 +47,7 @@ const questionModel = {
 		return db.query(q, [id]);
 	},
 
-	getQuestionDetails: (id) => {
+	getEditQuestionData: (id) => {
 		const q = `
                     SELECT
                         q.*,
@@ -63,6 +63,34 @@ const questionModel = {
                         q.id = ?;
                     `;
 		return db.query(q, [id]);
+	},
+
+	editQuestion: (data) => {
+		const q = `UPDATE question SET 
+                question_content = ?,
+                option_A = ?,
+                option_B = ?,
+                option_C = ?,
+                option_D = ?,
+                option_E = ?,
+                correct_option = ?,
+                explanation = ?,
+                pub_name = ?,
+                pg_no = ?
+            WHERE id = ?`;
+		return db.query(q, [
+			data.question_content,
+			data.option_A,
+			data.option_B,
+			data.option_C,
+			data.option_D,
+			data.option_E,
+			data.correct_option,
+			data.explanation,
+			data.pub_name,
+			data.pg_no,
+			data.id,
+		]);
 	},
 
 	getQuestionNumber: () => {
@@ -81,7 +109,9 @@ const questionModel = {
                         correct_option,
                         explanation, 
                         subject_name, 
-                        topic_name
+                        topic_name,
+                        pub_name,
+                        pg_no
                     FROM question 
                     
                     INNER JOIN subject as sub ON 

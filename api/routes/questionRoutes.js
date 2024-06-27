@@ -11,8 +11,8 @@ router.get('/get-question-number', questionController.getQuestionNumber);
 
 router.post('/delete', questionController.deleteQuestion);
 
-router.get('/get-question-details', questionController.getQuestionDetails);
-
 router.put('/edit-question', questionController.editQuestion);
+
+router.post('/edit-question-data', questionController.editQuestionData);
 
 export default router;

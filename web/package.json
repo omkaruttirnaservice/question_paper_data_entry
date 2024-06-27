@@ -2,7 +2,7 @@
 	"name": "master-panel-th",
 	"version": "0.1.0",
 	"private": true,
-	"proxy": "http://192.168.1.30:3025",
+	"proxy": "http://192.168.1.101:3025",
 	"dependencies": {
 		"@reduxjs/toolkit": "^2.0.1",
 		"@testing-library/jest-dom": "^5.17.0",
@@ -10,7 +10,6 @@
 		"@testing-library/user-event": "^13.5.0",
 		"ckeditor": "^4.7.0",
 		"react": "^18.2.0",
-		"react-bootstrap": "^2.9.1",
 		"react-dom": "^18.2.0",
 		"react-icons": "^5.2.1",
 		"react-redux": "^9.0.2",

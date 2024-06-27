@@ -1,22 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
-import { Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { notificationActions } from '../../Store/notification-slice';
-import { getSubjectsListThunk } from '../../Store/question-form-slice.js';
+import {
+	QuestionFormActions,
+	getSubjectsListThunk,
+} from '../../Store/question-form-slice.js';
 import useHttp from '../Hooks/use-http';
 import Loader from '../UI/Loader/Loader';
+
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { GoPencil } from 'react-icons/go';
+import { FaRegFloppyDisk } from 'react-icons/fa6';
+import { IoCloseSharp } from 'react-icons/io5';
+
 import './SubjectsList.css';
+import CButton from '../UI/CButton.js';
 function SubjectsList() {
+	const { sendRequest } = useHttp();
 	const editedSubjectName = useRef();
 
-	// REDUX
 	const dispatch = useDispatch();
 	const isLoading = useSelector((state) => state.loader.isLoading);
-	const { sendRequest } = useHttp();
-
 	const { subjectsList } = useSelector((state) => state.questionForm);
 
-	// const [subjectsList, setSubjectsList] = useState([]);
 	const [isSubjectNameEdit, setIsSubjectNameEdit] = useState(false);
 	const [editId, setEditId] = useState('');
 
@@ -31,22 +37,22 @@ function SubjectsList() {
 	}, []);
 
 	async function handleDeleteSubject(subjectId) {
-		let response = await fetch('/delete-subject', {
+		let reqData = {
+			url: '/delete-subject',
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
 			body: JSON.stringify({ subjectId }),
+		};
+		sendRequest(reqData, ({ success, data }) => {
+			if (success === 1) {
+				dispatch(
+					notificationActions.showNotification('Successfully deleted subject.')
+				);
+				let subjects = subjectsList.filter((sub) => sub.id != subjectId);
+				dispatch(QuestionFormActions.setSubjectsList(subjects));
+			} else {
+				dispatch(notificationActions.showNotification('Something went wrong!'));
+			}
 		});
-
-		let { success, data } = await response.json();
-		if (success === 1) {
-			dispatch(
-				notificationActions.showNotification('Successfully deleted subject.')
-			);
-		} else {
-			dispatch(notificationActions.showNotification('Something went wrong!'));
-		}
 	}
 
 	const handleSubjectEdit = (subjectId) => {
@@ -56,28 +62,26 @@ function SubjectsList() {
 
 	const handleSaveEditedSubjectName = async (subjectId) => {
 		let _editedSubjectName = editedSubjectName.current.value;
-		let response = await fetch('/post-edit-subject-name', {
+		let reqData = {
+			url: '/post-edit-subject-name',
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
 			body: JSON.stringify({ newSubjectName: _editedSubjectName, subjectId }),
+		};
+		sendRequest(reqData, ({ success, data }) => {
+			if (success === 1) {
+				setIsSubjectNameEdit(false);
+				getSubjectList();
+				return;
+			} else {
+				alert('Something went wrong');
+			}
 		});
-		let { success, data } = await response.json();
-
-		if (success === 1) {
-			setIsSubjectNameEdit(false);
-			getSubjectList();
-			return;
-		} else {
-			alert('Something went wrong');
-		}
 	};
 
 	return (
 		<>
 			<div className="container mt-4">
-				<Table bordered>
+				<table>
 					<thead>
 						<tr>
 							<th className="text-center" width="7%">
@@ -109,38 +113,43 @@ function SubjectsList() {
 														ref={editedSubjectName}
 														className="form-control w-50 d-inline-block p-0 ms-2"
 													/>
-													<i
-														className="btn fa-solid fa-floppy-disk text-success d-inline-block ms-2 px-0"
+
+													<CButton
+														varient="btn--success"
+														icon={<FaRegFloppyDisk />}
 														onClick={handleSaveEditedSubjectName.bind(
 															null,
 															subject.id
 														)}
-													></i>
-													<i
+													></CButton>
+
+													<CButton
+														varient="btn--danger"
+														icon={<IoCloseSharp />}
 														onClick={() => setIsSubjectNameEdit(false)}
-														className="btn fa-solid fa-xmark ps-1 px-0"
-													></i>
+													></CButton>
 												</>
 											)}
 										</td>
 										<td className="text-center">{subject.que_count}</td>
 										<td className="text-center">
-											<i
-												type="button"
-												onClick={handleDeleteSubject.bind(null, subject.id)}
-												className="btn text-danger btn-sm fa-solid fa-trash"
-											></i>
-											<i
-												type="button"
+											<CButton
+												varient="btn--success"
+												icon={<FaRegTrashAlt />}
+												onClick={() => handleDeleteSubject(subject.id)}
+											></CButton>
+
+											<CButton
+												varient="btn--danger"
+												icon={<GoPencil />}
 												onClick={handleSubjectEdit.bind(null, subject.id)}
-												className="btn text-danger btn-sm fa-solid fa-pen"
-											></i>
+											></CButton>
 										</td>
 									</tr>
 								);
 							})}
 					</tbody>
-				</Table>
+				</table>
 
 				{isLoading && <Loader />}
 			</div>

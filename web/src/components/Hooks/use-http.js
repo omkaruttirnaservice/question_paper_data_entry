@@ -9,7 +9,11 @@ const useHttp = () => {
 			dispatch(loaderActions.showLoader());
 			let res = await fetch(requestData.url, {
 				method: requestData.method ? requestData.method : 'GET',
-				headers: requestData.headers ? requestData.headers : {},
+				// headers: requestData.headers ? requestData.headers : {},
+				headers: {
+					'Content-Type': 'application/json',
+					...requestData.headers,
+				},
 				body: requestData.body ? requestData.body : null,
 			});
 			if (!res.ok) {
@@ -17,8 +21,8 @@ const useHttp = () => {
 			}
 			const data = await res.json();
 
-			// THIS FUNCTION IS FOR GETTING RESPONSE RECIVED FROM THE REQUEST
 			dispatch(loaderActions.hideLoader());
+			// THIS FUNCTION IS FOR GETTING RESPONSE RECIVED FROM THE REQUEST
 			callback(data);
 		} catch (err) {
 			dispatch(loaderActions.hideLoader());

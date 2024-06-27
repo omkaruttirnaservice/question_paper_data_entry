@@ -21,6 +21,7 @@ let initialState = {
 	topicsList: [],
 	questionNumber: null,
 	errors: {},
+	isEdit: false,
 };
 const QuestionFormSlice = createSlice({
 	name: 'question-form-slice',
@@ -48,6 +49,16 @@ const QuestionFormSlice = createSlice({
 		setErrors(state, action) {
 			state.errors = {};
 			state.errors = action.payload;
+		},
+
+		setEditQuestionDetails(state, action) {
+			state.isEdit = true;
+			console.log(action.payload);
+			state.data = action.payload;
+		},
+
+		setEditingFalse(state, action) {
+			state.isEdit = false;
 		},
 	},
 });
@@ -83,11 +94,33 @@ export const getTopicsListThunk = (subject_id, sendRequest) => {
 			},
 			body: JSON.stringify({ subjectId: subject_id }),
 		};
-		sendRequest(requestData, (data) => {
-			dispatch(QuestionFormActions.setTopicsList(data.data));
-		});
+		if (!subject_id) {
+			dispatch(QuestionFormActions.setTopicsList([]));
+		} else {
+			sendRequest(requestData, (data) => {
+				dispatch(QuestionFormActions.setTopicsList(data.data));
+			});
+		}
 	};
 };
+
+// export const getEditQuestionDetailsThunk = (questionId, sendRequest) => {
+// 	return async (dispatch) => {
+// 		try {
+// 			let requestData = {
+// 				url: '/questions/edit-question-data',
+// 				method: 'POST',
+// 				body: JSON.stringify({ questionId }),
+// 			};
+
+// 			sendRequest(requestData, ({ data }) => {
+// 				dispatch(QuestionFormActions.setEditQuestionDetails(data[0]));
+// 			});
+// 		} catch (error) {
+// 			dispatch(notificationActions.hideLoader());
+// 		}
+// 	};
+// };
 
 export const QuestionFormActions = QuestionFormSlice.actions;
 export default QuestionFormSlice;

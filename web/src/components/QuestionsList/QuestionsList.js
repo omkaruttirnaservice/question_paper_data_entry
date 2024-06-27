@@ -1,53 +1,49 @@
 import './questionsList.css';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { GoPencil } from 'react-icons/go';
 
-import react, { useCallback, useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
-import { Table } from 'react-bootstrap';
-import Loader from '../UI/Loader/Loader';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { loaderActions } from '../../Store/loader-slice';
 import { notificationActions } from '../../Store/notification-slice';
-import { useNavigate } from 'react-router-dom';
+import {
+	QuestionFormActions,
+	getSubjectsListThunk,
+	getTopicsListThunk,
+} from '../../Store/question-form-slice.js';
+import useHttp from '../Hooks/use-http.js';
 import CButton from '../UI/CButton.js';
+import Loader from '../UI/Loader/Loader';
 
 function QuestionsList() {
 	const navigate = useNavigate();
-	const [subjects, setSubjects] = useState([]);
-	const [topics, setTopics] = useState([]);
 	const [questionsList, setQuestionsList] = useState([]);
 
 	const [selectedSubject, setSelectedSubject] = useState('');
 	const [selectedTopic, setSelectedTopic] = useState('');
 
 	// REDUX STATES
+	const { subjectsList, topicsList } = useSelector(
+		(state) => state.questionForm
+	);
 	const loader = useSelector((state) => state.loader.isLoading);
+
+	const { sendRequest } = useHttp();
 
 	const dispatch = useDispatch();
 
 	const getSubjectList = async () => {
-		let response = await fetch('/get-subject-list');
-		let { success, data } = await response.json();
-
-		if (success === 1) {
-			setSubjects(data[0]);
-		}
+		dispatch(getSubjectsListThunk());
 	};
 
 	const getTopicList = async () => {
-		let response = await fetch('/get-topic-list', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ subjectId: selectedSubject }),
-		});
-		let { data } = await response.json();
-		setTopics(data);
+		dispatch(getTopicsListThunk(selectedSubject, sendRequest));
 	};
 
 	useEffect(() => {
 		getSubjectList();
-	}, [subjects]);
+	}, []);
 
 	useEffect(() => {
 		getTopicList();
@@ -95,8 +91,9 @@ function QuestionsList() {
 		dispatch(loaderActions.hideLoader());
 	}
 
-	const handleEditQuestion = (questionId) => {
-		navigate(`/question-form?forUpdate=true&questionId=${questionId}`);
+	const handleEditQuestion = (question) => {
+		dispatch(QuestionFormActions.setEditQuestionDetails(question));
+		navigate('/edit-question-form');
 	};
 
 	const handleDeleteQuestion = async (questionId) => {
@@ -129,9 +126,9 @@ function QuestionsList() {
 
 	return (
 		<>
-			<div className="container mt-4">
-				<div className="row mb-4">
-					<div className="col-md-2">
+			<div className="px-3 mt-4">
+				<div className="grid grid-cols-3 gap-3 mb-6">
+					<div className="">
 						{/* SUBJECT LIST */}
 						<select
 							name=""
@@ -139,18 +136,20 @@ function QuestionsList() {
 							onChange={handleSubjectChange}
 						>
 							<option value="">-- Select Subject --</option>
-							{subjects?.map((subject) => (
-								<option
-									key={subject.id}
-									value={subject.id}
-									data-subject_name={subject.subject_name}
-								>
-									{subject.subject_name}
-								</option>
-							))}
+							{subjectsList.length >= 1 &&
+								subjectsList?.map((subject) => (
+									<option
+										key={subject.id}
+										value={subject.id}
+										data-subject_name={subject.subject_name}
+									>
+										{subject.subject_name}
+									</option>
+								))}
 						</select>
 					</div>
-					<div className="col-md-2">
+
+					<div className="">
 						{/* TOPIC LIST */}
 						<select
 							name=""
@@ -158,91 +157,92 @@ function QuestionsList() {
 							onChange={handleTopicChange}
 						>
 							<option value="">-- Select Topic --</option>
-							{topics?.map((topic) => (
-								<option
-									key={topic.id}
-									value={topic.id}
-									data-topic_name={topic.topic_name}
-								>
-									{topic.topic_name}
-								</option>
-							))}
+							{topicsList.length >= 1 &&
+								topicsList?.map((topic) => (
+									<option
+										key={topic.id}
+										value={topic.id}
+										data-topic_name={topic.topic_name}
+									>
+										{topic.topic_name}
+									</option>
+								))}
 						</select>
 					</div>
 
-					<div className="col-md-2">
+					<div className="">
 						<CButton isLoading={loader} onClick={handleSearchQuestions}>
 							Search
 						</CButton>
 					</div>
 				</div>
 
-				<Table bordered>
-					<thead>
-						<tr>
-							<th width="8%">SR NO</th>
-							<th>Question</th>
-							<th>Option A</th>
-							<th>Option B</th>
-							<th>Option C</th>
-							<th>Option D</th>
-							<th>Correct Option</th>
-							<th width="8%">Topic</th>
-							<th width="8%">Subject</th>
-							<th width="5%">Edit</th>
-							<th width="5%">Delete</th>
-						</tr>
-					</thead>
+				<div className="overflow-auto mx-2 mt-6">
+					<table className="w-[100%] question-list-table">
+						<thead>
+							<tr>
+								<th className="text-center">#</th>
+								<th>Question</th>
+								<th>Option A</th>
+								<th>Option B</th>
+								<th>Option C</th>
+								<th>Option D</th>
+								<th>Correct Option</th>
+								<th>Subject</th>
+								<th>Topic</th>
+								<th>Edit</th>
+								<th>Delete</th>
+							</tr>
+						</thead>
 
-					<tbody>
-						{questionsList.length >= 1 &&
-							questionsList?.map((question, i) => {
-								return (
-									<tr key={question.id}>
-										<td>{i + 1}</td>
-										<td
-											dangerouslySetInnerHTML={{
-												__html: question.question_content,
-											}}
-										></td>
-										<td
-											dangerouslySetInnerHTML={{ __html: question.option_A }}
-										></td>
-										<td
-											dangerouslySetInnerHTML={{ __html: question.option_B }}
-										></td>
-										<td
-											dangerouslySetInnerHTML={{ __html: question.option_C }}
-										></td>
-
-										<td
-											dangerouslySetInnerHTML={{ __html: question.option_D }}
-										></td>
-										<td>{question.correct_option}</td>
-										<td>{question.subject_name}</td>
-										<td>{question.topic_name}</td>
-										<td className="text-center">
-											<i
-												type="button"
-												className="fa-solid fa-pen-to-square btn-sm text-success"
-												onClick={() => handleEditQuestion(question.id)}
-											></i>
-										</td>
-										<td className="text-center">
-											<i
-												type="button"
-												className="btn text-danger btn-sm fa-solid fa-trash"
-												onClick={() => {
-													// handleDeleteQuestion.bind(null, question.id);
-													handleDeleteQuestion(question.id);
+						<tbody>
+							{questionsList.length >= 1 &&
+								questionsList?.map((question, i) => {
+									return (
+										<tr key={question.id}>
+											<td className="text-center">{i + 1}</td>
+											<td
+												dangerouslySetInnerHTML={{
+													__html: question.question_content,
 												}}
-											></i>
-										</td>
-									</tr>
-								);
-							})}
-					</tbody>
-				</Table>
+											></td>
+											<td
+												dangerouslySetInnerHTML={{ __html: question.option_A }}
+											></td>
+											<td
+												dangerouslySetInnerHTML={{ __html: question.option_B }}
+											></td>
+											<td
+												dangerouslySetInnerHTML={{ __html: question.option_C }}
+											></td>
+											<td
+												dangerouslySetInnerHTML={{ __html: question.option_D }}
+											></td>
+											<td>{question.correct_option}</td>
+											<td>{question.subject_name}</td>
+											<td>{question.topic_name}</td>
+											<td className="text-center">
+												<CButton
+													varient="btn--success"
+													icon={<GoPencil />}
+													onClick={() => handleEditQuestion(question)}
+												></CButton>
+											</td>
+											<td className="text-center">
+												<CButton
+													varient="btn--danger"
+													icon={<FaRegTrashAlt />}
+													onClick={() => {
+														handleDeleteQuestion(question.id);
+													}}
+												></CButton>
+											</td>
+										</tr>
+									);
+								})}
+						</tbody>
+					</table>
+				</div>
 				{selectedSubject !== '' &&
 					selectedTopic !== '' &&
 					questionsList.length === 0 && (

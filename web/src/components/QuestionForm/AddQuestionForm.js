@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Form, InputGroup } from 'react-bootstrap';
 import { notificationActions } from '../../Store/notification-slice';
 
 import { useDispatch, useSelector } from 'react-redux';
-
-// CSS IMPORT
-import './addQuestionForm.css';
 
 import { ModalActions } from '../../Store/modal-slice.js';
 import {
@@ -171,10 +167,8 @@ const AddQuestionForm = () => {
 		<>
 			{/* add subject modal  */}
 			<CModal id={'add-subject-modal'} title={'Add Subject'}>
-				<InputGroup>
-					<InputGroup.Text>Subject Name</InputGroup.Text>
-					<Form.Control type="text" name="subject_name" ref={subjectNameRef} />
-				</InputGroup>
+				<label htmlFor="">Subject Name</label>
+				<input type="text" name="subject_name" ref={subjectNameRef} />
 
 				<CButton
 					onClick={handleSubjectAdd}
@@ -186,18 +180,15 @@ const AddQuestionForm = () => {
 
 			{/* add topic modal */}
 			<CModal id={'add-topic-modal'} title={'Add Topic'}>
-				<InputGroup>
-					<InputGroup.Text>Selected Subject</InputGroup.Text>
-					<Form.Control
-						type="text"
-						value={subjectsList[_formData.subject_id - 1]?.subject_name}
-						readOnly
-					/>
-				</InputGroup>
-				<InputGroup className="mt-3">
-					<InputGroup.Text>Topic Name</InputGroup.Text>
-					<Form.Control type="text" name="topic_name" ref={topicNameRef} />
-				</InputGroup>
+				<label htmlFor="">Selected Subject</label>
+				<input
+					type="text"
+					value={subjectsList[_formData.subject_id - 1]?.subject_name}
+					readOnly
+				/>
+
+				<label htmlFor="Topic Name"></label>
+				<input type="text" name="topic_name" ref={topicNameRef} />
 
 				<CButton
 					onClick={handleAddTopic}
@@ -209,76 +200,57 @@ const AddQuestionForm = () => {
 
 			<div className="container">
 				<form id="add-question-form" className="" onSubmit={handleSaveQuestion}>
-					<div className="row g-3">
-						<div className="col-12 col-sm-6 col-lg-3">
-							<InputGroup>
-								<InputGroup.Text>
-									<Button
-										className="btn p-0 px-1 btn-secondary btn-sm"
-										onClick={() => {
-											dispatch(ModalActions.toggleModal('add-subject-modal'));
-										}}
-									>
-										<i className="fa-solid fa-plus"></i>
-									</Button>
-								</InputGroup.Text>
-
-								<Form.Select
-									id="subject-id"
-									name="subject_id"
-									onChange={handleChange}
-								>
-									<option value="-1" className="text-center" name="subject_id">
-										-- Select Subject --
+					<div className="">
+						<div className="">
+							<CButton
+								onClick={() => {
+									dispatch(ModalActions.toggleModal('add-subject-modal'));
+								}}
+							>
+								+
+							</CButton>
+							<select id="subject-id" name="subject_id" onChange={handleChange}>
+								<option value="-1" className="text-center" name="subject_id">
+									-- Select Subject --
+								</option>
+								{subjectsList?.map((subject, i) => (
+									<option key={i} value={subject.id}>
+										{subject.subject_name}
 									</option>
-									{subjectsList?.map((subject, i) => (
-										<option key={i} value={subject.id}>
-											{subject.subject_name}
-										</option>
-									))}
-								</Form.Select>
-							</InputGroup>
+								))}
+							</select>
+
 							{errors.subject_id && (
 								<div className=" error">{errors.subject_id}</div>
 							)}
 						</div>
 
 						<div className="col-12 col-sm-6 col-lg-3">
-							<InputGroup>
-								<InputGroup.Text>
-									<Button
-										className="btn p-0 px-1 btn-secondary btn-sm"
-										onClick={handleTopicAddModal}
-									>
-										<i className="fa-solid fa-plus"></i>
-									</Button>
-								</InputGroup.Text>
-								<Form.Select name="topic_id" onChange={handleChange}>
-									<option value="-1" className="text-center">
-										-- Select topic --
+							<CButton onClick={handleTopicAddModal}>+</CButton>
+							<select name="topic_id" onChange={handleChange}>
+								<option value="-1" className="text-center">
+									-- Select topic --
+								</option>
+								{topicsList?.map((topic, i) => (
+									<option key={i} value={topic.id}>
+										{topic.topic_name}
 									</option>
-									{topicsList?.map((topic, i) => (
-										<option key={i} value={topic.id}>
-											{topic.topic_name}
-										</option>
-									))}
-								</Form.Select>
-							</InputGroup>
+								))}
+							</select>
+
 							{errors.topic_id && (
 								<div className=" error">{errors.topic_id}</div>
 							)}
 						</div>
 
 						<div className="col-12 col-sm-6 col-lg-6">
-							<InputGroup>
-								<InputGroup.Text>Pub. Name</InputGroup.Text>
-								<Form.Control
-									type="text"
-									onChange={handleChange}
-									name="pub_name"
-									value={_formData.pub_name}
-								></Form.Control>
-							</InputGroup>
+							<label htmlFor="pub-name">Pub Name</label>
+							<input
+								type="text"
+								onChange={handleChange}
+								name="pub_name"
+								value={_formData.pub_name}
+							/>
 
 							{errors.pub_name && (
 								<div className=" error">{errors.pub_name}</div>
@@ -286,23 +258,24 @@ const AddQuestionForm = () => {
 						</div>
 
 						<div className="col-12 col-sm-6 col-lg-2">
-							<InputGroup>
-								<InputGroup.Text>Pg No</InputGroup.Text>
-								<Form.Control
-									type="number"
-									onChange={handleChange}
-									name="pg_no"
-									value={_formData.pg_no}
-								></Form.Control>
-							</InputGroup>
+							<label htmlFor="pg_no">Pg No</label>
+							<input
+								type="number"
+								onChange={handleChange}
+								name="pg_no"
+								value={_formData.pg_no}
+							/>
 							{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
 						</div>
 
 						<div className="col-12 col-sm-6 col-lg-3">
-							<InputGroup>
-								<InputGroup.Text>Question Number</InputGroup.Text>
-								<Form.Control value={questionNumber} readOnly></Form.Control>
-							</InputGroup>
+							<label htmlFor="question-number">Question Number</label>
+							<input
+								type="text"
+								id="question-number"
+								value={questionNumber}
+								readOnly
+							/>
 						</div>
 
 						<div className="col-md-12">
@@ -327,18 +300,17 @@ const AddQuestionForm = () => {
 							</div>
 						</div>
 						<div className="col-md-3">
-							<InputGroup>
-								<InputGroup.Text>Correct Option</InputGroup.Text>
-								<Form.Control
-									type="text"
-									id="correct-option"
-									className="text-uppercase"
-									name="correct_option"
-									onChange={handleChange}
-									value={_formData.correct_option}
-									maxLength="1"
-								></Form.Control>
-							</InputGroup>
+							<label htmlFor="correct-option">Correct Option</label>
+
+							<input
+								type="text"
+								id="correct-option"
+								className="text-uppercase"
+								name="correct_option"
+								onChange={handleChange}
+								value={_formData.correct_option}
+								maxLength="1"
+							/>
 
 							{errors.correct_option && (
 								<div className="error">{errors.correct_option}</div>

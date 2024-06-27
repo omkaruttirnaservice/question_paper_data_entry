@@ -50,7 +50,7 @@
 	}
 
 	.error {
-		@apply ps-4 pt-2 text-red-400 font-bold top-[-4.8rem];
+		@apply ps-4 pt-2 text-red-400 font-bold top-[-2rem] absolute;
 	}
 
 	.cd-btn {

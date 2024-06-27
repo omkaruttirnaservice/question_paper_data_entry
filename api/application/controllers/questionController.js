@@ -74,24 +74,22 @@ const questionController = {
 	editQuestion: async (req, res) => {
 		try {
 			console.log(req.body, '==req.body edit question controller==');
+			let _editRes = await questionModel.editQuestion(req.body);
+			return sendSuccess(res, _editRes);
 		} catch (error) {
 			return sendError(res, error);
 		}
 	},
 
-	getQuestionDetails: async (req, res) => {
+	editQuestionData: async (req, res) => {
 		try {
-			const { questionId } = req.query;
-			if (isNumber(questionId)) {
-				return res.status(400).json({
-					success: false,
-					message: 'Empty question id',
-				});
-			}
-			const response = await questionModel.getQuestionDetails(questionId);
-			return sendSuccess(res, response[0][0]);
-		} catch (err) {
-			return sendError(res, err);
+			let qId = req.body.questionId;
+			if (!qId) throw new Error('No question id sent');
+
+			let _data = await questionModel.getEditQuestionData(qId);
+			return sendSuccess(res, _data[0]);
+		} catch (error) {
+			return sendError(res, error);
 		}
 	},
 
