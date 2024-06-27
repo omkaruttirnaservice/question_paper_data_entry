@@ -172,8 +172,7 @@ const AddQuestionForm = () => {
 
 				<CButton
 					onClick={handleSubjectAdd}
-					isLoading={useSelector((state) => state.loader.isLoading)}
-				>
+					isLoading={useSelector((state) => state.loader.isLoading)}>
 					Submit
 				</CButton>
 			</CModal>
@@ -192,8 +191,7 @@ const AddQuestionForm = () => {
 
 				<CButton
 					onClick={handleAddTopic}
-					isLoading={useSelector((state) => state.loader.isLoading)}
-				>
+					isLoading={useSelector((state) => state.loader.isLoading)}>
 					Submit
 				</CButton>
 			</CModal>
@@ -205,8 +203,7 @@ const AddQuestionForm = () => {
 							<CButton
 								onClick={() => {
 									dispatch(ModalActions.toggleModal('add-subject-modal'));
-								}}
-							>
+								}}>
 								+
 							</CButton>
 							<select id="subject-id" name="subject_id" onChange={handleChange}>
@@ -322,8 +319,7 @@ const AddQuestionForm = () => {
 
 					<CButton
 						type="submit"
-						isLoading={useSelector((state) => state.loader.isLoading)}
-					>
+						isLoading={useSelector((state) => state.loader.isLoading)}>
 						Save
 					</CButton>
 				</form>

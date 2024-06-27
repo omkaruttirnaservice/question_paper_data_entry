@@ -133,16 +133,14 @@ function QuestionsList() {
 						<select
 							name=""
 							className="form-control"
-							onChange={handleSubjectChange}
-						>
+							onChange={handleSubjectChange}>
 							<option value="">-- Select Subject --</option>
 							{subjectsList.length >= 1 &&
 								subjectsList?.map((subject) => (
 									<option
 										key={subject.id}
 										value={subject.id}
-										data-subject_name={subject.subject_name}
-									>
+										data-subject_name={subject.subject_name}>
 										{subject.subject_name}
 									</option>
 								))}
@@ -154,16 +152,14 @@ function QuestionsList() {
 						<select
 							name=""
 							className="form-control"
-							onChange={handleTopicChange}
-						>
+							onChange={handleTopicChange}>
 							<option value="">-- Select Topic --</option>
 							{topicsList.length >= 1 &&
 								topicsList?.map((topic) => (
 									<option
 										key={topic.id}
 										value={topic.id}
-										data-topic_name={topic.topic_name}
-									>
+										data-topic_name={topic.topic_name}>
 										{topic.topic_name}
 									</option>
 								))}
@@ -204,20 +200,23 @@ function QuestionsList() {
 											<td
 												dangerouslySetInnerHTML={{
 													__html: question.question_content,
-												}}
-											></td>
+												}}></td>
 											<td
-												dangerouslySetInnerHTML={{ __html: question.option_A }}
-											></td>
+												dangerouslySetInnerHTML={{
+													__html: question.option_A,
+												}}></td>
 											<td
-												dangerouslySetInnerHTML={{ __html: question.option_B }}
-											></td>
+												dangerouslySetInnerHTML={{
+													__html: question.option_B,
+												}}></td>
 											<td
-												dangerouslySetInnerHTML={{ __html: question.option_C }}
-											></td>
+												dangerouslySetInnerHTML={{
+													__html: question.option_C,
+												}}></td>
 											<td
-												dangerouslySetInnerHTML={{ __html: question.option_D }}
-											></td>
+												dangerouslySetInnerHTML={{
+													__html: question.option_D,
+												}}></td>
 											<td>{question.correct_option}</td>
 											<td>{question.subject_name}</td>
 											<td>{question.topic_name}</td>
@@ -225,8 +224,9 @@ function QuestionsList() {
 												<CButton
 													varient="btn--success"
 													icon={<GoPencil />}
-													onClick={() => handleEditQuestion(question)}
-												></CButton>
+													onClick={() =>
+														handleEditQuestion(question)
+													}></CButton>
 											</td>
 											<td className="text-center">
 												<CButton
@@ -234,8 +234,7 @@ function QuestionsList() {
 													icon={<FaRegTrashAlt />}
 													onClick={() => {
 														handleDeleteQuestion(question.id);
-													}}
-												></CButton>
+													}}></CButton>
 											</td>
 										</tr>
 									);
