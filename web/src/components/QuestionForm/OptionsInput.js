@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { QuestionFormActions } from '../../Store/question-form-slice.js';
+import CButton from '../UI/CButton.js';
 
 function OptionsInput({ showNewInputField, setShowNewInputField }) {
 	const { data: _formData, errors } = useSelector(
@@ -112,7 +113,7 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 		}
 
 		window.CKEDITOR.replace(`option_E`, {
-			height: 50,
+			height: 100,
 		});
 
 		window.CKEDITOR.instances[`option_E`].on('change', function () {
@@ -127,92 +128,89 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 
 	return (
 		<>
-			<div className="mb-16">
+			<div className="flex flex-col gap-1 relative">
+				<label
+					htmlFor="question_content"
+					className="question-option !top-[-3rem] !rounded-sm">
+					Question
+				</label>
+
 				<textarea
 					name={`question_content`}
 					id={`question_content`}
 					value={_formData.question_content}
-					className="top-10"
-				></textarea>
-				<label htmlFor="question_content" className="!top-[-3rem] !rounded-sm">
-					Question
-				</label>
+					className="top-10"></textarea>
+				{errors.question_content && (
+					<div className="error">{errors.question_content}</div>
+				)}
 			</div>
-			{errors.question_content && (
-				<div className=" error">{errors.question_content}</div>
-			)}
 
-			<div className="mb-16">
+			<div className="flex flex-col gap-1 relative">
+				<label htmlFor="option_A" className="question-option !top-[-3rem]">
+					Option A
+				</label>
 				<textarea
 					name={`option_A`}
 					id={`option_A`}
 					value={_formData.option_A}
-					className="top-10"
-				></textarea>
-				<label htmlFor="option_A" className="!top-[-3rem]">
-					A
-				</label>
+					className="top-10"></textarea>
+				{errors.option_A && <div className=" error">{errors.option_A}</div>}
 			</div>
-			{errors.option_A && <div className=" error">{errors.option_A}</div>}
 
-			<div className="mb-16">
+			<div className="flex flex-col gap-1 relative">
+				<label htmlFor="option_B" className="question-option !top-[-3rem]">
+					Option B
+				</label>
 				<textarea
 					name={`option_B`}
 					id={`option_B`}
 					value={_formData.option_B}
-					className="top-10"
-				></textarea>
-				<label htmlFor="option_B" className="!top-[-3rem]">
-					B
-				</label>
+					className="top-10"></textarea>
+				{errors.option_B && <div className=" error">{errors.option_B}</div>}
 			</div>
-			{errors.option_B && <div className=" error">{errors.option_B}</div>}
 
-			<div className="mb-16">
+			<div className="flex flex-col gap-1 relative">
+				<label htmlFor="option_C" className="question-option !top-[-3rem]">
+					Option C
+				</label>
 				<textarea
 					name={`option_C`}
 					id={`option_C`}
 					value={_formData.option_C}
-					className="top-10"
-				></textarea>
-				<label htmlFor="option_C" className="!top-[-3rem]">
-					C
-				</label>
+					className="top-10"></textarea>
+				{errors.option_C && <div className=" error">{errors.option_C}</div>}
 			</div>
-			{errors.option_C && <div className=" error">{errors.option_C}</div>}
 
-			<div className="mb-16">
+			<div className="flex flex-col gap-1 relative">
+				<label htmlFor="option_D" className="question-option !top-[-3rem]">
+					Option D
+				</label>
 				<textarea
 					name={`option_D`}
 					id={`option_D`}
 					value={_formData.option_D}
-					className="top-10"
-				></textarea>
-				<label htmlFor="option_D" className="!top-[-3rem]">
-					D
-				</label>
+					className="top-10"></textarea>
+				{errors.option_D && <div className=" error">{errors.option_D}</div>}
 			</div>
-			{errors.option_D && <div className=" error">{errors.option_D}</div>}
 
 			{showNewInputField ? (
 				<>
-					<div className="mb-16">
+					<div className="flex flex-col gap-1 relative">
+						<label htmlFor="option_E" className="question-option !top-[-3rem]">
+							Option E
+						</label>
 						<textarea
 							name={`option_E`}
 							id={`option_E`}
 							value={_formData.option_E}
-							className="top-10"
-						></textarea>
-						<label htmlFor="option_E" className="!top-[-3rem]">
-							D
-						</label>
+							className="top-10"></textarea>
+						{errors.option_E && (
+							<div className="!top-[1rem]">{errors.option_E}</div>
+						)}
 					</div>
-					{errors.option_E && (
-						<div className="!top-[1rem]">{errors.option_E}</div>
-					)}
-					<button
-						className="btn btn-danger"
-						id="remove-new-option-btn"
+					<CButton
+						className="btn--danger w-fit"
+						id=""
 						onClick={() => {
 							window.CKEDITOR?.instances['option_E'].destroy(true);
 							dispatch(
@@ -222,19 +220,17 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 								})
 							);
 							setShowNewInputField(!showNewInputField);
-						}}
-					>
+						}}>
 						Remove
-					</button>
+					</CButton>
 				</>
 			) : (
-				<button
-					className="btn btn-secondary"
-					id="add-new-option-btn"
-					onClick={() => setShowNewInputField(!showNewInputField)}
-				>
+				<CButton
+					className="btn--success w-fit"
+					id=""
+					onClick={() => setShowNewInputField(!showNewInputField)}>
 					Add option
-				</button>
+				</CButton>
 			)}
 		</>
 	);

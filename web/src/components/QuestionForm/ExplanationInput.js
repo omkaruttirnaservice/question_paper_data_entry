@@ -36,16 +36,15 @@ function ExplanationInput({ showNewInputField, setShowNewInputField }) {
 
 	return (
 		<>
-			<div className="mb-16">
+			<div className="flex flex-col gap-2">
+				<label htmlFor="explanation" className="question-option !top-[-3rem]">
+					Explanation
+				</label>
 				<textarea
 					name={`explanation`}
 					id={`explanation`}
 					value={_formData.explanation}
-					className="top-10"
-				></textarea>
-				<label htmlFor="explanation" className="!top-[-3rem]">
-					Explanation
-				</label>
+					className="top-10"></textarea>
 			</div>
 		</>
 	);

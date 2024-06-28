@@ -5,10 +5,10 @@ const addQuestionFormSchema = Yup.object().shape({
 	subject_id: Yup.number().required('Select subject'),
 	topic_id: Yup.number().required('Select topic'),
 	pub_name: Yup.string().required('Enter publication name'),
-	pg_no: Yup.string().when('pub_name', {
+	pg_no: Yup.string('Enter pg no').when('pub_name', {
 		is: (pub_name) => pub_name && pub_name.length > 0,
 		then: () => {
-			Yup.string().required('Page number is required');
+			Yup.string('Enter pg no').required('Page number is required');
 		},
 	}),
 	question_content: Yup.string().required('Enter question'),

@@ -66,18 +66,17 @@ const EditQuestionForm = () => {
 
 	return (
 		<>
-			<div className="container">
+			<div className="">
 				<form
 					id="edit-question-form"
 					className=""
-					onSubmit={handleEditQuestion}
-				>
+					onSubmit={handleEditQuestion}>
 					<div>
 						{_formData.subject_name} / {_formData.topic_name}
 					</div>
 
-					<div className="row g-3">
-						<div className="col-12 col-sm-6 col-lg-6">
+					<div className="">
+						<div className="">
 							<label htmlFor="">Pub Name</label>
 							<input
 								type="text"
@@ -90,7 +89,7 @@ const EditQuestionForm = () => {
 								<div className=" error">{errors.pub_name}</div>
 							)}
 						</div>
-						<div className="col-12 col-sm-6 col-lg-2">
+						<div className="">
 							<label htmlFor="">Pg No</label>
 							<input
 								type="number"
@@ -100,20 +99,20 @@ const EditQuestionForm = () => {
 							/>
 							{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
 						</div>
-						<div className="col-md-12">
-							<div className="form-options">
+						<div className="">
+							<div className="">
 								<OptionsInput
 									showNewInputField={showNewInputField}
 									setShowNewInputField={setShowNewInputField}
 								/>
 							</div>
 						</div>
-						<div className="col-md-3">
+						<div className="">
 							<label htmlFor="">Correct Option</label>
 							<input
 								type="text"
 								id="correct-option"
-								className="text-uppercase"
+								className=""
 								name="correct_option"
 								onChange={handleChange}
 								value={_formData.correct_option}
@@ -129,8 +128,7 @@ const EditQuestionForm = () => {
 
 					<CButton
 						type="submit"
-						isLoading={useSelector((state) => state.loader.isLoading)}
-					>
+						isLoading={useSelector((state) => state.loader.isLoading)}>
 						Update
 					</CButton>
 				</form>

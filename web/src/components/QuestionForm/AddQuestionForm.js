@@ -126,13 +126,17 @@ const AddQuestionForm = () => {
 	};
 
 	const handleSaveQuestion = async (e) => {
+		console.log(1);
 		e.preventDefault();
 		try {
+			console.log(2);
 			await addQuestionFormSchema.validate(_formData, { abortEarly: false });
+			console.log(3);
 			postQuestionData();
 
 			dispatch(QuestionFormActions.setErrors({}));
 		} catch (error) {
+			console.log(error.inner);
 			const errorsObj = {};
 			error.inner.forEach((el) => {
 				errorsObj[el.path] = el.message;
@@ -167,82 +171,134 @@ const AddQuestionForm = () => {
 		<>
 			{/* add subject modal  */}
 			<CModal id={'add-subject-modal'} title={'Add Subject'}>
-				<label htmlFor="">Subject Name</label>
-				<input type="text" name="subject_name" ref={subjectNameRef} />
+				<div className="flex flex-col">
+					<label htmlFor="" className="mb-1">
+						Subject Name
+					</label>
+					<input
+						type="text"
+						name="subject_name"
+						className="input-el mb-6"
+						ref={subjectNameRef}
+					/>
 
-				<CButton
-					onClick={handleSubjectAdd}
-					isLoading={useSelector((state) => state.loader.isLoading)}>
-					Submit
-				</CButton>
+					<CButton
+						className="w-[30%] flex justify-center mx-auto"
+						onClick={handleSubjectAdd}
+						isLoading={useSelector((state) => state.loader.isLoading)}>
+						Submit
+					</CButton>
+				</div>
 			</CModal>
 
 			{/* add topic modal */}
 			<CModal id={'add-topic-modal'} title={'Add Topic'}>
-				<label htmlFor="">Selected Subject</label>
-				<input
-					type="text"
-					value={subjectsList[_formData.subject_id - 1]?.subject_name}
-					readOnly
-				/>
+				<div className="flex flex-col">
+					<label htmlFor="" className="mb-1">
+						Selected Subject
+					</label>
+					<input
+						type="text"
+						className="input-el mb-3"
+						value={subjectsList[_formData.subject_id - 1]?.subject_name}
+						readOnly
+					/>
 
-				<label htmlFor="Topic Name"></label>
-				<input type="text" name="topic_name" ref={topicNameRef} />
+					<label htmlFor="Topic Name" className="mb-1">
+						Topic Name
+					</label>
+					<input
+						type="text"
+						className="input-el mb-6"
+						name="topic_name"
+						ref={topicNameRef}
+					/>
 
-				<CButton
-					onClick={handleAddTopic}
-					isLoading={useSelector((state) => state.loader.isLoading)}>
-					Submit
-				</CButton>
+					<CButton
+						className="w-[30%] flex justify-center mx-auto"
+						onClick={handleAddTopic}
+						isLoading={useSelector((state) => state.loader.isLoading)}>
+						Submit
+					</CButton>
+				</div>
 			</CModal>
 
-			<div className="container">
-				<form id="add-question-form" className="" onSubmit={handleSaveQuestion}>
-					<div className="">
-						<div className="">
-							<CButton
-								onClick={() => {
-									dispatch(ModalActions.toggleModal('add-subject-modal'));
-								}}>
-								+
-							</CButton>
-							<select id="subject-id" name="subject_id" onChange={handleChange}>
-								<option value="-1" className="text-center" name="subject_id">
-									-- Select Subject --
-								</option>
-								{subjectsList?.map((subject, i) => (
-									<option key={i} value={subject.id}>
-										{subject.subject_name}
+			<div className="container mx-auto px-10 mt-6 pb-10">
+				<form
+					id="add-question-form"
+					className="grid gap-10"
+					onSubmit={handleSaveQuestion}>
+					<div className="flex flex-col items-start">
+						{/* <label htmlFor="question-number">Question Number</label> */}
+						<span className="bg-blue-500 px-3 py-2 w-fit rounded-full text-white font-bold">
+							{questionNumber}
+						</span>
+						{/* <input
+							className="input-el w-fit"
+							type="text"
+							id="question-number"
+							value={questionNumber}
+							readOnly
+						/> */}
+					</div>
+					<div className="flex gap-10">
+						<div className="flex flex-col gap-1 relative">
+							<label htmlFor="">Subject</label>
+							<div className="flex">
+								<CButton
+									onClick={() => {
+										dispatch(ModalActions.toggleModal('add-subject-modal'));
+									}}>
+									+
+								</CButton>
+								<select
+									id="subject-id"
+									className="input-el grow w-48"
+									name="subject_id"
+									onChange={handleChange}>
+									<option value="-1" className="" name="subject_id">
+										-- Select Subject --
 									</option>
-								))}
-							</select>
-
+									{subjectsList?.map((subject, i) => (
+										<option key={i} value={subject.id}>
+											{subject.subject_name}
+										</option>
+									))}
+								</select>
+							</div>
 							{errors.subject_id && (
 								<div className=" error">{errors.subject_id}</div>
 							)}
 						</div>
 
-						<div className="col-12 col-sm-6 col-lg-3">
-							<CButton onClick={handleTopicAddModal}>+</CButton>
-							<select name="topic_id" onChange={handleChange}>
-								<option value="-1" className="text-center">
-									-- Select topic --
-								</option>
-								{topicsList?.map((topic, i) => (
-									<option key={i} value={topic.id}>
-										{topic.topic_name}
+						<div className="flex flex-col gap-1 relative">
+							<label htmlFor="">Select Topic</label>
+							<div className="flex">
+								<CButton onClick={handleTopicAddModal}>+</CButton>
+								<select
+									className="input-el grow w-48"
+									name="topic_id"
+									onChange={handleChange}>
+									<option value="-1" className="">
+										-- Select topic --
 									</option>
-								))}
-							</select>
+									{topicsList?.map((topic, i) => (
+										<option key={i} value={topic.id}>
+											{topic.topic_name}
+										</option>
+									))}
+								</select>
+							</div>
 
 							{errors.topic_id && (
 								<div className=" error">{errors.topic_id}</div>
 							)}
 						</div>
 
-						<div className="col-12 col-sm-6 col-lg-6">
+						<div className="flex flex-col gap-1 relative ">
 							<label htmlFor="pub-name">Pub Name</label>
 							<input
+								className="input-el grow"
 								type="text"
 								onChange={handleChange}
 								name="pub_name"
@@ -254,29 +310,22 @@ const AddQuestionForm = () => {
 							)}
 						</div>
 
-						<div className="col-12 col-sm-6 col-lg-2">
+						<div className="flex flex-col gap-1 relative">
 							<label htmlFor="pg_no">Pg No</label>
 							<input
+								className="input-el grow"
 								type="number"
+								min="0"
 								onChange={handleChange}
 								name="pg_no"
 								value={_formData.pg_no}
 							/>
 							{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
 						</div>
+					</div>
 
-						<div className="col-12 col-sm-6 col-lg-3">
-							<label htmlFor="question-number">Question Number</label>
-							<input
-								type="text"
-								id="question-number"
-								value={questionNumber}
-								readOnly
-							/>
-						</div>
-
-						<div className="col-md-12">
-							{/* <div className="mt-2 d-flex align-items-center gap-2">
+					<div className="">
+						{/* <div className="mt-2 d-flex align-items-center gap-2">
 								Text Editor{' '}
 								<span
 									className="toggle-options-editor"
@@ -289,35 +338,35 @@ const AddQuestionForm = () => {
 									)}
 								</span>
 							</div> */}
-							<div className="form-options">
-								<OptionsInput
-									showNewInputField={showNewInputField}
-									setShowNewInputField={setShowNewInputField}
-								/>
-							</div>
-						</div>
-						<div className="col-md-3">
-							<label htmlFor="correct-option">Correct Option</label>
-
-							<input
-								type="text"
-								id="correct-option"
-								className="text-uppercase"
-								name="correct_option"
-								onChange={handleChange}
-								value={_formData.correct_option}
-								maxLength="1"
+						<div className="flex flex-col gap-10">
+							<OptionsInput
+								showNewInputField={showNewInputField}
+								setShowNewInputField={setShowNewInputField}
 							/>
-
-							{errors.correct_option && (
-								<div className="error">{errors.correct_option}</div>
-							)}
 						</div>
+					</div>
+					<div className="flex flex-col relative">
+						<label htmlFor="correct-option">Correct Option</label>
 
-						<ExplanationInput />
+						<input
+							type="text"
+							id="correct-option"
+							className="input-el w-fit"
+							name="correct_option"
+							onChange={handleChange}
+							value={_formData.correct_option}
+							maxLength="1"
+						/>
+
+						{errors.correct_option && (
+							<div className="error">{errors.correct_option}</div>
+						)}
 					</div>
 
+					<ExplanationInput />
+
 					<CButton
+						className="w-fit"
 						type="submit"
 						isLoading={useSelector((state) => state.loader.isLoading)}>
 						Save

@@ -15,12 +15,11 @@ export default function CModal({ id, children, title, showCloseBtn = true }) {
 				<>
 					<ModalBackdrop></ModalBackdrop>
 					<div
-						className={`bg-white !rounded-md z-50 transition-all duration-300 absolute shadow-xl min-h-[10rem] left-[50%] translate-x-[-50%] translate-y-[-50%] ${
+						className={`bg-white  z-50 transition-all duration-300 absolute shadow-xl min-h-[10rem] left-[50%] translate-x-[-50%] translate-y-[-50%] ${
 							_isModalOpen
 								? `top-[50%] opacity-100 visible`
 								: `top-[55%] opacity-0 invisible`
-						} top-[50%] p-4 min-w-[40vw] w-auto`}
-					>
+						} top-[50%] p-4 min-w-[40vw] w-auto`}>
 						<ModalHeader id={id} showCloseBtn={showCloseBtn}>
 							{title}
 						</ModalHeader>

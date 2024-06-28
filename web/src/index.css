@@ -44,17 +44,21 @@
 		@apply flex items-center gap-2;
 	}
 
+	.input-el {
+		@apply border border-slate-400 transition-all ease-out duration-300 focus:ring focus:outline-none px-2 py-1;
+	}
+
 	select.error,
 	input.error {
 		@apply ring-2 ring-red-300 ring-offset-2;
 	}
 
 	.error {
-		@apply ps-4 pt-2 text-red-400 font-bold top-[-2rem] absolute;
+		@apply text-red-400 font-bold left-0 bottom-[-1.5rem] absolute text-sm;
 	}
 
 	.cd-btn {
-		@apply rounded-xl shadow-md py-2 px-3 text-base hover:shadow-lg transition-all duration-75 active:scale-75 font-medium;
+		@apply shadow-md py-1 px-2 text-base hover:shadow-lg transition-all duration-75 active:scale-75 font-medium;
 	}
 
 	.btn--primary {
@@ -62,7 +66,7 @@
 	}
 
 	.btn--secondary {
-		@apply border border-[#333] hover:bg-gray-200 hover:shadow-md;
+		@apply border hover:bg-gray-200 hover:shadow-md;
 	}
 
 	.btn--success {
@@ -170,5 +174,10 @@
 
 	.f-social-link {
 		@apply text-2xl;
+	}
+
+	/* question form css */
+	.question-option {
+		@apply bg-blue-600 flex items-center justify-center font-medium w-fit p-1 px-2 text-white mb-3;
 	}
 }
