@@ -190,7 +190,6 @@ const AddQuestionForm = () => {
 					</CButton>
 				</div>
 			</CModal>
-
 			{/* add topic modal */}
 			<CModal id={'add-topic-modal'} title={'Add Topic'}>
 				<div className="flex flex-col">
@@ -200,7 +199,12 @@ const AddQuestionForm = () => {
 					<input
 						type="text"
 						className="input-el mb-3"
-						value={subjectsList[_formData.subject_id - 1]?.subject_name}
+						// value={subjectsList[_formData.subject_id - 1]?.subject_name}
+						value={subjectsList
+							.map((el) => {
+								if (el.id == _formData.subject_id) return el.subject_name;
+							})
+							.join('')}
 						readOnly
 					/>
 
@@ -222,7 +226,6 @@ const AddQuestionForm = () => {
 					</CButton>
 				</div>
 			</CModal>
-
 			<div className="container mx-auto px-10 mt-6 pb-10">
 				<form
 					id="add-question-form"
@@ -363,16 +366,21 @@ const AddQuestionForm = () => {
 						)}
 					</div>
 
+					<hr />
+
 					<ExplanationInput />
 
+					<hr />
+
 					<CButton
-						className="w-fit"
+						className="w-[10%] flex justify-center items-center"
 						type="submit"
 						isLoading={useSelector((state) => state.loader.isLoading)}>
 						Save
 					</CButton>
 				</form>
 			</div>
+			toast('hi')
 		</>
 	);
 };

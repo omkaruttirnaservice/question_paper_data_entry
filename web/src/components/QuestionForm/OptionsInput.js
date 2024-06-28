@@ -112,6 +112,11 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 			return;
 		}
 
+		if (optionEInstance) {
+			optionEInstance.destroy(true);
+			return;
+		}
+
 		window.CKEDITOR.replace(`option_E`, {
 			height: 100,
 		});
@@ -145,6 +150,10 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 				)}
 			</div>
 
+			<ImageInputComp label="Question image" inputFor="question_content" />
+
+			<hr />
+
 			<div className="flex flex-col gap-1 relative">
 				<label htmlFor="option_A" className="question-option !top-[-3rem]">
 					Option A
@@ -156,6 +165,10 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 					className="top-10"></textarea>
 				{errors.option_A && <div className=" error">{errors.option_A}</div>}
 			</div>
+
+			<ImageInputComp label="Option A image" inputFor="option_A" />
+
+			<hr />
 
 			<div className="flex flex-col gap-1 relative">
 				<label htmlFor="option_B" className="question-option !top-[-3rem]">
@@ -169,6 +182,10 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 				{errors.option_B && <div className=" error">{errors.option_B}</div>}
 			</div>
 
+			<ImageInputComp label="Option B image" inputFor="option_B" />
+
+			<hr />
+
 			<div className="flex flex-col gap-1 relative">
 				<label htmlFor="option_C" className="question-option !top-[-3rem]">
 					Option C
@@ -181,6 +198,10 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 				{errors.option_C && <div className=" error">{errors.option_C}</div>}
 			</div>
 
+			<ImageInputComp label="Option C image" inputFor="option_C" />
+
+			<hr />
+
 			<div className="flex flex-col gap-1 relative">
 				<label htmlFor="option_D" className="question-option !top-[-3rem]">
 					Option D
@@ -192,6 +213,10 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 					className="top-10"></textarea>
 				{errors.option_D && <div className=" error">{errors.option_D}</div>}
 			</div>
+
+			<ImageInputComp label="Option D image" inputFor="option_D" />
+
+			<hr />
 
 			{showNewInputField ? (
 				<>
@@ -208,6 +233,9 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 							<div className="!top-[1rem]">{errors.option_E}</div>
 						)}
 					</div>
+
+					<ImageInputComp label="Option E image" inputFor="option_E" />
+
 					<CButton
 						className="btn--danger w-fit"
 						id=""
@@ -223,6 +251,8 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 						}}>
 						Remove
 					</CButton>
+
+					<hr />
 				</>
 			) : (
 				<CButton
@@ -233,6 +263,82 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 				</CButton>
 			)}
 		</>
+	);
+}
+
+function ImageInputComp({ label, inputFor }) {
+	const { data: _formData } = useSelector((state) => state.questionForm);
+	const dispatch = useDispatch();
+
+	const handleImagePaste = (e) => {
+		let pasteImageFor = e.currentTarget.attributes['data-image-for'].value;
+		let pastedFile = e.clipboardData?.items[0].getAsFile();
+		if (!pastedFile) {
+			e.preventDefault();
+			return false;
+		}
+
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			let _fileB64 = reader.result;
+			switch (pasteImageFor) {
+				case 'question_content':
+					appendImage('question_content', _fileB64);
+					break;
+				case 'option_A':
+					appendImage('option_A', _fileB64);
+					break;
+
+				case 'option_B':
+					appendImage('option_B', _fileB64);
+					break;
+
+				case 'option_C':
+					appendImage('option_C', _fileB64);
+					break;
+
+				case 'option_D':
+					appendImage('option_D', _fileB64);
+					break;
+
+				case 'option_E':
+					appendImage('option_E', _fileB64);
+					break;
+			}
+		};
+
+		reader.readAsDataURL(pastedFile);
+	};
+
+	function appendImage(appendFor, _file) {
+		let oldValue = _formData[`${appendFor}`];
+		if (!oldValue) {
+			oldValue = '';
+		}
+		dispatch(
+			QuestionFormActions.handleInputChange({
+				key: `${appendFor}`,
+				value: oldValue + ` <p><img src='${_file}'/></p>`,
+			})
+		);
+		setTimeout(() => {
+			window.CKEDITOR.instances[`${appendFor}`].setData(_formData.appendFor);
+		}, 1);
+	}
+
+	return (
+		<div className="flex flex-col mt-2">
+			<label htmlFor="" className="mb-1">
+				{label}
+			</label>
+			<input
+				onPaste={handleImagePaste}
+				type="text"
+				data-image-for={inputFor}
+				className="input-el flex-1"
+				placeholder="paste image"
+			/>
+		</div>
 	);
 }
 

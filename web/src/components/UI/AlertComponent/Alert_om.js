@@ -1,4 +1,3 @@
-import react from 'react';
 import DOM from 'react-dom';
 import './alert_om.css';
 

@@ -29,6 +29,7 @@ const QuestionFormSlice = createSlice({
 	reducers: {
 		handleInputChange(state, action) {
 			let { key, value } = action.payload;
+			console.log(key, value, '-here in slice');
 			state.data[key] = value;
 		},
 
