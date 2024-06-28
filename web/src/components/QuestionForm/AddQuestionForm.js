@@ -15,6 +15,8 @@ import CModal from '../UI/CModal.js';
 import ExplanationInput from './ExplanationInput.js';
 import OptionsInput from './OptionsInput.js';
 import addQuestionFormSchema from './addQuestionFormSchema.js';
+import AddSubjectModal from './AddSubject/AddSubjectModal.js';
+import AddTopicFormModal from './AddTopic/AddTopicModal.js';
 
 const AddQuestionForm = () => {
 	let {
@@ -27,9 +29,6 @@ const AddQuestionForm = () => {
 	const dispatch = useDispatch();
 
 	const { sendRequest } = useHttp();
-
-	const subjectNameRef = useRef();
-	const topicNameRef = useRef();
 
 	const [showNewInputField, setShowNewInputField] = useState(false);
 
@@ -64,66 +63,6 @@ const AddQuestionForm = () => {
 	useEffect(() => {
 		getTopicList();
 	}, [_formData.subject_id]);
-
-	const handleSubjectAdd = async () => {
-		let subjectName = subjectNameRef.current.value;
-		if (!subjectName) {
-			dispatch(
-				notificationActions.showNotification('Please enter subject name')
-			);
-			return;
-		}
-
-		const requestData = {
-			url: '/add-subject',
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ subjectName }),
-		};
-		sendRequest(requestData, (data) => {
-			dispatch(ModalActions.toggleModal('add-subject-modal'));
-			if (data.success === 1) {
-				dispatch(
-					notificationActions.showNotification('Subject added successfully')
-				);
-				getSubjectList();
-			} else {
-				dispatch(notificationActions.showNotification('Something went wrong1'));
-			}
-		});
-	};
-
-	const handleAddTopic = async () => {
-		let subjectId = _formData.subject_id;
-		let topicName = topicNameRef.current.value;
-
-		if (!topicName) {
-			dispatch(notificationActions.showNotification('Please enter topic name'));
-			return;
-		}
-
-		const requestData = {
-			url: '/add-topic',
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ subjectId, topicName }),
-		};
-		sendRequest(requestData, (data) => {
-			dispatch(ModalActions.toggleModal('add-topic-modal'));
-			if (data.success === 1) {
-				dispatch(
-					notificationActions.showNotification('Successfully added new topic')
-				);
-				getTopicList();
-			} else {
-				dispatch(notificationActions.showNotification('Something went wrong2'));
-			}
-		});
-	};
 
 	const handleSaveQuestion = async (e) => {
 		console.log(1);
@@ -170,62 +109,9 @@ const AddQuestionForm = () => {
 	return (
 		<>
 			{/* add subject modal  */}
-			<CModal id={'add-subject-modal'} title={'Add Subject'}>
-				<div className="flex flex-col">
-					<label htmlFor="" className="mb-1">
-						Subject Name
-					</label>
-					<input
-						type="text"
-						name="subject_name"
-						className="input-el mb-6"
-						ref={subjectNameRef}
-					/>
-
-					<CButton
-						className="w-[30%] flex justify-center mx-auto"
-						onClick={handleSubjectAdd}
-						isLoading={useSelector((state) => state.loader.isLoading)}>
-						Submit
-					</CButton>
-				</div>
-			</CModal>
+			<AddSubjectModal />
 			{/* add topic modal */}
-			<CModal id={'add-topic-modal'} title={'Add Topic'}>
-				<div className="flex flex-col">
-					<label htmlFor="" className="mb-1">
-						Selected Subject
-					</label>
-					<input
-						type="text"
-						className="input-el mb-3"
-						// value={subjectsList[_formData.subject_id - 1]?.subject_name}
-						value={subjectsList
-							.map((el) => {
-								if (el.id == _formData.subject_id) return el.subject_name;
-							})
-							.join('')}
-						readOnly
-					/>
-
-					<label htmlFor="Topic Name" className="mb-1">
-						Topic Name
-					</label>
-					<input
-						type="text"
-						className="input-el mb-6"
-						name="topic_name"
-						ref={topicNameRef}
-					/>
-
-					<CButton
-						className="w-[30%] flex justify-center mx-auto"
-						onClick={handleAddTopic}
-						isLoading={useSelector((state) => state.loader.isLoading)}>
-						Submit
-					</CButton>
-				</div>
-			</CModal>
+			<AddTopicFormModal />
 			<div className="container mx-auto px-10 mt-6 pb-10">
 				<form
 					id="add-question-form"
