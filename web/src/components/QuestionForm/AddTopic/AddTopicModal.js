@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { notificationActions } from '../../../Store/notification-slice.js';
-import useHttp from '../../Hooks/use-http.js';
 import { ModalActions } from '../../../Store/modal-slice.js';
+import { notificationActions } from '../../../Store/notification-slice.js';
 import { getTopicsListThunk } from '../../../Store/question-form-slice.js';
-import CModal from '../../UI/CModal.js';
+import useHttp from '../../Hooks/use-http.js';
 import CButton from '../../UI/CButton.js';
+import CModal from '../../UI/CModal.js';
 
 function AddTopicFormModal() {
 	const topicNameRef = useRef();

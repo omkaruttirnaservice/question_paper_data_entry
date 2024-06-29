@@ -4,6 +4,7 @@ import { notificationActions } from './notification-slice.js';
 
 let initialState = {
 	data: {
+		post_id: null,
 		subject_id: null,
 		topic_id: null,
 		pub_name: null,
@@ -17,6 +18,7 @@ let initialState = {
 		correct_option: null,
 		explanation: null,
 	},
+	postsList: [],
 	subjectsList: [],
 	topicsList: [],
 	questionNumber: null,
@@ -33,14 +35,17 @@ const QuestionFormSlice = createSlice({
 			state.data[key] = value;
 		},
 
+		setPostsList(state, action) {
+			state.postsList = action.payload;
+		},
+
 		setSubjectsList(state, action) {
-			let subjects = action.payload;
-			state.subjectsList = subjects;
+			console.log(action.payload, 'subjects list setting');
+			state.subjectsList = action.payload;
 		},
 
 		setTopicsList(state, action) {
-			let topics = action.payload;
-			state.topicsList = topics;
+			state.topicsList = action.payload;
 		},
 
 		setQuestionNumber(state, action) {
@@ -64,23 +69,66 @@ const QuestionFormSlice = createSlice({
 	},
 });
 
-export const getSubjectsListThunk = () => {
+export const getPostListThunk = () => {
 	return async (dispatch) => {
 		try {
 			dispatch(loaderActions.showLoader());
-			let response = await fetch('/get-subject-list');
+			let response = await fetch('/posts/list');
 			let { success, data } = await response.json();
 
+			console.log('here');
+			console.log(data, 'posts list==');
+
 			if (success === 1) {
-				dispatch(QuestionFormActions.setSubjectsList(data[0]));
+				dispatch(QuestionFormActions.setPostsList(data));
 			}
 
 			dispatch(loaderActions.hideLoader());
 		} catch (error) {
+			console.log(error);
 			dispatch(loaderActions.hideLoader());
 			dispatch(
 				notificationActions.showNotification('Error getting questions list')
 			);
+		}
+	};
+};
+
+export const getSubjectsListThunk = (post_id, sendRequest) => {
+	return async (dispatch) => {
+		// try {
+		// 	dispatch(loaderActions.showLoader());
+		// 	let response = await fetch('/get-subject-list');
+		// 	let { success, data } = await response.json();
+		// 	console.log(data[0], 'subjects list==');
+
+		// 	if (success === 1) {
+		// 		dispatch(QuestionFormActions.setSubjectsList(data[0]));
+		// 	}
+
+		// 	dispatch(loaderActions.hideLoader());
+		// } catch (error) {
+		// 	dispatch(loaderActions.hideLoader());
+		// 	dispatch(
+		// 		notificationActions.showNotification('Error getting subjects list')
+		// 	);
+		// }
+
+		const reqData = {
+			url: '/get-subject-list',
+			method: 'POST',
+			body: JSON.stringify({ post_id }),
+		};
+
+		if (!post_id) {
+			dispatch(QuestionFormActions.setSubjectsList([]));
+		} else {
+			sendRequest(reqData, ({ data, success }) => {
+				console.log(data, 'subjects list');
+				if (success == 1) {
+					dispatch(QuestionFormActions.setSubjectsList(data));
+				}
+			});
 		}
 	};
 };

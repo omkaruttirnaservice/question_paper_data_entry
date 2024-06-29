@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { notificationActions } from '../../Store/notification-slice';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,17 +6,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ModalActions } from '../../Store/modal-slice.js';
 import {
 	QuestionFormActions,
+	getPostListThunk,
 	getSubjectsListThunk,
 	getTopicsListThunk,
 } from '../../Store/question-form-slice.js';
 import useHttp from '../Hooks/use-http';
 import CButton from '../UI/CButton.js';
-import CModal from '../UI/CModal.js';
-import ExplanationInput from './ExplanationInput.js';
-import OptionsInput from './OptionsInput.js';
-import addQuestionFormSchema from './addQuestionFormSchema.js';
+import AddPostModal from './AddPost/AddPostModal.js';
 import AddSubjectModal from './AddSubject/AddSubjectModal.js';
 import AddTopicFormModal from './AddTopic/AddTopicModal.js';
+import addQuestionFormSchema from './addQuestionFormSchema.js';
+import OptionsInput from './OptionsInput.js';
+import ExplanationInput from './ExplanationInput.js';
 
 const AddQuestionForm = () => {
 	let {
@@ -25,6 +26,7 @@ const AddQuestionForm = () => {
 		topicsList,
 		questionNumber,
 		errors,
+		postsList,
 	} = useSelector((state) => state.questionForm);
 	const dispatch = useDispatch();
 
@@ -42,7 +44,7 @@ const AddQuestionForm = () => {
 	};
 
 	const getSubjectList = async () => {
-		dispatch(getSubjectsListThunk());
+		dispatch(getSubjectsListThunk(_formData.post_id, sendRequest));
 	};
 
 	const getTopicList = async () => {
@@ -56,9 +58,13 @@ const AddQuestionForm = () => {
 	};
 
 	useEffect(() => {
-		getSubjectList();
+		dispatch(getPostListThunk());
 		getQuestionNumber();
 	}, []);
+
+	useEffect(() => {
+		getSubjectList();
+	}, [_formData.post_id]);
 
 	useEffect(() => {
 		getTopicList();
@@ -108,6 +114,8 @@ const AddQuestionForm = () => {
 
 	return (
 		<>
+			{/* add post modal */}
+			<AddPostModal />
 			{/* add subject modal  */}
 			<AddSubjectModal />
 			{/* add topic modal */}
@@ -118,19 +126,42 @@ const AddQuestionForm = () => {
 					className="grid gap-10"
 					onSubmit={handleSaveQuestion}>
 					<div className="flex flex-col items-start">
-						{/* <label htmlFor="question-number">Question Number</label> */}
 						<span className="bg-blue-500 px-3 py-2 w-fit rounded-full text-white font-bold">
 							{questionNumber}
 						</span>
-						{/* <input
-							className="input-el w-fit"
-							type="text"
-							id="question-number"
-							value={questionNumber}
-							readOnly
-						/> */}
 					</div>
+
 					<div className="flex gap-10">
+						<div className="flex flex-col gap-1 relative">
+							<label htmlFor="">Post</label>
+							<div className="flex">
+								<CButton
+									onClick={() => {
+										dispatch(ModalActions.toggleModal('add-post-modal'));
+									}}>
+									+
+								</CButton>
+								<select
+									id="post-id"
+									className="input-el grow w-48"
+									name="post_id"
+									onChange={handleChange}>
+									<option value="-1" className="" name="">
+										-- Select --
+									</option>
+									{postsList.length >= 1 &&
+										postsList?.map((subject, i) => (
+											<option key={i} value={subject.id}>
+												{subject.mtl_test_name}
+											</option>
+										))}
+								</select>
+							</div>
+							{errors.subject_id && (
+								<div className=" error">{errors.post_id}</div>
+							)}
+						</div>
+
 						<div className="flex flex-col gap-1 relative">
 							<label htmlFor="">Subject</label>
 							<div className="flex">
@@ -146,13 +177,14 @@ const AddQuestionForm = () => {
 									name="subject_id"
 									onChange={handleChange}>
 									<option value="-1" className="" name="subject_id">
-										-- Select Subject --
+										-- Select --
 									</option>
-									{subjectsList?.map((subject, i) => (
-										<option key={i} value={subject.id}>
-											{subject.subject_name}
-										</option>
-									))}
+									{subjectsList.length >= 1 &&
+										subjectsList?.map((subject, i) => (
+											<option key={i} value={subject.id}>
+												{subject.mtl_name}
+											</option>
+										))}
 								</select>
 							</div>
 							{errors.subject_id && (
@@ -169,7 +201,7 @@ const AddQuestionForm = () => {
 									name="topic_id"
 									onChange={handleChange}>
 									<option value="-1" className="">
-										-- Select topic --
+										-- Select --
 									</option>
 									{topicsList?.map((topic, i) => (
 										<option key={i} value={topic.id}>

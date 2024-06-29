@@ -1,22 +1,33 @@
 import db from '../config/db.connect.js';
 const subjectModel = {
-	getSubjectList: function () {
-		return db.query(`
+	getSubjectList: function (post_id) {
+		return db.query(
+			`
 			SELECT 
-				sub.id id, 
-				subject_name, 
-				count(que.id) que_count
-			FROM subject sub
-			LEFT JOIN question que
-			ON sub.id = que.subject_id
-			GROUP BY sub.id;	
-			`);
+				* 
+			FROM
+				tm_main_topic_list sub
+			WHERE
+				mtl_master_test_list_id = ?
+			`,
+			[post_id]
+		);
+		// return db.query(`
+		// 	SELECT
+		// 		sub.id id,
+		// 		subject_name,
+		// 		count(que.id) que_count
+		// 	FROM subject sub
+		// 	LEFT JOIN question que
+		// 	ON sub.id = que.subject_id
+		// 	GROUP BY sub.id;
+		// 	`);
 	},
 
 	addSubject: function (subjectName) {
 		console.log('subject name in modal', subjectName);
 		return db.query(
-			`INSERT INTO subject (subject_name) VALUES(?)`,
+			`INSERT INTO tm_main_topic_list (subject_name) VALUES(?)`,
 			subjectName
 		);
 	},

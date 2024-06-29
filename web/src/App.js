@@ -1,12 +1,12 @@
-import './App.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import RootComponent from './components/RootComponent/RootComponent';
-import Dashboard from './components/Dashboard/Dashboard';
+import './App.css';
 import AddNewTestForm from './components/AddNewTestForm/AddNewTestForm';
-import QuestionsList from './components/QuestionsList/QuestionsList';
-import SubjectsList from './components/SubjectsList/SubjectsList';
+import Dashboard from './components/Dashboard/Dashboard';
 import AddQuestionForm from './components/QuestionForm/AddQuestionForm.js';
 import EditQuestionForm from './components/QuestionForm/EditQuestionForm.js';
+import QuestionsList from './components/QuestionsList/QuestionsList';
+import RootComponent from './components/RootComponent/RootComponent';
+import SubjectsList from './components/SubjectsList/SubjectsList';
 
 const router = createBrowserRouter([
 	{
