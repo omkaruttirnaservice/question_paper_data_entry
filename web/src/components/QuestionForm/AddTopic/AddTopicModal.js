@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+import * as Yup from 'yup';
+import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ModalActions } from '../../../Store/modal-slice.js';
 import { notificationActions } from '../../../Store/notification-slice.js';
@@ -9,11 +10,31 @@ import CModal from '../../UI/CModal.js';
 
 function AddTopicFormModal() {
 	const topicNameRef = useRef();
+	const [error, setError] = useState({});
 	const dispatch = useDispatch();
 	const { sendRequest } = useHttp();
 	const { data: _formData, subjectsList } = useSelector(
 		(state) => state.questionForm
 	);
+
+	const addTopicSchema = Yup.object().shape({
+		topic_name: Yup.string('Topic name should be in string').required(
+			'Topic name requied'
+		),
+	});
+
+	async function handleInputChange(e) {
+		let { name: topic_name, value } = e.target;
+		console.log(topic_name, value);
+		try {
+			await addTopicSchema.validateAt(topic_name, { topic_name: value });
+			setError({ ...error, topic_name: null });
+		} catch (error) {
+			console.log(error.message);
+			setError({ ...error, topic_name: error.message });
+		}
+	}
+
 	const handleAddTopic = async () => {
 		let subjectId = _formData.subject_id;
 		let topicName = topicNameRef.current.value;
@@ -23,6 +44,17 @@ function AddTopicFormModal() {
 			return;
 		}
 
+		try {
+			await addTopicSchema.validate({ topic_name: topicName });
+			setError({ ...error, subject_name: null });
+			postTopicAdd(subjectId, topicName);
+		} catch (error) {
+			console.log(error.message);
+			setError({ ...error, topic_name: error.message });
+		}
+	};
+
+	function postTopicAdd(subjectId, topicName) {
 		const requestData = {
 			url: '/add-topic',
 			method: 'POST',
@@ -31,6 +63,7 @@ function AddTopicFormModal() {
 			},
 			body: JSON.stringify({ subjectId, topicName }),
 		};
+
 		sendRequest(requestData, (data) => {
 			console.log(data, 'data=== after adding topic');
 			if (data.success === 1) {
@@ -43,35 +76,44 @@ function AddTopicFormModal() {
 				dispatch(notificationActions.showNotification('Something went wrong2'));
 			}
 		});
-	};
+	}
 	return (
 		<div>
 			<CModal id={'add-topic-modal'} title={'Add Topic'}>
-				<div className="flex flex-col">
-					<label htmlFor="" className="mb-1">
-						Selected Subject
-					</label>
-					<input
-						type="text"
-						className="input-el mb-3"
-						// value={subjectsList[_formData.subject_id - 1]?.subject_name}
-						value={subjectsList
-							.map((el) => {
-								if (el.id == _formData.subject_id) return el.subject_name;
-							})
-							.join('')}
-						readOnly
-					/>
+				<div className="flex flex-col gap-3">
+					<div className="flex flex-col">
+						<label htmlFor="" className="">
+							Selected Subject
+						</label>
+						<input
+							type="text"
+							className="input-el mt-2 mb-3"
+							// value={subjectsList[_formData.subject_id - 1]?.subject_name}
+							value={subjectsList
+								.map((el) => {
+									if (el.id == _formData.subject_id) return el.mtl_name;
+								})
+								.join('')}
+							readOnly
+						/>
+					</div>
 
-					<label htmlFor="Topic Name" className="mb-1">
-						Topic Name
-					</label>
-					<input
-						type="text"
-						className="input-el mb-6"
-						name="topic_name"
-						ref={topicNameRef}
-					/>
+					<div className="flex flex-col relative mb-6">
+						<label htmlFor="Topic Name" className="">
+							Topic Name
+						</label>
+						<input
+							type="text"
+							className="input-el mt-2"
+							name="topic_name"
+							ref={topicNameRef}
+							onChange={handleInputChange}
+						/>
+
+						{error.topic_name && (
+							<span className="error">{error.topic_name}</span>
+						)}
+					</div>
 
 					<CButton
 						className="w-[30%] flex justify-center mx-auto"

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { notificationActions } from '../../Store/notification-slice';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { FaP, FaPlus } from 'react-icons/fa6';
 
 import { ModalActions } from '../../Store/modal-slice.js';
 import {
@@ -104,6 +105,19 @@ const AddQuestionForm = () => {
 			}
 		});
 	}
+
+	const handlePostAddModal = () => {
+		dispatch(ModalActions.toggleModal('add-post-modal'));
+	};
+
+	const handleSubjectAddModal = () => {
+		if (_formData.post_id === '-1' || _formData.post_id === null) {
+			dispatch(notificationActions.showNotification('Please select post.'));
+			return;
+		}
+		dispatch(ModalActions.toggleModal('add-subject-modal'));
+	};
+
 	const handleTopicAddModal = () => {
 		if (_formData.subject_id === '-1' || _formData.subject_id === null) {
 			dispatch(notificationActions.showNotification('Please select subject.'));
@@ -135,12 +149,7 @@ const AddQuestionForm = () => {
 						<div className="flex flex-col gap-1 relative">
 							<label htmlFor="">Post</label>
 							<div className="flex">
-								<CButton
-									onClick={() => {
-										dispatch(ModalActions.toggleModal('add-post-modal'));
-									}}>
-									+
-								</CButton>
+								<CButton onClick={handlePostAddModal} icon={<FaPlus />} />
 								<select
 									id="post-id"
 									className="input-el grow w-48"
@@ -165,12 +174,7 @@ const AddQuestionForm = () => {
 						<div className="flex flex-col gap-1 relative">
 							<label htmlFor="">Subject</label>
 							<div className="flex">
-								<CButton
-									onClick={() => {
-										dispatch(ModalActions.toggleModal('add-subject-modal'));
-									}}>
-									+
-								</CButton>
+								<CButton onClick={handleSubjectAddModal} icon={<FaPlus />} />
 								<select
 									id="subject-id"
 									className="input-el grow w-48"
@@ -195,7 +199,7 @@ const AddQuestionForm = () => {
 						<div className="flex flex-col gap-1 relative">
 							<label htmlFor="">Select Topic</label>
 							<div className="flex">
-								<CButton onClick={handleTopicAddModal}>+</CButton>
+								<CButton onClick={handleTopicAddModal} icon={<FaPlus />} />
 								<select
 									className="input-el grow w-48"
 									name="topic_id"

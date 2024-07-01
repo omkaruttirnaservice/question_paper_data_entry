@@ -31,7 +31,6 @@ const QuestionFormSlice = createSlice({
 	reducers: {
 		handleInputChange(state, action) {
 			let { key, value } = action.payload;
-			console.log(key, value, '-here in slice');
 			state.data[key] = value;
 		},
 
@@ -40,7 +39,6 @@ const QuestionFormSlice = createSlice({
 		},
 
 		setSubjectsList(state, action) {
-			console.log(action.payload, 'subjects list setting');
 			state.subjectsList = action.payload;
 		},
 
@@ -76,9 +74,6 @@ export const getPostListThunk = () => {
 			let response = await fetch('/posts/list');
 			let { success, data } = await response.json();
 
-			console.log('here');
-			console.log(data, 'posts list==');
-
 			if (success === 1) {
 				dispatch(QuestionFormActions.setPostsList(data));
 			}
@@ -96,24 +91,6 @@ export const getPostListThunk = () => {
 
 export const getSubjectsListThunk = (post_id, sendRequest) => {
 	return async (dispatch) => {
-		// try {
-		// 	dispatch(loaderActions.showLoader());
-		// 	let response = await fetch('/get-subject-list');
-		// 	let { success, data } = await response.json();
-		// 	console.log(data[0], 'subjects list==');
-
-		// 	if (success === 1) {
-		// 		dispatch(QuestionFormActions.setSubjectsList(data[0]));
-		// 	}
-
-		// 	dispatch(loaderActions.hideLoader());
-		// } catch (error) {
-		// 	dispatch(loaderActions.hideLoader());
-		// 	dispatch(
-		// 		notificationActions.showNotification('Error getting subjects list')
-		// 	);
-		// }
-
 		const reqData = {
 			url: '/get-subject-list',
 			method: 'POST',
@@ -121,10 +98,10 @@ export const getSubjectsListThunk = (post_id, sendRequest) => {
 		};
 
 		if (!post_id) {
+			console.warn('No post id passed to get subject list');
 			dispatch(QuestionFormActions.setSubjectsList([]));
 		} else {
 			sendRequest(reqData, ({ data, success }) => {
-				console.log(data, 'subjects list');
 				if (success == 1) {
 					dispatch(QuestionFormActions.setSubjectsList(data));
 				}

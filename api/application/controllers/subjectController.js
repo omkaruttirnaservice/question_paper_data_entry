@@ -15,8 +15,20 @@ const subjectController = {
 	},
 	addSubject: async (req, res) => {
 		try {
-			const { subjectName } = req.body;
-			const response = await subjectModel.addSubject(subjectName);
+			const { postId, subjectName } = req.body;
+
+			let insertData = {
+				mtl_master_test_list_id: postId,
+				mtl_name: subjectName,
+				mtp_added_aouth_id: 1,
+				mtl_added_time: '00:00:00',
+				mtl_added_date: new Date(),
+				mtl_time_stamp: '',
+				mtl_is_live: 1,
+				type: 1,
+			};
+
+			const response = await subjectModel.addSubject(insertData);
 			if (response[0].affectedRows === 1) {
 				sendSuccess(res);
 			} else {
