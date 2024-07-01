@@ -158,12 +158,6 @@ const AddQuestionForm = () => {
 					id="add-question-form"
 					className="grid gap-10"
 					onSubmit={handleSaveQuestion}>
-					<div className="flex flex-col items-start">
-						<span className="bg-blue-500 px-3 py-2 w-fit rounded-full text-white font-bold">
-							{questionNumber}
-						</span>
-					</div>
-
 					<div className="grid grid-cols-4 gap-6">
 						<div className="flex flex-col gap-1 relative">
 							<label htmlFor="">Post</label>
@@ -216,7 +210,7 @@ const AddQuestionForm = () => {
 						</div>
 
 						<div className="flex flex-col gap-1 relative">
-							<label htmlFor="">Select Topic</label>
+							<label htmlFor="">Topic</label>
 							<div className="flex">
 								<CButton onClick={handleTopicAddModal} icon={<FaPlus />} />
 								<select
@@ -238,9 +232,10 @@ const AddQuestionForm = () => {
 								<div className=" error">{errors.topic_id}</div>
 							)}
 						</div>
-
+					</div>
+					<div className="grid grid-cols-4 gap-6">
 						<div className="flex flex-col gap-1 relative ">
-							<label htmlFor="pub-name">Pub Name</label>
+							<label htmlFor="pub-name">Publication Name</label>
 
 							<div className="flex">
 								<CButton onClick={handleAddPulicationModal} icon={<FaPlus />} />
@@ -294,7 +289,7 @@ const AddQuestionForm = () => {
 						</div>
 
 						<div className="flex flex-col gap-1 relative">
-							<label htmlFor="pg_no">Pg No</label>
+							<label htmlFor="pg_no">Page No</label>
 							<input
 								className="input-el grow"
 								type="number"

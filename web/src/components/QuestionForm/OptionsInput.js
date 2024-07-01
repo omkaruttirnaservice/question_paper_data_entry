@@ -4,9 +4,11 @@ import { QuestionFormActions } from '../../Store/question-form-slice.js';
 import CButton from '../UI/CButton.js';
 
 function OptionsInput({ showNewInputField, setShowNewInputField }) {
-	const { data: _formData, errors } = useSelector(
-		(state) => state.questionForm
-	);
+	const {
+		data: _formData,
+		errors,
+		questionNumber,
+	} = useSelector((state) => state.questionForm);
 	const dispatch = useDispatch();
 	useEffect(() => {
 		/**
@@ -134,11 +136,17 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 	return (
 		<>
 			<div className="flex flex-col gap-3 relative">
-				<label
-					htmlFor="question_content"
-					className="question-option !top-[-3rem] !rounded-sm">
-					Question
-				</label>
+				<div className="flex gap-2">
+					<label
+						htmlFor="question_content"
+						className="question-option !top-[-3rem] !rounded-sm">
+						Question&nbsp;
+					</label>
+
+					<span className="bg-purple-200 text-gray-700 px-2 py-1 font-bold">
+						{questionNumber}
+					</span>
+				</div>
 
 				<textarea
 					name={`question_content`}
