@@ -133,7 +133,7 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 
 	return (
 		<>
-			<div className="flex flex-col gap-1 relative">
+			<div className="flex flex-col gap-3 relative">
 				<label
 					htmlFor="question_content"
 					className="question-option !top-[-3rem] !rounded-sm">
@@ -155,7 +155,7 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 			<hr />
 
 			<div className="flex flex-col gap-3 relative">
-				<div className="flex gap-2">
+				<div className="flex items-center gap-2">
 					<label htmlFor="option_A" className="question-option !top-[-3rem]">
 						Option A
 					</label>
@@ -174,7 +174,7 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 			<hr />
 
 			<div className="flex flex-col gap-3 relative">
-				<div className="flex gap-2">
+				<div className="flex items-center gap-2">
 					<label htmlFor="option_B" className="question-option !top-[-3rem]">
 						Option B
 					</label>
@@ -194,7 +194,7 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 			<hr />
 
 			<div className="flex flex-col gap-3 relative">
-				<div className="flex gap-2">
+				<div className="flex items-center gap-2">
 					<label htmlFor="option_C" className="question-option !top-[-3rem]">
 						Option C
 					</label>
@@ -214,7 +214,7 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 			<hr />
 
 			<div className="flex flex-col gap-3 relative">
-				<div className="flex gap-2">
+				<div className="flex items-center gap-2">
 					<label htmlFor="option_D" className="question-option !top-[-3rem]">
 						Option D
 					</label>
@@ -236,7 +236,7 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 			{showNewInputField ? (
 				<>
 					<div className="flex flex-col gap-3 relative">
-						<div className="flex gap-2">
+						<div className="flex gap-2 items-center">
 							<label
 								htmlFor="option_E"
 								className="question-option !top-[-3rem]">
@@ -375,7 +375,7 @@ function AnswerOptionRadioBox({ value, className }) {
 	};
 	return (
 		<input
-			className={`w-10 h-10 ${className}`}
+			className={`w-6 h-6 ${className}`}
 			type="radio"
 			name="correct_option"
 			value={value}

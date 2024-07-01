@@ -164,7 +164,7 @@ const AddQuestionForm = () => {
 						</span>
 					</div>
 
-					<div className="flex gap-10">
+					<div className="grid grid-cols-4 gap-6">
 						<div className="flex flex-col gap-1 relative">
 							<label htmlFor="">Post</label>
 							<div className="flex">
@@ -306,6 +306,8 @@ const AddQuestionForm = () => {
 							{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
 						</div>
 					</div>
+
+					<hr />
 
 					<div className="">
 						<div className="flex flex-col gap-10">
