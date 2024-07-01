@@ -122,6 +122,31 @@ const questionModel = {
 
 		return db.query(q, [subjectId, topicId]);
 	},
+
+	getPublicationList: async () => {
+		return db.query(
+			`SELECT 
+                msq_publication_name
+            FROM 
+                tm_mega_question_set 
+            WHERE
+                coalesce(msq_publication_name, '') != ''
+            GROUP BY msq_publication_name`
+		);
+	},
+
+	getBooksList: async (pubName) => {
+		return db.query(
+			`SELECT 
+                msq_book_name
+            FROM 
+                tm_mega_question_set 
+            WHERE
+                msq_publication_name = ?
+            GROUP BY msq_book_name`,
+			[pubName]
+		);
+	},
 };
 
 export default questionModel;

@@ -15,4 +15,8 @@ router.put('/edit-question', questionController.editQuestion);
 
 router.post('/edit-question-data', questionController.editQuestionData);
 
+router.get('/publications-list', questionController.getPublicationList);
+
+router.post('/books-list', questionController.getBooksList);
+
 export default router;

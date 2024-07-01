@@ -7,7 +7,9 @@ import { FaP, FaPlus } from 'react-icons/fa6';
 import { ModalActions } from '../../Store/modal-slice.js';
 import {
 	QuestionFormActions,
+	getBooksListThunk,
 	getPostListThunk,
+	getPublicationsListThunk,
 	getSubjectsListThunk,
 	getTopicsListThunk,
 } from '../../Store/question-form-slice.js';
@@ -19,6 +21,8 @@ import AddTopicFormModal from './AddTopic/AddTopicModal.js';
 import addQuestionFormSchema from './addQuestionFormSchema.js';
 import OptionsInput from './OptionsInput.js';
 import ExplanationInput from './ExplanationInput.js';
+import AddPublicationModal from './AddPublication/AddPublicationModal.js';
+import AddBookModal from './AddBook/AddBookModal.js';
 
 const AddQuestionForm = () => {
 	let {
@@ -28,6 +32,8 @@ const AddQuestionForm = () => {
 		questionNumber,
 		errors,
 		postsList,
+		publicationsList,
+		bookNamesList,
 	} = useSelector((state) => state.questionForm);
 	const dispatch = useDispatch();
 
@@ -59,6 +65,7 @@ const AddQuestionForm = () => {
 	};
 
 	useEffect(() => {
+		dispatch(getPublicationsListThunk(sendRequest));
 		dispatch(getPostListThunk());
 		getQuestionNumber();
 	}, []);
@@ -71,18 +78,18 @@ const AddQuestionForm = () => {
 		getTopicList();
 	}, [_formData.subject_id]);
 
+	useEffect(() => {
+		dispatch(getBooksListThunk(_formData.pub_name, sendRequest));
+	}, [_formData.pub_name]);
+
 	const handleSaveQuestion = async (e) => {
-		console.log(1);
 		e.preventDefault();
 		try {
-			console.log(2);
 			await addQuestionFormSchema.validate(_formData, { abortEarly: false });
-			console.log(3);
 			postQuestionData();
 
 			dispatch(QuestionFormActions.setErrors({}));
 		} catch (error) {
-			console.log(error.inner);
 			const errorsObj = {};
 			error.inner.forEach((el) => {
 				errorsObj[el.path] = el.message;
@@ -126,6 +133,14 @@ const AddQuestionForm = () => {
 		dispatch(ModalActions.toggleModal('add-topic-modal'));
 	};
 
+	const handleAddPulicationModal = () => {
+		dispatch(ModalActions.toggleModal('add-publication-modal'));
+	};
+
+	const handleAddBookModal = () => {
+		dispatch(ModalActions.toggleModal('add-book-modal'));
+	};
+
 	return (
 		<>
 			{/* add post modal */}
@@ -134,6 +149,10 @@ const AddQuestionForm = () => {
 			<AddSubjectModal />
 			{/* add topic modal */}
 			<AddTopicFormModal />
+			{/* add publication modal */}
+			<AddPublicationModal />
+			{/* add book modal */}
+			<AddBookModal />
 			<div className="container mx-auto px-10 mt-6 pb-10">
 				<form
 					id="add-question-form"
@@ -222,16 +241,55 @@ const AddQuestionForm = () => {
 
 						<div className="flex flex-col gap-1 relative ">
 							<label htmlFor="pub-name">Pub Name</label>
-							<input
-								className="input-el grow"
-								type="text"
-								onChange={handleChange}
-								name="pub_name"
-								value={_formData.pub_name}
-							/>
 
+							<div className="flex">
+								<CButton onClick={handleAddPulicationModal} icon={<FaPlus />} />
+								<select
+									className="input-el grow"
+									type="text"
+									onChange={handleChange}
+									name="pub_name"
+									value={_formData.pub_name}>
+									<option value={'-1'}>-- Select --</option>
+									{publicationsList.length >= 1 &&
+										publicationsList.map((el) => {
+											return (
+												<option value={el.msq_publication_name}>
+													{el.msq_publication_name}
+												</option>
+											);
+										})}
+								</select>
+							</div>
 							{errors.pub_name && (
 								<div className=" error">{errors.pub_name}</div>
+							)}
+						</div>
+
+						<div className="flex flex-col gap-1 relative ">
+							<label htmlFor="pub-name">Book Name</label>
+
+							<div className="flex">
+								<CButton onClick={handleAddBookModal} icon={<FaPlus />} />
+								<select
+									className="input-el grow"
+									type="text"
+									onChange={handleChange}
+									name="book_name"
+									value={_formData.book_name}>
+									<option value={'-1'}>-- Select --</option>
+									{bookNamesList.length >= 1 &&
+										bookNamesList.map((el) => {
+											return (
+												<option value={el.msq_book_name}>
+													{el.msq_book_name}
+												</option>
+											);
+										})}
+								</select>
+							</div>
+							{errors.book_name && (
+								<div className=" error">{errors.book_name}</div>
 							)}
 						</div>
 

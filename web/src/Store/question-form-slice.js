@@ -8,6 +8,7 @@ let initialState = {
 		subject_id: null,
 		topic_id: null,
 		pub_name: null,
+		book_name: null,
 		pg_no: null,
 		question_content: null,
 		option_A: null,
@@ -18,6 +19,8 @@ let initialState = {
 		correct_option: null,
 		explanation: null,
 	},
+	publicationsList: [],
+	bookNamesList: [],
 	postsList: [],
 	subjectsList: [],
 	topicsList: [],
@@ -32,6 +35,14 @@ const QuestionFormSlice = createSlice({
 		handleInputChange(state, action) {
 			let { key, value } = action.payload;
 			state.data[key] = value;
+		},
+
+		setPublicationsList(state, action) {
+			state.publicationsList = action.payload;
+		},
+
+		setBooksList(state, action) {
+			state.bookNamesList = action.payload;
 		},
 
 		setPostsList(state, action) {
@@ -66,6 +77,38 @@ const QuestionFormSlice = createSlice({
 		},
 	},
 });
+
+export const getBooksListThunk = (pubName, sendRequest) => {
+	return async (dispatch) => {
+		let requestData = {
+			url: 'questions/books-list',
+			method: 'POST',
+			body: JSON.stringify({ pubName: pubName }),
+		};
+		sendRequest(requestData, ({ success, data }) => {
+			if (data.length == 0) {
+				dispatch(QuestionFormActions.setBooksList([]));
+			} else {
+				dispatch(QuestionFormActions.setBooksList(data));
+			}
+		});
+	};
+};
+
+export const getPublicationsListThunk = (sendRequest) => {
+	return async (dispatch) => {
+		let requestData = {
+			url: 'questions/publications-list',
+		};
+		sendRequest(requestData, ({ success, data }) => {
+			if (data.length == 0) {
+				dispatch(QuestionFormActions.setPublicationsList([]));
+			} else {
+				dispatch(QuestionFormActions.setPublicationsList(data));
+			}
+		});
+	};
+};
 
 export const getPostListThunk = () => {
 	return async (dispatch) => {

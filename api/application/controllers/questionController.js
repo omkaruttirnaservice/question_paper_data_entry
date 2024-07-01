@@ -121,6 +121,27 @@ const questionController = {
 			});
 		}
 	},
+
+	// publication list
+
+	getPublicationList: async (req, res) => {
+		try {
+			let [publicationsList] = await questionModel.getPublicationList();
+			return sendSuccess(res, publicationsList);
+		} catch (error) {
+			return sendError(res, err);
+		}
+	},
+
+	getBooksList: async (req, res) => {
+		try {
+			let { pubName } = req.body;
+			let [booksList] = await questionModel.getBooksList(pubName);
+			return sendSuccess(res, booksList);
+		} catch (error) {
+			return sendError(res, err);
+		}
+	},
 };
 
 export default questionController;

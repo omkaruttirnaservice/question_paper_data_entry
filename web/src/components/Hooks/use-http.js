@@ -27,6 +27,7 @@ const useHttp = () => {
 		} catch (err) {
 			dispatch(loaderActions.hideLoader());
 			dispatch(notificationActions.showNotification('Something went wrong.'));
+			console.log(err);
 		}
 	};
 	return {
