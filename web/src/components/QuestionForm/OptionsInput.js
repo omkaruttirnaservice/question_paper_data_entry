@@ -154,10 +154,13 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 
 			<hr />
 
-			<div className="flex flex-col gap-1 relative">
-				<label htmlFor="option_A" className="question-option !top-[-3rem]">
-					Option A
-				</label>
+			<div className="flex flex-col gap-3 relative">
+				<div className="flex gap-2">
+					<label htmlFor="option_A" className="question-option !top-[-3rem]">
+						Option A
+					</label>
+					<AnswerOptionRadioBox value={'A'} />
+				</div>
 				<textarea
 					name={`option_A`}
 					id={`option_A`}
@@ -170,10 +173,14 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 
 			<hr />
 
-			<div className="flex flex-col gap-1 relative">
-				<label htmlFor="option_B" className="question-option !top-[-3rem]">
-					Option B
-				</label>
+			<div className="flex flex-col gap-3 relative">
+				<div className="flex gap-2">
+					<label htmlFor="option_B" className="question-option !top-[-3rem]">
+						Option B
+					</label>
+
+					<AnswerOptionRadioBox value={'B'} />
+				</div>
 				<textarea
 					name={`option_B`}
 					id={`option_B`}
@@ -186,10 +193,14 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 
 			<hr />
 
-			<div className="flex flex-col gap-1 relative">
-				<label htmlFor="option_C" className="question-option !top-[-3rem]">
-					Option C
-				</label>
+			<div className="flex flex-col gap-3 relative">
+				<div className="flex gap-2">
+					<label htmlFor="option_C" className="question-option !top-[-3rem]">
+						Option C
+					</label>
+
+					<AnswerOptionRadioBox value={'C'} />
+				</div>
 				<textarea
 					name={`option_C`}
 					id={`option_C`}
@@ -202,10 +213,14 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 
 			<hr />
 
-			<div className="flex flex-col gap-1 relative">
-				<label htmlFor="option_D" className="question-option !top-[-3rem]">
-					Option D
-				</label>
+			<div className="flex flex-col gap-3 relative">
+				<div className="flex gap-2">
+					<label htmlFor="option_D" className="question-option !top-[-3rem]">
+						Option D
+					</label>
+
+					<AnswerOptionRadioBox value={'D'} />
+				</div>
 				<textarea
 					name={`option_D`}
 					id={`option_D`}
@@ -220,10 +235,16 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 
 			{showNewInputField ? (
 				<>
-					<div className="flex flex-col gap-1 relative">
-						<label htmlFor="option_E" className="question-option !top-[-3rem]">
-							Option E
-						</label>
+					<div className="flex flex-col gap-3 relative">
+						<div className="flex gap-2">
+							<label
+								htmlFor="option_E"
+								className="question-option !top-[-3rem]">
+								Option E
+							</label>
+
+							<AnswerOptionRadioBox value={'E'} />
+						</div>
 						<textarea
 							name={`option_E`}
 							id={`option_E`}
@@ -339,6 +360,27 @@ function ImageInputComp({ label, inputFor }) {
 				placeholder="paste image"
 			/>
 		</div>
+	);
+}
+
+function AnswerOptionRadioBox({ value, className }) {
+	const dispatch = useDispatch();
+	const handleOptionChange = (e) => {
+		dispatch(
+			QuestionFormActions.handleInputChange({
+				key: e.target.name,
+				value: e.target.value,
+			})
+		);
+	};
+	return (
+		<input
+			className={`w-10 h-10 ${className}`}
+			type="radio"
+			name="correct_option"
+			value={value}
+			onChange={handleOptionChange}
+		/>
 	);
 }
 

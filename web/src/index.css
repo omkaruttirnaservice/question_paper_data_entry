@@ -173,6 +173,6 @@
 
 	/* question form css */
 	.question-option {
-		@apply bg-blue-600 flex items-center justify-center font-medium w-fit p-1 px-2 text-white mb-3;
+		@apply bg-blue-600 flex items-center justify-center font-medium w-fit p-1 px-2 text-white;
 	}
 }

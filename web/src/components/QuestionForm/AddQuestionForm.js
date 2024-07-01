@@ -308,19 +308,6 @@ const AddQuestionForm = () => {
 					</div>
 
 					<div className="">
-						{/* <div className="mt-2 d-flex align-items-center gap-2">
-								Text Editor{' '}
-								<span
-									className="toggle-options-editor"
-									onClick={() => setToggleOptions(!toggleOptions)}
-								>
-									{toggleOptions ? (
-										<i className="fa-solid fa-toggle-on text-success"></i>
-									) : (
-										<i className="fa-solid fa-toggle-off"></i>
-									)}
-								</span>
-							</div> */}
 						<div className="flex flex-col gap-10">
 							<OptionsInput
 								showNewInputField={showNewInputField}
@@ -328,29 +315,10 @@ const AddQuestionForm = () => {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col relative">
-						<label htmlFor="correct-option">Correct Option</label>
-
-						<input
-							type="text"
-							id="correct-option"
-							className="input-el w-fit"
-							name="correct_option"
-							onChange={handleChange}
-							value={_formData.correct_option}
-							maxLength="1"
-						/>
-
-						{errors.correct_option && (
-							<div className="error">{errors.correct_option}</div>
-						)}
-					</div>
 
 					<hr />
 
 					<ExplanationInput />
-
-					<hr />
 
 					<CButton
 						className="w-[10%] flex justify-center items-center"
@@ -360,7 +328,6 @@ const AddQuestionForm = () => {
 					</CButton>
 				</form>
 			</div>
-			toast('hi')
 		</>
 	);
 };
