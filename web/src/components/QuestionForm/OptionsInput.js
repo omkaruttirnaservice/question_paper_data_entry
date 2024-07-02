@@ -156,9 +156,8 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 				{errors.question_content && (
 					<div className="error">{errors.question_content}</div>
 				)}
+				<ImageInputComp label="Question image" inputFor="question_content" />
 			</div>
-
-			<ImageInputComp label="Question image" inputFor="question_content" />
 
 			<hr />
 
@@ -175,9 +174,8 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 					value={_formData.option_A}
 					className="top-10"></textarea>
 				{errors.option_A && <div className=" error">{errors.option_A}</div>}
+				<ImageInputComp label="Option A image" inputFor="option_A" />
 			</div>
-
-			<ImageInputComp label="Option A image" inputFor="option_A" />
 
 			<hr />
 
@@ -195,9 +193,8 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 					value={_formData.option_B}
 					className="top-10"></textarea>
 				{errors.option_B && <div className=" error">{errors.option_B}</div>}
+				<ImageInputComp label="Option B image" inputFor="option_B" />
 			</div>
-
-			<ImageInputComp label="Option B image" inputFor="option_B" />
 
 			<hr />
 
@@ -215,9 +212,8 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 					value={_formData.option_C}
 					className="top-10"></textarea>
 				{errors.option_C && <div className=" error">{errors.option_C}</div>}
+				<ImageInputComp label="Option C image" inputFor="option_C" />
 			</div>
-
-			<ImageInputComp label="Option C image" inputFor="option_C" />
 
 			<hr />
 
@@ -235,9 +231,8 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 					value={_formData.option_D}
 					className="top-10"></textarea>
 				{errors.option_D && <div className=" error">{errors.option_D}</div>}
+				<ImageInputComp label="Option D image" inputFor="option_D" />
 			</div>
-
-			<ImageInputComp label="Option D image" inputFor="option_D" />
 
 			<hr />
 
@@ -261,9 +256,8 @@ function OptionsInput({ showNewInputField, setShowNewInputField }) {
 						{errors.option_E && (
 							<div className="!top-[1rem]">{errors.option_E}</div>
 						)}
+						<ImageInputComp label="Option E image" inputFor="option_E" />
 					</div>
-
-					<ImageInputComp label="Option E image" inputFor="option_E" />
 
 					<CButton
 						className="btn--danger w-fit"
@@ -356,16 +350,13 @@ function ImageInputComp({ label, inputFor }) {
 	}
 
 	return (
-		<div className="flex flex-col mt-2">
-			<label htmlFor="" className="mb-1">
-				{label}
-			</label>
+		<div className="flex flex-col mt-2 absolute bottom-0 left-0">
 			<input
 				onPaste={handleImagePaste}
 				type="text"
 				data-image-for={inputFor}
-				className="input-el flex-1"
-				placeholder="paste image"
+				className="input-el !w-[15rem]"
+				placeholder={`${label} paste image`}
 			/>
 		</div>
 	);

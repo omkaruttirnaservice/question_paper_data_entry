@@ -6,14 +6,14 @@
 		font-family: 'Poppins', sans-serif;
 	}
 
-	.no-scrollbar::-webkit-scrollbar {
+	/* .no-scrollbar::-webkit-scrollbar {
 		display: none;
 	}
 
 	.no-scrollbar {
 		--ms-overflow-style: none;
 		scrollbar-width: none;
-	}
+	} */
 
 	.menu-item {
 		@apply text-gray-200 flex items-center gap-2 p-2 rounded-md text-sm;
@@ -175,4 +175,8 @@
 	.question-option {
 		@apply bg-blue-600 flex items-center justify-center font-medium w-fit p-1 px-2 text-white;
 	}
+}
+
+.cke_notification {
+	display: none !important;
 }

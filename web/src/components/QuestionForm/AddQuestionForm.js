@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { notificationActions } from '../../Store/notification-slice';
 
 import { FaPlus } from 'react-icons/fa6';
@@ -158,147 +158,152 @@ const AddQuestionForm = () => {
 					id="add-question-form"
 					className="grid gap-10"
 					onSubmit={handleSaveQuestion}>
-					<div className="grid grid-cols-4 gap-6">
-						<div className="flex flex-col gap-1 relative">
-							<label htmlFor="">Post</label>
-							<div className="flex">
-								<CButton onClick={handlePostAddModal} icon={<FaPlus />} />
-								<select
-									id="post-id"
-									className="input-el grow w-48"
-									name="post_id"
-									onChange={handleChange}>
-									<option value="-1" className="" name="">
-										-- Select --
-									</option>
-									{postsList.length >= 1 &&
-										postsList?.map((subject, i) => (
-											<option key={i} value={subject.id}>
-												{subject.mtl_test_name}
-											</option>
-										))}
-								</select>
-							</div>
-							{errors.subject_id && (
-								<div className=" error">{errors.post_id}</div>
-							)}
-						</div>
-
-						<div className="flex flex-col gap-1 relative">
-							<label htmlFor="">Subject</label>
-							<div className="flex">
-								<CButton onClick={handleSubjectAddModal} icon={<FaPlus />} />
-								<select
-									id="subject-id"
-									className="input-el grow w-48"
-									name="subject_id"
-									onChange={handleChange}>
-									<option value="-1" className="" name="subject_id">
-										-- Select --
-									</option>
-									{subjectsList.length >= 1 &&
-										subjectsList?.map((subject, i) => (
-											<option key={i} value={subject.id}>
-												{subject.mtl_name}
-											</option>
-										))}
-								</select>
-							</div>
-							{errors.subject_id && (
-								<div className=" error">{errors.subject_id}</div>
-							)}
-						</div>
-
-						<div className="flex flex-col gap-1 relative">
-							<label htmlFor="">Topic</label>
-							<div className="flex">
-								<CButton onClick={handleTopicAddModal} icon={<FaPlus />} />
-								<select
-									className="input-el grow w-48"
-									name="topic_id"
-									onChange={handleChange}>
-									<option value="-1" className="">
-										-- Select --
-									</option>
-									{topicsList?.map((topic, i) => (
-										<option key={i} value={topic.id}>
-											{topic.topic_name}
+					<div className={`bg-white observe-container sticky top-0 z-50`}>
+						<div className="grid grid-cols-4 gap-6 mb-4">
+							<div className="flex flex-col gap-1 relative">
+								<label htmlFor="">Post</label>
+								<div className="flex">
+									<CButton onClick={handlePostAddModal} icon={<FaPlus />} />
+									<select
+										id="post-id"
+										className="input-el grow w-48"
+										name="post_id"
+										onChange={handleChange}>
+										<option value="-1" className="" name="">
+											-- Select --
 										</option>
-									))}
-								</select>
-							</div>
-
-							{errors.topic_id && (
-								<div className=" error">{errors.topic_id}</div>
-							)}
-						</div>
-					</div>
-					<div className="grid grid-cols-4 gap-6">
-						<div className="flex flex-col gap-1 relative ">
-							<label htmlFor="pub-name">Publication Name</label>
-
-							<div className="flex">
-								<CButton onClick={handleAddPulicationModal} icon={<FaPlus />} />
-								<select
-									className="input-el grow"
-									type="text"
-									onChange={handleChange}
-									name="pub_name"
-									value={_formData.pub_name}>
-									<option value={'-1'}>-- Select --</option>
-									{publicationsList.length >= 1 &&
-										publicationsList.map((el) => {
-											return (
-												<option value={el.msq_publication_name}>
-													{el.msq_publication_name}
+										{postsList.length >= 1 &&
+											postsList?.map((subject, i) => (
+												<option key={i} value={subject.id}>
+													{subject.mtl_test_name}
 												</option>
-											);
-										})}
-								</select>
+											))}
+									</select>
+								</div>
+								{errors.subject_id && (
+									<div className=" error">{errors.post_id}</div>
+								)}
 							</div>
-							{errors.pub_name && (
-								<div className=" error">{errors.pub_name}</div>
-							)}
-						</div>
 
-						<div className="flex flex-col gap-1 relative ">
-							<label htmlFor="pub-name">Book Name</label>
-
-							<div className="flex">
-								<CButton onClick={handleAddBookModal} icon={<FaPlus />} />
-								<select
-									className="input-el grow"
-									type="text"
-									onChange={handleChange}
-									name="book_name"
-									value={_formData.book_name}>
-									<option value={'-1'}>-- Select --</option>
-									{bookNamesList.length >= 1 &&
-										bookNamesList.map((el) => {
-											return (
-												<option value={el.msq_book_name}>
-													{el.msq_book_name}
+							<div className="flex flex-col gap-1 relative">
+								<label htmlFor="">Subject</label>
+								<div className="flex">
+									<CButton onClick={handleSubjectAddModal} icon={<FaPlus />} />
+									<select
+										id="subject-id"
+										className="input-el grow w-48"
+										name="subject_id"
+										onChange={handleChange}>
+										<option value="-1" className="" name="subject_id">
+											-- Select --
+										</option>
+										{subjectsList.length >= 1 &&
+											subjectsList?.map((subject, i) => (
+												<option key={i} value={subject.id}>
+													{subject.mtl_name}
 												</option>
-											);
-										})}
-								</select>
+											))}
+									</select>
+								</div>
+								{errors.subject_id && (
+									<div className=" error">{errors.subject_id}</div>
+								)}
 							</div>
-							{errors.book_name && (
-								<div className=" error">{errors.book_name}</div>
-							)}
-						</div>
 
-						<div className="flex flex-col gap-1 relative">
-							<label htmlFor="pg_no">Page No</label>
-							<input
-								className="input-el grow"
-								type="number"
-								min="0"
-								onChange={handleChange}
-								name="pg_no"
-								value={_formData.pg_no}
-							/>
-							{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
+							<div className="flex flex-col gap-1 relative">
+								<label htmlFor="">Topic</label>
+								<div className="flex">
+									<CButton onClick={handleTopicAddModal} icon={<FaPlus />} />
+									<select
+										className="input-el grow w-48"
+										name="topic_id"
+										onChange={handleChange}>
+										<option value="-1" className="">
+											-- Select --
+										</option>
+										{topicsList?.map((topic, i) => (
+											<option key={i} value={topic.id}>
+												{topic.topic_name}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{errors.topic_id && (
+									<div className=" error">{errors.topic_id}</div>
+								)}
+							</div>
+						</div>
+						<div className="grid grid-cols-4 gap-6 ">
+							<div className="flex flex-col gap-1 relative ">
+								<label htmlFor="pub-name">Publication Name</label>
+
+								<div className="flex">
+									<CButton
+										onClick={handleAddPulicationModal}
+										icon={<FaPlus />}
+									/>
+									<select
+										className="input-el grow"
+										type="text"
+										onChange={handleChange}
+										name="pub_name"
+										value={_formData.pub_name}>
+										<option value={'-1'}>-- Select --</option>
+										{publicationsList.length >= 1 &&
+											publicationsList.map((el) => {
+												return (
+													<option value={el.msq_publication_name}>
+														{el.msq_publication_name}
+													</option>
+												);
+											})}
+									</select>
+								</div>
+								{errors.pub_name && (
+									<div className=" error">{errors.pub_name}</div>
+								)}
+							</div>
+
+							<div className="flex flex-col gap-1 relative ">
+								<label htmlFor="pub-name">Book Name</label>
+
+								<div className="flex">
+									<CButton onClick={handleAddBookModal} icon={<FaPlus />} />
+									<select
+										className="input-el grow"
+										type="text"
+										onChange={handleChange}
+										name="book_name"
+										value={_formData.book_name}>
+										<option value={'-1'}>-- Select --</option>
+										{bookNamesList.length >= 1 &&
+											bookNamesList.map((el) => {
+												return (
+													<option value={el.msq_book_name}>
+														{el.msq_book_name}
+													</option>
+												);
+											})}
+									</select>
+								</div>
+								{errors.book_name && (
+									<div className=" error">{errors.book_name}</div>
+								)}
+							</div>
+
+							<div className="flex flex-col gap-1 relative">
+								<label htmlFor="pg_no">Page No</label>
+								<input
+									className="input-el grow"
+									type="number"
+									min="0"
+									onChange={handleChange}
+									name="pg_no"
+									value={_formData.pg_no}
+								/>
+								{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
+							</div>
 						</div>
 					</div>
 
