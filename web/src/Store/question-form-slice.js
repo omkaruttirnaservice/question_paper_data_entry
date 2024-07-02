@@ -27,11 +27,17 @@ let initialState = {
 	questionNumber: null,
 	errors: {},
 	isEdit: false,
+	isQuestionPreview: false,
 };
 const QuestionFormSlice = createSlice({
 	name: 'question-form-slice',
 	initialState,
 	reducers: {
+		// question preview
+		toggleQuestionPreview(state, action) {
+			state.isQuestionPreview = !state.isQuestionPreview;
+		},
+
 		handleInputChange(state, action) {
 			let { key, value } = action.payload;
 			state.data[key] = value;

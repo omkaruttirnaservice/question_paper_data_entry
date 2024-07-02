@@ -73,7 +73,7 @@
 	}
 
 	.btn--warning {
-		@apply bg-gradient-to-tr from-zinc-300 to-zinc-200 hover:from-zinc-200 hover:to-zinc-300;
+		@apply bg-gradient-to-tr from-yellow-300 to-yellow-200 hover:from-yellow-200 hover:to-yellow-300;
 	}
 
 	.btn--info {

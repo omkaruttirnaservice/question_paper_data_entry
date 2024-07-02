@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { notificationActions } from '../../Store/notification-slice';
 
 import { FaPlus } from 'react-icons/fa6';
+
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ModalActions } from '../../Store/modal-slice.js';
@@ -22,6 +23,7 @@ import AddSubjectModal from './AddSubject/AddSubjectModal.js';
 import AddTopicFormModal from './AddTopic/AddTopicModal.js';
 import ExplanationInput from './ExplanationInput.js';
 import OptionsInput from './OptionsInput.js';
+import QuestionPreview from './QuestionPreview/QuestionPreview.js';
 import addQuestionFormSchema from './addQuestionFormSchema.js';
 
 const AddQuestionForm = () => {
@@ -143,6 +145,7 @@ const AddQuestionForm = () => {
 
 	return (
 		<>
+			<QuestionPreview />
 			{/* add post modal */}
 			<AddPostModal />
 			{/* add subject modal  */}
@@ -153,12 +156,14 @@ const AddQuestionForm = () => {
 			<AddPublicationModal />
 			{/* add book modal */}
 			<AddBookModal />
-			<div className="container mx-auto px-10 mt-6 pb-10">
+			<div className="container mx-auto px-10 mt-6 pb-10 ">
 				<form
 					id="add-question-form"
 					className="grid gap-10"
 					onSubmit={handleSaveQuestion}>
-					<div className={`bg-white observe-container sticky top-0 z-50`}>
+					{/* view question button */}
+
+					<div className={`bg-white observe-container sticky top-0 z-40`}>
 						<div className="grid grid-cols-4 gap-6 mb-4">
 							<div className="flex flex-col gap-1 relative">
 								<label htmlFor="">Post</label>
