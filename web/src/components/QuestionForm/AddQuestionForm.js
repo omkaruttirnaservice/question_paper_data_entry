@@ -92,6 +92,7 @@ const AddQuestionForm = () => {
 
 			dispatch(QuestionFormActions.setErrors({}));
 		} catch (error) {
+			console.log({ ...error }, '-here======');
 			const errorsObj = {};
 			error.inner.forEach((el) => {
 				errorsObj[el.path] = el.message;
@@ -163,8 +164,8 @@ const AddQuestionForm = () => {
 					onSubmit={handleSaveQuestion}>
 					{/* view question button */}
 
-					<div className={`bg-white observe-container sticky top-0 z-40`}>
-						<div className="grid grid-cols-4 gap-6 mb-4">
+					<div className={`bg-white pb-6 observe-container sticky top-0 z-40`}>
+						<div className="grid grid-cols-4 gap-6 mb-8">
 							<div className="flex flex-col gap-1 relative">
 								<label htmlFor="">Post</label>
 								<div className="flex">
@@ -174,7 +175,7 @@ const AddQuestionForm = () => {
 										className="input-el grow w-48"
 										name="post_id"
 										onChange={handleChange}>
-										<option value="-1" className="" name="">
+										<option value="" className="" name="">
 											-- Select --
 										</option>
 										{postsList.length >= 1 &&
@@ -185,7 +186,7 @@ const AddQuestionForm = () => {
 											))}
 									</select>
 								</div>
-								{errors.subject_id && (
+								{errors.post_id && (
 									<div className=" error">{errors.post_id}</div>
 								)}
 							</div>
@@ -199,7 +200,7 @@ const AddQuestionForm = () => {
 										className="input-el grow w-48"
 										name="subject_id"
 										onChange={handleChange}>
-										<option value="-1" className="" name="subject_id">
+										<option value="" className="" name="subject_id">
 											-- Select --
 										</option>
 										{subjectsList.length >= 1 &&
@@ -223,7 +224,7 @@ const AddQuestionForm = () => {
 										className="input-el grow w-48"
 										name="topic_id"
 										onChange={handleChange}>
-										<option value="-1" className="">
+										<option value="" className="">
 											-- Select --
 										</option>
 										{topicsList?.map((topic, i) => (
@@ -254,7 +255,7 @@ const AddQuestionForm = () => {
 										onChange={handleChange}
 										name="pub_name"
 										value={_formData.pub_name}>
-										<option value={'-1'}>-- Select --</option>
+										<option value="">-- Select --</option>
 										{publicationsList.length >= 1 &&
 											publicationsList.map((el) => {
 												return (
@@ -281,7 +282,7 @@ const AddQuestionForm = () => {
 										onChange={handleChange}
 										name="book_name"
 										value={_formData.book_name}>
-										<option value={'-1'}>-- Select --</option>
+										<option value="">-- Select --</option>
 										{bookNamesList.length >= 1 &&
 											bookNamesList.map((el) => {
 												return (
