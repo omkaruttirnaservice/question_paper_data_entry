@@ -16,10 +16,6 @@ const tm_sub_topic_list = sequelize.define('tm_sub_topic_list', {
 		type: BIGINT,
 	},
 
-	stl_topic_number: {
-		type: STRING('255'),
-	},
-
 	stl_main_topic_list_id: {
 		type: BIGINT,
 	},

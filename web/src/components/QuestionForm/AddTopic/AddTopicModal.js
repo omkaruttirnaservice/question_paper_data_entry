@@ -38,6 +38,7 @@ function AddTopicFormModal() {
 	const handleAddTopic = async () => {
 		let subjectId = _formData.subject_id;
 		let topicName = topicNameRef.current.value;
+		let postId = _formData.post_id;
 
 		if (!topicName) {
 			dispatch(notificationActions.showNotification('Please enter topic name'));
@@ -47,21 +48,21 @@ function AddTopicFormModal() {
 		try {
 			await addTopicSchema.validate({ topic_name: topicName });
 			setError({ ...error, subject_name: null });
-			postTopicAdd(subjectId, topicName);
+			postTopicAdd(postId, subjectId, topicName);
 		} catch (error) {
 			console.log(error.message);
 			setError({ ...error, topic_name: error.message });
 		}
 	};
 
-	function postTopicAdd(subjectId, topicName) {
+	function postTopicAdd(postId, subjectId, topicName) {
 		const requestData = {
 			url: '/add-topic',
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ subjectId, topicName }),
+			body: JSON.stringify({ postId, subjectId, topicName }),
 		};
 
 		sendRequest(requestData, (data) => {
@@ -88,7 +89,6 @@ function AddTopicFormModal() {
 						<input
 							type="text"
 							className="input-el mt-2 mb-3"
-							// value={subjectsList[_formData.subject_id - 1]?.subject_name}
 							value={subjectsList
 								.map((el) => {
 									if (el.id == _formData.subject_id) return el.mtl_name;

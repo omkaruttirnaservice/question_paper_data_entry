@@ -1,3 +1,4 @@
+import { myDate } from '../config/utils.js';
 import subjectModel from '../model/subjectModel.js';
 import { sendSuccess, sendError } from '../utils/commonFunctions.js';
 const subjectController = {
@@ -78,8 +79,17 @@ const subjectController = {
 
 	addTopic: async function (req, res) {
 		try {
-			const data = req.body;
-			const response = await subjectModel.addTopic(data);
+			const { postId, subjectId, topicName } = req.body;
+
+			let insertData = {
+				stl_name: topicName,
+				stl_master_test_id: postId,
+				stl_main_topic_list_id: subjectId,
+				stl_added_date: myDate.getDate(),
+				stl_added_time: myDate.getTime(),
+				stl_time_stamp: myDate.getTimeStamp(),
+			};
+			const response = await subjectModel.addTopic(insertData);
 			sendSuccess(res, response[0]);
 		} catch (error) {
 			sendError(res, error);

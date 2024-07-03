@@ -62,16 +62,32 @@ const subjectModel = {
 
 	getTopicList: function (subjectId) {
 		return db.query(
-			`SELECT id,topic_name FROM topic WHERE subject_id = ?`,
+			`SELECT id, stl_name AS topic_name FROM tm_sub_topic_list WHERE stl_main_topic_list_id = ?`,
 			subjectId
 		);
 	},
 
-	addTopic: function (data) {
-		return db.query(`INSERT INTO topic (subject_id, topic_name) VALUES(?, ?)`, [
-			data.subjectId,
-			data.topicName,
-		]);
+	addTopic: function (d) {
+		return db.query(
+			`INSERT INTO 
+				tm_sub_topic_list (
+						stl_name,
+						stl_master_test_id,
+						stl_main_topic_list_id,
+						stl_added_date,
+						stl_added_time,
+						stl_time_stamp
+						) 
+				VALUES(?, ?, ?, ?, ?, ?)`,
+			[
+				d.stl_name,
+				d.stl_master_test_id,
+				d.stl_main_topic_list_id,
+				d.stl_added_date,
+				d.stl_added_time,
+				d.stl_time_stamp,
+			]
+		);
 	},
 };
 
