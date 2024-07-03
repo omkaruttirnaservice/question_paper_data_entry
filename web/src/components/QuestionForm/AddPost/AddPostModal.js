@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
-import CModal from '../../UI/CModal.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { notificationActions } from '../../../Store/notification-slice.js';
-import useHttp from '../../Hooks/use-http.js';
 import { ModalActions } from '../../../Store/modal-slice.js';
-import { getSubjectsListThunk } from '../../../Store/question-form-slice.js';
+import { notificationActions } from '../../../Store/notification-slice.js';
+import { getPostListThunk } from '../../../Store/question-form-slice.js';
+import useHttp from '../../Hooks/use-http.js';
 import CButton from '../../UI/CButton.js';
+import CModal from '../../UI/CModal.js';
 
 function AddPostModal() {
 	const postNameRef = useRef();
@@ -33,7 +33,7 @@ function AddPostModal() {
 				dispatch(
 					notificationActions.showNotification('Post added successfully')
 				);
-				dispatch(getSubjectsListThunk());
+				dispatch(getPostListThunk());
 			} else {
 				dispatch(notificationActions.showNotification('Something went wrong1'));
 			}
