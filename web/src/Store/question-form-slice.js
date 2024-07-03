@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { loaderActions } from './loader-slice.js';
-import { notificationActions } from './notification-slice.js';
+import { toast } from 'react-toastify';
 
 let initialState = {
 	data: {
@@ -150,9 +150,7 @@ export const getPostListThunk = () => {
 		} catch (error) {
 			console.log(error);
 			dispatch(loaderActions.hideLoader());
-			dispatch(
-				notificationActions.showNotification('Error getting questions list')
-			);
+			toast('Error getting questions list');
 		}
 	};
 };

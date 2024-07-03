@@ -1,12 +1,12 @@
-import * as Yup from 'yup';
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import * as Yup from 'yup';
 import { loaderActions } from '../../../Store/loader-slice.js';
 import { ModalActions } from '../../../Store/modal-slice.js';
-import { notificationActions } from '../../../Store/notification-slice.js';
 import { QuestionFormActions } from '../../../Store/question-form-slice.js';
 import CButton from '../../UI/CButton.js';
 import CModal from '../../UI/CModal.js';
+import { toast } from 'react-toastify';
 
 function AddBookModal() {
 	const bookNameRef = useRef();
@@ -35,7 +35,7 @@ function AddBookModal() {
 		let bookName = bookNameRef.current.value;
 		dispatch(loaderActions.showLoader());
 		if (!bookName) {
-			dispatch(notificationActions.showNotification('Please enter book name'));
+			toast('Please enter book name');
 			dispatch(loaderActions.hideLoader());
 			return;
 		}

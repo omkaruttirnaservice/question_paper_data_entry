@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
-import { notificationActions } from '../../Store/notification-slice';
 import { loaderActions } from '../../Store/loader-slice.js';
+import { toast } from 'react-toastify';
 const useHttp = () => {
 	const dispatch = useDispatch();
 
@@ -26,7 +26,7 @@ const useHttp = () => {
 			callback(data);
 		} catch (err) {
 			dispatch(loaderActions.hideLoader());
-			dispatch(notificationActions.showNotification('Something went wrong.'));
+			toast('Something went wrong.');
 			console.log(err);
 		}
 	};

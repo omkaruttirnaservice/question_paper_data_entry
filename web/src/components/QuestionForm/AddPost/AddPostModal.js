@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ModalActions } from '../../../Store/modal-slice.js';
-import { notificationActions } from '../../../Store/notification-slice.js';
 import { getPostListThunk } from '../../../Store/question-form-slice.js';
 import useHttp from '../../Hooks/use-http.js';
 import CButton from '../../UI/CButton.js';
 import CModal from '../../UI/CModal.js';
+import { toast } from 'react-toastify';
 
 function AddPostModal() {
 	const postNameRef = useRef();
@@ -15,7 +15,7 @@ function AddPostModal() {
 	const handlePostAdd = async () => {
 		let postName = postNameRef.current.value;
 		if (!postName) {
-			dispatch(notificationActions.showNotification('Please enter post name'));
+			toast('Please enter post name');
 			return;
 		}
 
@@ -30,12 +30,10 @@ function AddPostModal() {
 		sendRequest(requestData, (data) => {
 			dispatch(ModalActions.toggleModal('add-post-modal'));
 			if (data.success === 1) {
-				dispatch(
-					notificationActions.showNotification('Post added successfully')
-				);
+				toast('Post added successfully');
 				dispatch(getPostListThunk());
 			} else {
-				dispatch(notificationActions.showNotification('Something went wrong1'));
+				toast('Something went wrong1');
 			}
 		});
 	};

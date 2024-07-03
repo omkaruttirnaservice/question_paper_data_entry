@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { notificationActions } from '../../Store/notification-slice';
 import {
 	QuestionFormActions,
 	getSubjectsListThunk,
@@ -9,12 +8,13 @@ import useHttp from '../Hooks/use-http';
 import Loader from '../UI/Loader/Loader';
 
 import { FaRegTrashAlt } from 'react-icons/fa';
-import { GoPencil } from 'react-icons/go';
 import { FaRegFloppyDisk } from 'react-icons/fa6';
+import { GoPencil } from 'react-icons/go';
 import { IoCloseSharp } from 'react-icons/io5';
 
-import './SubjectsList.css';
 import CButton from '../UI/CButton.js';
+import './SubjectsList.css';
+import { toast } from 'react-toastify';
 function SubjectsList() {
 	const { sendRequest } = useHttp();
 	const editedSubjectName = useRef();
@@ -44,13 +44,11 @@ function SubjectsList() {
 		};
 		sendRequest(reqData, ({ success, data }) => {
 			if (success === 1) {
-				dispatch(
-					notificationActions.showNotification('Successfully deleted subject.')
-				);
+				toast('Successfully deleted subject.');
 				let subjects = subjectsList.filter((sub) => sub.id != subjectId);
 				dispatch(QuestionFormActions.setSubjectsList(subjects));
 			} else {
-				dispatch(notificationActions.showNotification('Something went wrong!'));
+				toast('Something went wrong!');
 			}
 		});
 	}
@@ -120,14 +118,14 @@ function SubjectsList() {
 														onClick={handleSaveEditedSubjectName.bind(
 															null,
 															subject.id
-														)}
-													></CButton>
+														)}></CButton>
 
 													<CButton
 														varient="btn--danger"
 														icon={<IoCloseSharp />}
-														onClick={() => setIsSubjectNameEdit(false)}
-													></CButton>
+														onClick={() =>
+															setIsSubjectNameEdit(false)
+														}></CButton>
 												</>
 											)}
 										</td>
@@ -136,14 +134,17 @@ function SubjectsList() {
 											<CButton
 												varient="btn--success"
 												icon={<FaRegTrashAlt />}
-												onClick={() => handleDeleteSubject(subject.id)}
-											></CButton>
+												onClick={() =>
+													handleDeleteSubject(subject.id)
+												}></CButton>
 
 											<CButton
 												varient="btn--danger"
 												icon={<GoPencil />}
-												onClick={handleSubjectEdit.bind(null, subject.id)}
-											></CButton>
+												onClick={handleSubjectEdit.bind(
+													null,
+													subject.id
+												)}></CButton>
 										</td>
 									</tr>
 								);

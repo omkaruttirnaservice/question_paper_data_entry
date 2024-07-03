@@ -1,12 +1,13 @@
-import * as Yup from 'yup';
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import * as Yup from 'yup';
 import { loaderActions } from '../../../Store/loader-slice.js';
 import { ModalActions } from '../../../Store/modal-slice.js';
-import { notificationActions } from '../../../Store/notification-slice.js';
 import { QuestionFormActions } from '../../../Store/question-form-slice.js';
 import CButton from '../../UI/CButton.js';
 import CModal from '../../UI/CModal.js';
+
+import { toast } from 'react-toastify';
 
 function AddPublicationModal() {
 	const publicationName = useRef();
@@ -35,9 +36,7 @@ function AddPublicationModal() {
 		let pubName = publicationName.current.value;
 		dispatch(loaderActions.showLoader());
 		if (!pubName) {
-			dispatch(
-				notificationActions.showNotification('Please enter publication name')
-			);
+			toast('Please enter publication name');
 
 			dispatch(loaderActions.hideLoader());
 			return;

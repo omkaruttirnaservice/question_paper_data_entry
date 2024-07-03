@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { notificationActions } from '../../Store/notification-slice.js';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,6 +9,7 @@ import CButton from '../UI/CButton.js';
 import ExplanationInput from './ExplanationInput.js';
 import OptionsInput from './OptionsInput.js';
 import editQuestionFormSchema from './editQuestionFormSchema.js';
+import { toast } from 'react-toastify';
 
 const EditQuestionForm = () => {
 	let { data: _formData, errors } = useSelector((state) => state.questionForm);
@@ -55,9 +55,7 @@ const EditQuestionForm = () => {
 		};
 		sendRequest(reqData, (data) => {
 			if (data.success == 1) {
-				dispatch(
-					notificationActions.showNotification('Successfully updated question')
-				);
+				toast('Successfully updated question');
 				dispatch(QuestionFormActions.setEditingFalse());
 				navigate('/questions-list');
 			}

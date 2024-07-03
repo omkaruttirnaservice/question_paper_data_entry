@@ -1,8 +1,8 @@
-import * as Yup from 'yup';
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import * as Yup from 'yup';
 import { ModalActions } from '../../../Store/modal-slice.js';
-import { notificationActions } from '../../../Store/notification-slice.js';
 import { getTopicsListThunk } from '../../../Store/question-form-slice.js';
 import useHttp from '../../Hooks/use-http.js';
 import CButton from '../../UI/CButton.js';
@@ -41,7 +41,7 @@ function AddTopicFormModal() {
 		let postId = _formData.post_id;
 
 		if (!topicName) {
-			dispatch(notificationActions.showNotification('Please enter topic name'));
+			toast('Please enter topic name');
 			return;
 		}
 
@@ -69,12 +69,10 @@ function AddTopicFormModal() {
 			console.log(data, 'data=== after adding topic');
 			if (data.success === 1) {
 				dispatch(ModalActions.toggleModal('add-topic-modal'));
-				dispatch(
-					notificationActions.showNotification('Successfully added new topic')
-				);
+				toast('Successfully added new topic');
 				dispatch(getTopicsListThunk(subjectId, sendRequest));
 			} else {
-				dispatch(notificationActions.showNotification('Something went wrong2'));
+				toast('Something went wrong2');
 			}
 		});
 	}

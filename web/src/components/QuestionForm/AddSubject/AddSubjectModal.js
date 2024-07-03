@@ -1,12 +1,12 @@
-import * as Yup from 'yup';
-import React, { useEffect, useRef, useState } from 'react';
-import CModal from '../../UI/CModal.js';
+import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { notificationActions } from '../../../Store/notification-slice.js';
-import useHttp from '../../Hooks/use-http.js';
+import * as Yup from 'yup';
 import { ModalActions } from '../../../Store/modal-slice.js';
 import { getSubjectsListThunk } from '../../../Store/question-form-slice.js';
+import useHttp from '../../Hooks/use-http.js';
 import CButton from '../../UI/CButton.js';
+import CModal from '../../UI/CModal.js';
+import { toast } from 'react-toastify';
 
 function AddSubjectModal() {
 	const subjectNameRef = useRef();
@@ -40,7 +40,7 @@ function AddSubjectModal() {
 		console.log(postId, '--');
 
 		if (!postId) {
-			dispatch(notificationActions.showNotification('Please select post'));
+			toast('Please select post');
 			return;
 		}
 
@@ -68,12 +68,10 @@ function AddSubjectModal() {
 			console.log(data, 'after adding subject');
 			dispatch(ModalActions.toggleModal('add-subject-modal'));
 			if (data.success === 1) {
-				dispatch(
-					notificationActions.showNotification('Subject added successfully')
-				);
+				toast('Subject added successfully');
 				dispatch(getSubjectsListThunk(postId, sendRequest));
 			} else {
-				dispatch(notificationActions.showNotification('Something went wrong1'));
+				toast('Something went wrong1');
 			}
 		});
 	}

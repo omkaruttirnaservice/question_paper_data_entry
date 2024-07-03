@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { notificationActions } from '../../Store/notification-slice';
 
 import { FaPlus } from 'react-icons/fa6';
 
 import { useDispatch, useSelector } from 'react-redux';
 
+import { toast } from 'react-toastify';
 import { ModalActions } from '../../Store/modal-slice.js';
 import {
 	QuestionFormActions,
@@ -121,9 +121,7 @@ const AddQuestionForm = () => {
 		};
 		sendRequest(reqData, (data) => {
 			if (data.success == 1) {
-				dispatch(
-					notificationActions.showNotification('Successfully added question')
-				);
+				toast('Successfully added question');
 				dispatch(QuestionFormActions.resetFormData());
 			}
 		});
@@ -135,7 +133,7 @@ const AddQuestionForm = () => {
 
 	const handleSubjectAddModal = () => {
 		if (_formData.post_id === '-1' || _formData.post_id === null) {
-			dispatch(notificationActions.showNotification('Please select post.'));
+			toast('Please select post.');
 			return;
 		}
 		dispatch(ModalActions.toggleModal('add-subject-modal'));
@@ -143,7 +141,7 @@ const AddQuestionForm = () => {
 
 	const handleTopicAddModal = () => {
 		if (_formData.subject_id === '-1' || _formData.subject_id === null) {
-			dispatch(notificationActions.showNotification('Please select subject.'));
+			toast('Please select subject.');
 			return;
 		}
 		dispatch(ModalActions.toggleModal('add-topic-modal'));

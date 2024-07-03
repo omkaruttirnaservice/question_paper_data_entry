@@ -1,12 +1,12 @@
-import './questionsList.css';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { GoPencil } from 'react-icons/go';
+import './questionsList.css';
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { loaderActions } from '../../Store/loader-slice';
-import { notificationActions } from '../../Store/notification-slice';
 import {
 	QuestionFormActions,
 	getSubjectsListThunk,
@@ -113,9 +113,7 @@ function QuestionsList() {
 						return que.id !== questionId;
 					})
 				);
-				dispatch(
-					notificationActions.showNotification('Successfully deleted question.')
-				);
+				toast('Successfully deleted question.');
 			} else {
 				throw new Error('Something went wrong');
 			}
