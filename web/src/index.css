@@ -93,27 +93,27 @@
 	}
 
 	.heading-1__light {
-		@apply text-3xl lg:text-6xl font-semibold mb-5 text-[#fff];
+		@apply text-3xl lg:text-3xl font-semibold mb-5 text-[#fff];
 	}
 
 	.heading-1__dark {
-		@apply text-3xl lg:text-6xl font-semibold mb-5 text-[#333];
+		@apply text-3xl lg:text-3xl font-semibold mb-5 text-[#333];
 	}
 
 	.heading-2__light {
-		@apply text-xl md:text-4xl font-semibold mb-3 md:mb-5 !text-[#fff];
+		@apply text-xl md:text-2xl font-semibold mb-3 md:mb-5 !text-[#fff];
 	}
 
 	.heading-2__dark {
-		@apply text-xl md:text-4xl font-semibold mb-3 md:mb-5 text-[#333];
+		@apply text-xl md:text-2xl font-semibold mb-3 md:mb-5 text-[#333];
 	}
 
 	.heading-3__light {
-		@apply text-sm md:text-2xl font-semibold mb-3 md:mb-5 text-[#fff];
+		@apply text-sm md:text-lg font-semibold mb-3 md:mb-5 text-[#fff];
 	}
 
 	.heading-3__dark {
-		@apply text-sm md:text-2xl font-semibold mb-3 md:mb-5 text-[#333];
+		@apply text-sm md:text-lg font-semibold mb-3 md:mb-5 text-[#333];
 	}
 
 	.heading_2_1_overlay {

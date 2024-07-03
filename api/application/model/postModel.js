@@ -1,7 +1,14 @@
 import db from '../config/db.connect.js';
 const postModel = {
 	getPostList: () => {
-		return db.query(`SELECT * FROM tm_master_test_list;`);
+		return db.query(`SELECT 
+												m_test_list.*, 
+												COUNT(m_tl.id) AS total_topics
+											FROM
+													tm_master_test_list AS m_test_list
+															LEFT JOIN
+													tm_main_topic_list AS m_tl ON m_test_list.id = m_tl.mtl_master_test_list_id
+											GROUP BY mtl_test_name;`);
 	},
 
 	addPost: (d) => {
