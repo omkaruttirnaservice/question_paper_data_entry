@@ -177,7 +177,7 @@ const AddQuestionForm = () => {
 					onSubmit={handleSaveQuestion}>
 					{/* view question button */}
 
-					<div className={`bg-white pb-6 observe-container sticky top-0 z-40`}>
+					<div className={`bg-white pb-6 sticky top-0 z-30`}>
 						<div className="grid grid-cols-4 gap-6 mb-8">
 							<div className="flex flex-col gap-1 relative">
 								<label htmlFor="">Post</label>

@@ -25,6 +25,14 @@ function QuestionPreview() {
 	} = useSelector((state) => state.questionForm);
 
 	useEffect(() => {
+		if (isQuestionPreview) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = 'unset';
+		}
+	}, [isQuestionPreview]);
+
+	useEffect(() => {
 		if (_formData.post_id) {
 			let postDetails = postsList.find((post) => post.id == _formData.post_id);
 			let subjectDetails = subjectsList.find(
