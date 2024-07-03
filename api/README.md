@@ -20,6 +20,12 @@
   type = `Admin = 1 OR else = 2`
 
 - tm_sub_topic_list = `stores sub topics of the subject`
+  stl_name=`actual topic name`
+  stl_master_test_id=`id of tm_master_test_list`
+  stl_main_topic_list_id= `subject_id`
+  stl_added_date= `added date`
+  stl_added_time= `added time`
+  stl_time_stamp= `added time stamp`
 
 - tm_mega_question_set = `stores question data`
   mqs_question = `question`
