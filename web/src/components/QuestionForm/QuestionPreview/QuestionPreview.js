@@ -123,8 +123,14 @@ function QuestionPreview() {
 			</div>
 
 			<CButton
-				className="fixed right-10 top-16 z-[100]"
-				icon={isQuestionPreview ? <FaEyeSlash /> : <FaEye />}
+				className="fixed right-2 bottom-16 z-[100]"
+				icon={
+					isQuestionPreview ? (
+						<FaEyeSlash className="text-2xl" />
+					) : (
+						<FaEye className="text-2xl" />
+					)
+				}
 				varient="btn--warning"
 				onClick={() => {
 					dispatch(QuestionFormActions.toggleQuestionPreview());
