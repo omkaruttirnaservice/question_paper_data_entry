@@ -1,24 +1,35 @@
 import db from '../config/db.connect.js';
+import { myDate } from '../config/utils.js';
 const questionModel = {
 	addNewQuestion: (data) => {
 		console.log(data, 'save question data.');
 		return db.query(
-			`INSERT INTO question 
-                        (question_content,
-                        option_A,
-                        option_B,
-                        option_C,
-                        option_D,
-                        option_E,
-                        correct_option,
-                        explanation,
-                        subject_id,     
-                        topic_id, 
-                        pub_name, 
-                        pg_no
+			`INSERT INTO tm_mega_question_set 
+                        (mqs_question, 
+                        mqs_opt_one, 
+                        mqs_opt_two, 
+                        mqs_opt_three, 
+                        mqs_opt_four, 
+                        mqs_opt_five,
+                        mqs_type,
+                        mqs_ans,
+                        mqs_solution, 
+                        mqs_leval, 
+                        mqs_added_by, 
+                        mqs_section_id, 
+                        mqs_chapter_id, 
+                        mqs_added_date, 
+                        mqs_added_time, 
+                        mqs_added_time_stamp, 
+                        mqs_is_trash, 
+                        msq_publication_name, 
+                        msq_book_name, 
+                        maq_page_number, 
+                        mqs_ask_in_month, 
+                        mqs_ask_in_year
                         )
                     VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			[
 				data.question_content,
 				data.option_A,
@@ -26,12 +37,22 @@ const questionModel = {
 				data.option_C,
 				data.option_D,
 				data.option_E,
+				'1', // hard coding value to 1 because of mcq question type
 				data.correct_option,
 				data.explanation,
+				data.difficulty,
+				'1', // hard coding to 1 because of added by admin
 				data.subject_id,
 				data.topic_id,
+				myDate.getDate(),
+				myDate.getTime(),
+				myDate.getTimeStamp(),
+				'0', // hard coding to 1 becuase question is not trash
 				data.pub_name,
+				data.book_name,
 				data.pg_no,
+				data.month,
+				data.year,
 			]
 		);
 	},

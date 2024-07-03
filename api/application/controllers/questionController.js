@@ -7,36 +7,7 @@ import { sendError, sendSuccess } from '../utils/commonFunctions.js';
 const questionController = {
 	addNewQuestion: async (req, res) => {
 		try {
-			// const {
-			//     question_content,
-			//     option_A,
-			//     option_B,
-			//     option_C,
-			//     option_D,
-			//     option_E,
-			//     correct_option,
-			//     explanation,
-			//     subject_id,
-			//     topic_id,
-			// } = req.body;
-			// if (
-			//     !isNonEmptyNullString(question_content) ||
-			//     !isNonEmptyNullString(option_A) ||
-			//     !isNonEmptyNullString(option_B) ||
-			//     !isNonEmptyNullString(option_C) ||
-			//     !isNonEmptyNullString(option_D) ||
-			//     !isNonEmptyNullString(correct_option) ||
-			//     !isNumber(subject_id) ||
-			//     !isNumber(topic_id)
-			// ) {
-			//     return res.status(400).json({
-			//         success: 0,
-			//         message: `Bad Request. All fields are required`,
-			//     });
-			// }
-
 			let response = await questionModel.addNewQuestion(req.body);
-
 			if (response[0].affectedRows === 0)
 				throw new Error('Question was not saved');
 			return sendSuccess(res);

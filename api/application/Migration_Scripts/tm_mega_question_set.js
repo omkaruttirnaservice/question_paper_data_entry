@@ -36,40 +36,26 @@ const tm_mega_question_set = sequelize.define('tm_mega_question_set', {
 	mqs_opt_five: {
 		type: TEXT('long'),
 	},
-	mqs_opt_six: {
-		type: TEXT('long'),
-	},
-	mqs_is_image: {
-		type: TEXT('long'),
-	},
 	mqs_type: {
 		type: INTEGER,
 	},
-	mqs_ask_in: {
-		type: TEXT('long'),
+	mqs_ask_in_month: {
+		type: STRING('10'),
 	},
-	mqs_matrix_id: {
-		type: BIGINT,
+	mqs_ask_in_year: {
+		type: STRING(4),
 	},
-	mqs_question_data: {
-		type: INTEGER,
-	},
+
 	mqs_ans: {
 		type: TEXT('long'),
 	},
 	mqs_solution: {
 		type: TEXT('long'),
 	},
-	msqs_is_sol_image: {
-		type: TEXT('long'),
-	},
 	mqs_leval: {
 		type: STRING(255),
 	},
 	mqs_added_by: {
-		type: INTEGER,
-	},
-	mqs_col_count: {
 		type: INTEGER,
 	},
 	mqs_section_id: {

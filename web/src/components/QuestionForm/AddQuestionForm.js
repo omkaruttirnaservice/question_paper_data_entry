@@ -27,11 +27,23 @@ import QuestionPreview from './QuestionPreview/QuestionPreview.js';
 import addQuestionFormSchema from './addQuestionFormSchema.js';
 
 const AddQuestionForm = () => {
+	// prettier-ignore
+	const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec', ];
+	const [years, setYears] = useState([]);
+
+	useState(() => {
+		let _y = [];
+		let _currentYear = new Date().getFullYear();
+		for (let i = _currentYear; i >= 2000; i--) {
+			_y.push(i);
+		}
+		setYears(_y);
+	}, []);
+
 	let {
 		data: _formData,
 		subjectsList,
 		topicsList,
-		questionNumber,
 		errors,
 		postsList,
 		publicationsList,
@@ -239,8 +251,29 @@ const AddQuestionForm = () => {
 									<div className=" error">{errors.topic_id}</div>
 								)}
 							</div>
+
+							<div className="flex flex-col gap-1 relative">
+								<label htmlFor="">Difficulty</label>
+								<div className="flex">
+									<select
+										className="input-el grow w-48"
+										name="difficulty"
+										onChange={handleChange}>
+										<option value="" className="">
+											-- Select --
+										</option>
+										<option value="1">Easy</option>
+										<option value="2">Medium</option>
+										<option value="3">Hard</option>
+									</select>
+								</div>
+
+								{errors.difficulty && (
+									<div className=" error">{errors.difficulty}</div>
+								)}
+							</div>
 						</div>
-						<div className="grid grid-cols-4 gap-6 ">
+						<div className="grid grid-cols-5 gap-6 ">
 							<div className="flex flex-col gap-1 relative ">
 								<label htmlFor="pub-name">Publication Name</label>
 
@@ -309,6 +342,45 @@ const AddQuestionForm = () => {
 									value={_formData.pg_no}
 								/>
 								{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
+							</div>
+
+							<div className="flex flex-col gap-1 relative">
+								<label htmlFor="">Month</label>
+								<div className="flex">
+									<select
+										className="input-el grow w-48"
+										name="month"
+										onChange={handleChange}>
+										<option value="" className="">
+											-- Select --
+										</option>
+										{months.map((el) => {
+											return <option value={el}>{el}</option>;
+										})}
+									</select>
+								</div>
+
+								{errors.month && <div className=" error">{errors.month}</div>}
+							</div>
+
+							<div className="flex flex-col gap-1 relative">
+								<label htmlFor="">Year</label>
+								<div className="flex">
+									<select
+										className="input-el grow w-48"
+										name="year"
+										onChange={handleChange}>
+										<option value="" className="">
+											-- Select --
+										</option>
+										{years.length >= 1 &&
+											years.map((_y) => {
+												return <option value={_y}>{_y}</option>;
+											})}
+									</select>
+								</div>
+
+								{errors.month && <div className=" error">{errors.month}</div>}
 							</div>
 						</div>
 					</div>
