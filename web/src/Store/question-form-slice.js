@@ -46,6 +46,22 @@ const QuestionFormSlice = createSlice({
 			state.data[key] = value;
 		},
 
+		resetFormData(state, action) {
+			console.log(1, '==1==');
+			state.data.pg_no = null;
+			state.data.question_content = null;
+			state.data.option_A = null;
+			state.data.option_B = null;
+			state.data.option_C = null;
+			state.data.option_D = null;
+			state.data.option_E = null;
+			state.data.correct_option = null;
+			state.data.explanation = null;
+			state.data.difficulty = null;
+			state.data.month = null;
+			state.data.year = null;
+		},
+
 		setPublicationsList(state, action) {
 			state.publicationsList = action.payload;
 		},

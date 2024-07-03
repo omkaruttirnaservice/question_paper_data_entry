@@ -124,6 +124,7 @@ const AddQuestionForm = () => {
 				dispatch(
 					notificationActions.showNotification('Successfully added question')
 				);
+				dispatch(QuestionFormActions.resetFormData());
 			}
 		});
 	}
