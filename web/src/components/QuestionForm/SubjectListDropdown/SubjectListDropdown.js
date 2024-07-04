@@ -6,7 +6,7 @@ import { ModalActions } from '../../../Store/modal-slice.js';
 import { FaPlus } from 'react-icons/fa';
 import { QuestionFormActions } from '../../../Store/question-form-slice.js';
 
-function SubjectListDropdown() {
+function SubjectListDropdown({ isShowAddNewBtn = true }) {
 	const dispatch = useDispatch();
 	const {
 		data: _formData,
@@ -22,7 +22,11 @@ function SubjectListDropdown() {
 		);
 	};
 	const handleSubjectAddModal = () => {
-		if (_formData.post_id === '-1' || _formData.post_id === null) {
+		if (
+			_formData.post_id === '-1' ||
+			_formData.post_id === null ||
+			_formData.post_id == ''
+		) {
 			toast('Please select post.');
 			return;
 		}
@@ -32,7 +36,9 @@ function SubjectListDropdown() {
 		<div className="flex flex-col gap-1 relative">
 			<label htmlFor="">Subject</label>
 			<div className="flex">
-				<CButton onClick={handleSubjectAddModal} icon={<FaPlus />} />
+				{isShowAddNewBtn && (
+					<CButton onClick={handleSubjectAddModal} icon={<FaPlus />} />
+				)}
 				<select
 					id="subject-id"
 					className="input-el grow w-48"

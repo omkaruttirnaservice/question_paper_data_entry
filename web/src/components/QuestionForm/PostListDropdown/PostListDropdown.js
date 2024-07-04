@@ -5,7 +5,7 @@ import { ModalActions } from '../../../Store/modal-slice.js';
 import { FaPlus } from 'react-icons/fa';
 import { QuestionFormActions } from '../../../Store/question-form-slice.js';
 
-function PostListDropdown() {
+function PostListDropdown({ isShowAddNewBtn = true }) {
 	const dispatch = useDispatch();
 	const { postsList, errors } = useSelector((state) => state.questionForm);
 	const handleChange = async (e) => {
@@ -25,7 +25,9 @@ function PostListDropdown() {
 		<div className="flex flex-col gap-1 relative">
 			<label htmlFor="">Post</label>
 			<div className="flex">
-				<CButton onClick={handlePostAddModal} icon={<FaPlus />} />
+				{isShowAddNewBtn && (
+					<CButton onClick={handlePostAddModal} icon={<FaPlus />} />
+				)}
 				<select
 					id="post-id"
 					className="input-el grow w-48"

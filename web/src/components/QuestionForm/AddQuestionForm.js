@@ -8,6 +8,7 @@ import {
 	getBooksListThunk,
 	getPostListThunk,
 	getPublicationsListThunk,
+	getQuestionNumberThunk,
 	getSubjectsListThunk,
 	getTopicsListThunk,
 } from '../../Store/question-form-slice.js';
@@ -33,39 +34,24 @@ import TopicListDropdown from './TopicListDropdown/TopicListDropdown.js';
 import addQuestionFormSchema from './addQuestionFormSchema.js';
 
 const AddQuestionForm = () => {
-	let { data: _formData } = useSelector((state) => state.questionForm);
 	const dispatch = useDispatch();
-
 	const { sendRequest } = useHttp();
+	let { data: _formData } = useSelector((state) => state.questionForm);
 
 	const [showNewInputField, setShowNewInputField] = useState(false);
 
-	const getSubjectList = async () => {
-		dispatch(getSubjectsListThunk(_formData.post_id, sendRequest));
-	};
-
-	const getTopicList = async () => {
-		dispatch(getTopicsListThunk(_formData.subject_id, sendRequest));
-	};
-
-	const getQuestionNumber = async () => {
-		let response = await fetch('/questions/get-question-number');
-		let { data } = await response.json();
-		dispatch(QuestionFormActions.setQuestionNumber(data.total_questions));
-	};
-
 	useEffect(() => {
-		dispatch(getPublicationsListThunk(sendRequest));
+		dispatch(getQuestionNumberThunk());
 		dispatch(getPostListThunk());
-		getQuestionNumber();
+		dispatch(getPublicationsListThunk(sendRequest));
 	}, []);
 
 	useEffect(() => {
-		getSubjectList();
+		dispatch(getSubjectsListThunk(_formData.post_id, sendRequest));
 	}, [_formData.post_id]);
 
 	useEffect(() => {
-		getTopicList();
+		dispatch(getTopicsListThunk(_formData.subject_id, sendRequest));
 	}, [_formData.subject_id]);
 
 	useEffect(() => {

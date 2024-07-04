@@ -118,30 +118,15 @@ const questionModel = {
 		return db.query(`SELECT COUNT(id) AS total_questions FROM question;`);
 	},
 
-	getQuestionList: (subjectId, topicId) => {
+	getQuestionList: (d) => {
+		console.log(d, 'in model');
 		const q = `SELECT 
-                        question.id, 
-                        question_content,
-                        option_A,
-                        option_B,
-                        option_C,
-                        option_D,
-                        option_E,
-                        correct_option,
-                        explanation, 
-                        subject_name, 
-                        topic_name,
-                        pub_name,
-                        pg_no
-                    FROM question 
-                    
-                    INNER JOIN subject as sub ON 
-                    question.subject_id = sub.id 
-                    INNER JOIN topic ON 
-                    question.topic_id = topic.id
-                    WHERE question.subject_id = ? AND question.topic_id = ?`;
+                        *
+                    FROM tm_mega_question_set AS mqs
+                    WHERE 
+                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ?`;
 
-		return db.query(q, [subjectId, topicId]);
+		return db.query(q, [+d.subject_id, +d.topic_id]);
 	},
 
 	getPublicationList: async () => {

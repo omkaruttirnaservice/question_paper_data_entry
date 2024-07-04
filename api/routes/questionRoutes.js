@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post('/add-question', questionController.addNewQuestion);
 
-router.post('/get-question-list', questionController.getQuestionList);
+router.post('/list', questionController.getQuestionList);
 
 router.get('/get-question-number', questionController.getQuestionNumber);
 

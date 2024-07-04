@@ -103,6 +103,14 @@ const QuestionFormSlice = createSlice({
 	},
 });
 
+export const getQuestionNumberThunk = () => {
+	return async (dispatch) => {
+		let response = await fetch('/questions/get-question-number');
+		let { data } = await response.json();
+		dispatch(QuestionFormActions.setQuestionNumber(data.total_questions));
+	};
+};
+
 export const getBooksListThunk = (pubName, sendRequest) => {
 	return async (dispatch) => {
 		let requestData = {

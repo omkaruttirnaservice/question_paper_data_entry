@@ -1,12 +1,36 @@
-import { FaEye } from 'react-icons/fa';
-import CButton from '../UI/CButton.js';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPostListThunk } from '../../Store/question-form-slice.js';
+import { useEffect, useState } from 'react';
+import { FaGripLinesVertical } from 'react-icons/fa';
 
+import { FaAngleRight } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	getPostListThunk,
+	getSubjectsListThunk,
+	getTopicsListThunk,
+} from '../../Store/question-form-slice.js';
+import useHttp from '../Hooks/use-http.js';
+import PostListDropdown from '../QuestionForm/PostListDropdown/PostListDropdown.js';
+import SubjectListDropdown from '../QuestionForm/SubjectListDropdown/SubjectListDropdown.js';
+import TopicListDropdown from '../QuestionForm/TopicListDropdown/TopicListDropdown.js';
+
+import {
+	Accordion,
+	AccordionItem,
+	AccordionItemButton,
+	AccordionItemHeading,
+	AccordionItemPanel,
+} from 'react-accessible-accordion';
 function Dashboard() {
 	const dispatch = useDispatch();
-	const { postsList } = useSelector((state) => state.questionForm);
+
+	const {
+		data: _formData,
+		postsList,
+		subjectsList,
+		topicsList,
+	} = useSelector((state) => state.questionForm);
+
+	const { sendRequest } = useHttp();
 
 	useEffect(() => {
 		if (postsList.length === 0) {
@@ -14,8 +38,182 @@ function Dashboard() {
 		}
 	}, []);
 
+	useEffect(() => {
+		dispatch(getSubjectsListThunk(_formData.post_id, sendRequest));
+	}, [_formData.post_id]);
+
+	useEffect(() => {
+		dispatch(getTopicsListThunk(_formData.subject_id, sendRequest));
+	}, [_formData.subject_id]);
+
+	const [questionList, setQuestionList] = useState([]);
+
+	async function getQuestions() {
+		let reqData = {
+			url: '/questions/list',
+			method: 'POST',
+			body: JSON.stringify({
+				post_id: _formData.post_id,
+				subject_id: _formData.subject_id,
+				topic_id: _formData.topic_id,
+			}),
+		};
+		sendRequest(reqData, (data) => {
+			setQuestionList(data.data);
+			console.log(data, '---');
+		});
+	}
+
+	useEffect(() => {
+		if (!_formData.topic_id && !_formData.subject_id && !_formData.topic_id) {
+			return;
+		}
+		getQuestions();
+	}, [_formData.topic_id]);
+
 	return (
 		<>
+			<div className="container mx-auto mt-6">
+				<div className="grid grid-cols-5 gap-3 mb-6">
+					<PostListDropdown isShowAddNewBtn={false} />
+					<SubjectListDropdown isShowAddNewBtn={false} />
+					<TopicListDropdown isShowAddNewBtn={false} />
+				</div>
+
+				<div className="bg-cyan-100 px-4">
+					<div className="flex items-center py-3 gap-3">
+						<p>Total posts</p>
+						<FaAngleRight />
+						<span className="underline">{postsList.length}</span>
+
+						<FaGripLinesVertical />
+						<p>Total Subjets</p>
+						<FaAngleRight />
+						<span className="underline">{subjectsList.length}</span>
+
+						<FaGripLinesVertical />
+						<p>Total Topics</p>
+						<FaAngleRight />
+						<span className="underline">{topicsList.length}</span>
+					</div>
+				</div>
+			</div>
+
+			<div className="container mx-auto mt-6">
+				<Accordion allowZeroExpanded={true}>
+					{questionList.length >= 1 &&
+						questionList.map((el, idx) => {
+							return (
+								<AccordionItem className="border  mb-1" key={idx}>
+									<AccordionItemHeading className="border-b py-3 bg-gray-200 px-4">
+										<AccordionItemButton>
+											<span>Question: {el.id}</span>
+										</AccordionItemButton>
+									</AccordionItemHeading>
+									<AccordionItemPanel className="py-3 px-4">
+										<div className="py-3">
+											<span className="font-bold text-[#555] mb-4 block">
+												Question
+											</span>
+											<p
+												dangerouslySetInnerHTML={{
+													__html: el.mqs_question,
+												}}></p>
+										</div>
+
+										<div className="py-3">
+											<span className="font-bold text-[#555] mb-4 block">
+												Option A
+											</span>
+
+											<p
+												dangerouslySetInnerHTML={{
+													__html: el.mqs_opt_one,
+												}}></p>
+										</div>
+
+										<hr />
+
+										<div className="py-3">
+											<span className="font-bold text-[#555] mb-4 block">
+												Option B
+											</span>
+
+											<p
+												dangerouslySetInnerHTML={{
+													__html: el.mqs_opt_two,
+												}}></p>
+										</div>
+
+										<hr />
+
+										<div className="py-3">
+											<span className="font-bold text-[#555] mb-4 block">
+												Option C
+											</span>
+											<p
+												dangerouslySetInnerHTML={{
+													__html: el.mqs_opt_three,
+												}}></p>
+										</div>
+
+										<hr />
+
+										<div className="py-3">
+											<span className="font-bold text-[#555] mb-4 block">
+												Option D
+											</span>
+											<p
+												dangerouslySetInnerHTML={{
+													__html: el.mqs_opt_four,
+												}}></p>
+										</div>
+
+										<hr />
+
+										{el.mqs_opt_five && (
+											<div className="py-3">
+												<span className="font-bold text-[#555] mb-4 block">
+													Option E
+												</span>
+												<p
+													dangerouslySetInnerHTML={{
+														__html: el.mqs_opt_five,
+													}}></p>
+											</div>
+										)}
+
+										<hr />
+
+										<div className="py-3">
+											<span className="font-bold text-[#555] mb-4 me-3">
+												Correct Option
+											</span>
+											<span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
+												{el.mqs_ans}
+											</span>
+										</div>
+
+										<hr />
+
+										{el.mqs_solution && (
+											<div className="py-3">
+												<span className="font-bold text-[#555] my-4 block">
+													Solution
+												</span>
+												<p
+													dangerouslySetInnerHTML={{
+														__html: el.mqs_solution,
+													}}></p>
+											</div>
+										)}
+									</AccordionItemPanel>
+								</AccordionItem>
+							);
+						})}
+				</Accordion>
+			</div>
+
 			{/* <div className="container mx-auto mt-6">
 				<h3 className="heading-3__dark ">Post List</h3>
 				<div class="relative overflow-x-auto">

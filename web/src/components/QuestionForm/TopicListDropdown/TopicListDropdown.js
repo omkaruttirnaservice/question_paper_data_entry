@@ -6,7 +6,7 @@ import { ModalActions } from '../../../Store/modal-slice.js';
 import CButton from '../../UI/CButton.js';
 import { FaPlus } from 'react-icons/fa';
 
-function TopicListDropdown() {
+function TopicListDropdown({ isShowAddNewBtn = true }) {
 	const dispatch = useDispatch();
 	const {
 		data: _formData,
@@ -22,7 +22,11 @@ function TopicListDropdown() {
 		);
 	};
 	const handleTopicAddModal = () => {
-		if (_formData.subject_id === '-1' || _formData.subject_id === null) {
+		if (
+			_formData.subject_id === '-1' ||
+			_formData.subject_id === null ||
+			_formData.subject_id == ''
+		) {
 			toast('Please select subject.');
 			return;
 		}
@@ -32,7 +36,9 @@ function TopicListDropdown() {
 		<div className="flex flex-col gap-1 relative">
 			<label htmlFor="">Topic</label>
 			<div className="flex">
-				<CButton onClick={handleTopicAddModal} icon={<FaPlus />} />
+				{isShowAddNewBtn && (
+					<CButton onClick={handleTopicAddModal} icon={<FaPlus />} />
+				)}
 				<select
 					className="input-el grow w-48"
 					name="topic_id"
