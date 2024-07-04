@@ -25,9 +25,14 @@ const useHttp = () => {
 			// THIS FUNCTION IS FOR GETTING RESPONSE RECIVED FROM THE REQUEST
 			callback(data);
 		} catch (err) {
-			dispatch(loaderActions.hideLoader());
-			toast('Something went wrong.');
 			console.log(err);
+			dispatch(loaderActions.hideLoader());
+			if ((err.message = 'Failed to fetch')) {
+				console.log('Unable to connect to backend');
+				toast(err.message);
+			} else {
+				toast('Something went wrong.');
+			}
 		}
 	};
 	return {
