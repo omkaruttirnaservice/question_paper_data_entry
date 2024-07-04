@@ -77,19 +77,16 @@ const questionController = {
 
 	getQuestionList: async (req, res) => {
 		try {
-			const { subjectId, topicId } = req.body;
-			const questionList = await questionModel.getQuestionList(
-				+subjectId,
-				+topicId
-			);
+			const { post_id, subject_id, topic_id } = req.body;
+			const questionList = await questionModel.getQuestionList({
+				post_id,
+				subject_id,
+				topic_id,
+			});
 			return sendSuccess(res, questionList[0]);
 		} catch (err) {
 			console.log('Error whlie fetching the questions: ', err);
-			return res.status(500).json({
-				success: 0,
-				message: 'Internal server error',
-				error: `ERROR : ${err}`,
-			});
+			return sendError(res, err);
 		}
 	},
 
