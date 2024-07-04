@@ -33,29 +33,12 @@ import TopicListDropdown from './TopicListDropdown/TopicListDropdown.js';
 import addQuestionFormSchema from './addQuestionFormSchema.js';
 
 const AddQuestionForm = () => {
-	let {
-		data: _formData,
-		subjectsList,
-		topicsList,
-		errors,
-		postsList,
-		publicationsList,
-		bookNamesList,
-	} = useSelector((state) => state.questionForm);
+	let { data: _formData } = useSelector((state) => state.questionForm);
 	const dispatch = useDispatch();
 
 	const { sendRequest } = useHttp();
 
 	const [showNewInputField, setShowNewInputField] = useState(false);
-
-	const handleChange = async (e) => {
-		dispatch(
-			QuestionFormActions.handleInputChange({
-				key: e.target.name,
-				value: e.target.value,
-			})
-		);
-	};
 
 	const getSubjectList = async () => {
 		dispatch(getSubjectsListThunk(_formData.post_id, sendRequest));
