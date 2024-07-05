@@ -115,7 +115,9 @@ const questionModel = {
 	},
 
 	getQuestionNumber: () => {
-		return db.query(`SELECT COUNT(id) AS total_questions FROM question;`);
+		return db.query(
+			`SELECT COUNT(id) AS total_questions FROM tm_mega_question_set;`
+		);
 	},
 
 	getQuestionList: (d) => {

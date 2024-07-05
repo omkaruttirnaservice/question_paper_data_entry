@@ -49,6 +49,21 @@ function QuestionPreview() {
 			});
 		}
 	}, [_formData.post_id, _formData.subject_id, _formData.topic_id]);
+
+	const handleKeyPress = (e) => {
+		let key = e.key;
+		if (e.altKey && key.toLowerCase() == 'p') {
+			dispatch(QuestionFormActions.toggleQuestionPreview());
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener('keydown', handleKeyPress);
+		return () => {
+			document.removeEventListener('keydown', handleKeyPress);
+		};
+	}, [handleKeyPress]);
+
 	return (
 		<>
 			{isQuestionPreview && (
@@ -90,21 +105,30 @@ function QuestionPreview() {
 						}}
 						className="mb-2 bg-gray-50 p-3"></div>
 					<p className="font-bold">Option A</p>
-					<div dangerouslySetInnerHTML={{ __html: _formData.option_A }}></div>
+					<div
+						className="mb-2 bg-gray-50 p-3"
+						dangerouslySetInnerHTML={{ __html: _formData.option_A }}></div>
 
 					<p className="font-bold">Option B</p>
-					<div dangerouslySetInnerHTML={{ __html: _formData.option_B }}></div>
+					<div
+						className="mb-2 bg-gray-50 p-3"
+						dangerouslySetInnerHTML={{ __html: _formData.option_B }}></div>
 
 					<p className="font-bold">Option C</p>
-					<div dangerouslySetInnerHTML={{ __html: _formData.option_C }}></div>
+					<div
+						className="mb-2 bg-gray-50 p-3"
+						dangerouslySetInnerHTML={{ __html: _formData.option_C }}></div>
 
 					<p className="font-bold">Option D</p>
-					<div dangerouslySetInnerHTML={{ __html: _formData.option_D }}></div>
+					<div
+						className="mb-2 bg-gray-50 p-3"
+						dangerouslySetInnerHTML={{ __html: _formData.option_D }}></div>
 
 					{_formData.option_E && (
 						<>
 							<p className="font-bold">Option E</p>
 							<div
+								className="mb-2 bg-gray-50 p-3"
 								dangerouslySetInnerHTML={{ __html: _formData.option_E }}></div>
 						</>
 					)}
@@ -118,6 +142,7 @@ function QuestionPreview() {
 
 					<p className="font-bold">Explanation</p>
 					<div
+						className="mb-2 bg-gray-50 p-3"
 						dangerouslySetInnerHTML={{ __html: _formData.explanation }}></div>
 				</div>
 			</div>
