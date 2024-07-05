@@ -107,6 +107,7 @@ const questionController = {
 			let [booksList] = await questionModel.getBooksList(pubName);
 			return sendSuccess(res, booksList);
 		} catch (error) {
+			console.log(error, '-error');
 			return sendError(res, err);
 		}
 	},

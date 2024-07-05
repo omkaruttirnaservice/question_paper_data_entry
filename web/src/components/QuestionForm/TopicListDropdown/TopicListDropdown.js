@@ -27,7 +27,7 @@ function TopicListDropdown({ isShowAddNewBtn = true }) {
 			_formData.subject_id === null ||
 			_formData.subject_id == ''
 		) {
-			toast('Please select subject.');
+			toast('Please select subect.');
 			return;
 		}
 		dispatch(ModalActions.toggleModal('add-topic-modal'));

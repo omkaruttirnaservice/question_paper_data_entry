@@ -40,33 +40,6 @@ const subjectController = {
 		}
 	},
 
-	postEditSubjectName: async (req, res) => {
-		try {
-			const { newSubjectName, subjectId } = req.body;
-			const response = await subjectModel.postEditSubjectName(
-				newSubjectName,
-				subjectId
-			);
-			if (response[0].affectedRows === 1) {
-				sendSuccess(res);
-			}
-		} catch (error) {
-			sendError(res, error);
-		}
-	},
-
-	deleteSubject: async function (req, res) {
-		try {
-			const { subjectId } = req.body;
-			const response = await subjectModel.deleteSubject(subjectId);
-			if (response[0].affectedRows === 1) {
-				sendSuccess(res);
-			}
-		} catch (error) {
-			sendError(res, error);
-		}
-	},
-
 	getTopicList: async function (req, res) {
 		try {
 			const subjectId = req.body.subjectId;

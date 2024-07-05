@@ -12,16 +12,6 @@ const subjectModel = {
 			`,
 			[post_id]
 		);
-		// return db.query(`
-		// 	SELECT
-		// 		sub.id id,
-		// 		subject_name,
-		// 		count(que.id) que_count
-		// 	FROM subject sub
-		// 	LEFT JOIN question que
-		// 	ON sub.id = que.subject_id
-		// 	GROUP BY sub.id;
-		// 	`);
 	},
 
 	addSubject: function (d) {
@@ -47,17 +37,6 @@ const subjectModel = {
 				d.type,
 			]
 		);
-	},
-
-	postEditSubjectName: function (newSubjectName, subjectId) {
-		return db.query(`UPDATE subject SET subject_name = ? WHERE id = ?`, [
-			newSubjectName,
-			subjectId,
-		]);
-	},
-
-	deleteSubject: function (subjectId) {
-		return db.query('DELETE FROM subject WHERE id = ?', subjectId);
 	},
 
 	getTopicList: function (subjectId) {
