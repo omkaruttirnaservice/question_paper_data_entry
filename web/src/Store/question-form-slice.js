@@ -71,11 +71,20 @@ const QuestionFormSlice = createSlice({
 		},
 
 		setPostsList(state, action) {
+			state.data.subject_id = null;
+			state.data.topic_id = null;
 			state.postsList = action.payload;
 		},
 
 		setSubjectsList(state, action) {
-			state.subjectsList = action.payload;
+			console.log(action.payload, 'subjects list');
+			let _subjectsList = action.payload;
+			if (_subjectsList.length === 0) {
+				state.data.topic_id = null;
+				state.topicsList = [];
+			}
+
+			state.subjectsList = _subjectsList;
 		},
 
 		setTopicsList(state, action) {

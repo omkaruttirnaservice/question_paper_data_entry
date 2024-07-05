@@ -7,7 +7,11 @@ import { QuestionFormActions } from '../../../Store/question-form-slice.js';
 
 function PostListDropdown({ isShowAddNewBtn = true }) {
 	const dispatch = useDispatch();
-	const { postsList, errors } = useSelector((state) => state.questionForm);
+	const {
+		data: _formData,
+		postsList,
+		errors,
+	} = useSelector((state) => state.questionForm);
 	const handleChange = async (e) => {
 		dispatch(
 			QuestionFormActions.handleInputChange({
@@ -38,7 +42,10 @@ function PostListDropdown({ isShowAddNewBtn = true }) {
 					</option>
 					{postsList.length >= 1 &&
 						postsList?.map((subject, i) => (
-							<option key={i} value={subject.id}>
+							<option
+								key={i}
+								value={subject.id}
+								selected={subject.id == _formData.post_id}>
 								{subject.mtl_test_name}
 							</option>
 						))}

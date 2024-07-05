@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
+import { BiReset } from 'react-icons/bi';
+
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { FaGripLinesVertical } from 'react-icons/fa';
+
+import { FaTrash } from 'react-icons/fa';
 
 import { FaAngleRight } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +25,8 @@ import {
 	AccordionItemHeading,
 	AccordionItemPanel,
 } from 'react-accessible-accordion';
-function Dashboard() {
+import Swal from 'sweetalert2';
+function TrashQuestionsList() {
 	const dispatch = useDispatch();
 
 	const {
@@ -29,6 +35,7 @@ function Dashboard() {
 		subjectsList,
 		topicsList,
 	} = useSelector((state) => state.questionForm);
+	const { isLoading } = useSelector((state) => state.loader);
 
 	const { sendRequest } = useHttp();
 
@@ -50,7 +57,7 @@ function Dashboard() {
 
 	async function getQuestions() {
 		let reqData = {
-			url: '/questions/list',
+			url: '/questions/list-trash',
 			method: 'POST',
 			body: JSON.stringify({
 				post_id: _formData.post_id,
@@ -70,6 +77,79 @@ function Dashboard() {
 		}
 		getQuestions();
 	}, [_formData.topic_id]);
+
+	const handleDeleteQuestion = (id) => {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: 'This question will delete permently!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Yes',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				confirmDeleteQuestionPermenant(id);
+			}
+		});
+	};
+
+	const confirmDeleteQuestionPermenant = (id) => {
+		let reqData = {
+			url: '/questions/delete-permenant',
+			method: 'DELETE',
+			body: JSON.stringify({ questionId: id }),
+		};
+		sendRequest(reqData, (data) => {
+			if (data.success == 1) {
+				setQuestionList(questionList.filter((el) => el.id != id));
+				Swal.fire({
+					title: 'Deleted!',
+					text: 'Question has been removed permenantly.',
+					icon: 'success',
+				});
+			}
+		});
+	};
+
+	const handleRestoreQuestion = (id) => {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: 'Question will restored!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Yes',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				confirmRestoreQuestion(id);
+			}
+		});
+	};
+
+	const confirmRestoreQuestion = (id) => {
+		let reqData = {
+			url: '/questions/restore',
+			method: 'DELETE',
+			body: JSON.stringify({ questionId: id }),
+		};
+		sendRequest(reqData, (data) => {
+			if (data.success == 1) {
+				setQuestionList(questionList.filter((el) => el.id != id));
+				Swal.fire({
+					title: 'Successful!',
+					text: 'Question has been restored.',
+					icon: 'success',
+				});
+			}
+		});
+	};
+
+	const [expandedItem, setExpandedItem] = useState(null);
+	const handleAccordionChange = (e) => {
+		if (e == expandedItem) {
+			setExpandedItem(null);
+		} else {
+			setExpandedItem(e);
+		}
+	};
 
 	return (
 		<>
@@ -100,14 +180,37 @@ function Dashboard() {
 			</div>
 
 			<div className="container mx-auto mt-6">
-				<Accordion allowZeroExpanded={true}>
+				{isLoading && (
+					<AiOutlineLoading3Quarters className="animate-spin text-2xl m-3 mx-auto" />
+				)}
+				{!isLoading && questionList.length === 0 && (
+					<p className="text-center text-[#555]">Woops! no questions found!</p>
+				)}
+				<Accordion allowZeroExpanded={true} onChange={handleAccordionChange}>
 					{questionList.length >= 1 &&
 						questionList.map((el, idx) => {
 							return (
-								<AccordionItem className="border  mb-1" key={idx}>
-									<AccordionItemHeading className="border-b py-3 bg-gray-200 px-4">
+								<AccordionItem className="border  mb-1" key={idx} uuid={idx}>
+									<AccordionItemHeading
+										className={`border-b py-3 bg-gray-200 px-4 ${
+											expandedItem == idx ? 'bg-cyan-500' : ''
+										}`}>
 										<AccordionItemButton>
-											<span>Question: {el.id}</span>
+											<div className="flex justify-between items-center">
+												<span>Question: {el.id}</span>
+
+												<div className="flex items-center gap-5">
+													<BiReset
+														className="text-green-800 text-xl hover:scale-[1.2] transition-all duration-300"
+														onClick={handleRestoreQuestion.bind(null, el.id)}
+													/>
+
+													<FaTrash
+														className="text-red-800 hover:scale-[1.2] transition-all duration-300"
+														onClick={handleDeleteQuestion.bind(null, el.id)}
+													/>
+												</div>
+											</div>
 										</AccordionItemButton>
 									</AccordionItemHeading>
 									<AccordionItemPanel className="py-3 px-4">
@@ -273,4 +376,4 @@ function Dashboard() {
 	);
 }
 
-export default Dashboard;
+export default TrashQuestionsList;

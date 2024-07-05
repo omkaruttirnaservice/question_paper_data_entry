@@ -49,7 +49,10 @@ function SubjectListDropdown({ isShowAddNewBtn = true }) {
 					</option>
 					{subjectsList.length >= 1 &&
 						subjectsList?.map((subject, i) => (
-							<option key={i} value={subject.id}>
+							<option
+								key={i}
+								value={subject.id}
+								selected={subject.id == _formData.subject_id}>
 								{subject.mtl_name}
 							</option>
 						))}

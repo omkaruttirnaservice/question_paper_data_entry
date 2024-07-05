@@ -47,7 +47,10 @@ function TopicListDropdown({ isShowAddNewBtn = true }) {
 						-- Select --
 					</option>
 					{topicsList?.map((topic, i) => (
-						<option key={i} value={topic.id}>
+						<option
+							key={i}
+							value={topic.id}
+							selected={topic.id == _formData.topic_id}>
 							{topic.topic_name}
 						</option>
 					))}

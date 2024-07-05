@@ -6,10 +6,13 @@ const router = express.Router();
 router.post('/add-question', questionController.addNewQuestion);
 
 router.post('/list', questionController.getQuestionList);
+router.post('/list-trash', questionController.getQuestionListTrash);
 
 router.get('/get-question-number', questionController.getQuestionNumber);
 
-router.post('/delete', questionController.deleteQuestion);
+router.delete('/delete', questionController.deleteQuestion);
+router.delete('/delete-permenant', questionController.deleteQuestionPermenant);
+router.delete('/restore', questionController.restoreQuestion);
 
 router.put('/edit-question', questionController.editQuestion);
 

@@ -5,7 +5,6 @@ import './MenuBar.css';
 
 function MenuBar() {
 	const menuButtons = [
-		{ name: 'Dashboard', icon: 'fa-solid fa-house', path: '/' },
 		{
 			name: 'Add Questions',
 			icon: 'fa-solid fa-square-plus',
@@ -13,15 +12,19 @@ function MenuBar() {
 		},
 		{
 			name: 'Questions List',
-			icon: 'fa-solid fa-circle-question',
+			icon: 'fa-solid fa-house',
 			path: '/questions-list',
 		},
-		{ name: 'Subjects List', icon: 'fa-solid fa-book', path: '/subjects-list' },
+		{
+			name: 'Deleted Questions',
+			icon: 'fa-solid fa-house',
+			path: '/deleted-questions-list',
+		},
 	];
 
 	return (
 		<>
-			<div className="flex p-2 gap-2 justify-start">
+			<div className="flex p-2 gap-2 justify-start container mx-auto">
 				{menuButtons?.map((el, index) => {
 					return (
 						<NavLink

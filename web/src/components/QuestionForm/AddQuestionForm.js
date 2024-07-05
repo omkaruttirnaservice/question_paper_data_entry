@@ -96,7 +96,7 @@ const AddQuestionForm = () => {
 			<AddTopicFormModal />
 			<AddPublicationModal />
 			<AddBookModal />
-			<div className="container mx-auto px-10 mt-6 pb-10 ">
+			<div className="container mx-auto mt-6 pb-10 ">
 				<form
 					id="add-question-form"
 					className="grid gap-10"

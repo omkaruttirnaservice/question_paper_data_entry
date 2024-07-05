@@ -57,15 +57,19 @@ const questionModel = {
 		);
 	},
 
-	deleteQuestion: (id) => {
-		console.log(id, 'delete que id');
-		const q = `DELETE FROM question WHERE id = ?`;
-		return db.query(q, [id]);
+	restoreQuestion: (id) => {
+		const q = `UPDATE tm_mega_question_set SET mqs_is_trash = 0 WHERE id = ?`;
+		return db.query(q, [+id]);
 	},
 
-	getQuestion: (id) => {
-		const q = `SELECT * FROM question WHERE id = ?`;
-		return db.query(q, [id]);
+	deleteQuestion: (id) => {
+		const q = `UPDATE tm_mega_question_set SET mqs_is_trash = 1 WHERE id = ?`;
+		return db.query(q, [+id]);
+	},
+
+	deleteQuestionPermenant: (id) => {
+		const q = `DELETE FROM tm_mega_question_set WHERE id = ?`;
+		return db.query(q, [+id]);
 	},
 
 	getEditQuestionData: (id) => {
@@ -126,7 +130,18 @@ const questionModel = {
                         *
                     FROM tm_mega_question_set AS mqs
                     WHERE 
-                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ?`;
+                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 0`;
+
+		return db.query(q, [+d.subject_id, +d.topic_id]);
+	},
+
+	getQuestionListTrash: (d) => {
+		console.log(d, 'in model');
+		const q = `SELECT 
+                        *
+                    FROM tm_mega_question_set AS mqs
+                    WHERE 
+                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 1`;
 
 		return db.query(q, [+d.subject_id, +d.topic_id]);
 	},

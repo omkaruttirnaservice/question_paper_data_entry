@@ -16,27 +16,61 @@ const questionController = {
 		}
 	},
 
-	deleteQuestion: async (req, res) => {
-		console.log(req.body, '---');
+	restoreQuestion: async (req, res) => {
 		try {
-			const questionId = +req.body.questionId;
-			// if (isNumber(questionId)) {
-			//     return res.status(400).json({
-			//         success: false,
-			//         message: 'Empty question id',
-			//     });
-			// }
-			const existingQuestion = await questionModel.getQuestion(questionId);
-
-			if (!existingQuestion) {
-				return res.status(404).json({
-					success: 0,
-					message: 'Question not found',
-				});
+			const { questionId } = req.body;
+			if (!questionId) {
+				throw new Error(
+					'Invalid questionID for restoration, please send valid id'
+				);
 			}
+			let _deleteResponse = await questionModel.restoreQuestion(questionId);
+			if (_deleteResponse[0].affectedRows == 1) {
+				return sendSuccess(res, 'Successfully restored');
+			} else {
+				throw new Error(`Unable to restore questionID: ${questionId}`);
+			}
+		} catch (err) {
+			sendError(res, err);
+		}
+	},
 
-			await questionModel.deleteQuestion(questionId);
-			return sendSuccess(res);
+	deleteQuestion: async (req, res) => {
+		try {
+			const { questionId } = req.body;
+			if (!questionId) {
+				throw new Error(
+					'Invalid questionID for deletion, please send valid id'
+				);
+			}
+			let _deleteResponse = await questionModel.deleteQuestion(questionId);
+			if (_deleteResponse[0].affectedRows == 1) {
+				return sendSuccess(res, 'Successfully deleted');
+			} else {
+				throw new Error(`Unable to delte questionID: ${questionId}`);
+			}
+		} catch (err) {
+			sendError(res, err);
+		}
+	},
+
+	deleteQuestionPermenant: async (req, res) => {
+		try {
+			const { questionId } = req.body;
+			if (!questionId) {
+				throw new Error(
+					'Invalid questionID for deletion, please send valid id'
+				);
+			}
+			let _deleteResponse = await questionModel.deleteQuestionPermenant(
+				questionId
+			);
+			console.log(_deleteResponse, '-after permenet delete');
+			if (_deleteResponse[0].affectedRows == 1) {
+				return sendSuccess(res, 'Successfully deleted');
+			} else {
+				throw new Error(`Unable to delte questionID: ${questionId}`);
+			}
 		} catch (err) {
 			sendError(res, err);
 		}
@@ -79,6 +113,21 @@ const questionController = {
 		try {
 			const { post_id, subject_id, topic_id } = req.body;
 			const questionList = await questionModel.getQuestionList({
+				post_id,
+				subject_id,
+				topic_id,
+			});
+			return sendSuccess(res, questionList[0]);
+		} catch (err) {
+			console.log('Error whlie fetching the questions: ', err);
+			return sendError(res, err);
+		}
+	},
+
+	getQuestionListTrash: async (req, res) => {
+		try {
+			const { post_id, subject_id, topic_id } = req.body;
+			const questionList = await questionModel.getQuestionListTrash({
 				post_id,
 				subject_id,
 				topic_id,
