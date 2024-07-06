@@ -143,81 +143,88 @@ function EditOptionsInput({ showNewInputField, setShowNewInputField }) {
 	useEffect(() => {
 		destroyEditorInstances();
 
-		window.CKEDITOR.replace('question_content', {
-			height: 100,
-		});
+		if (!window.CKEDITOR.instances['question_content']) {
+			window.CKEDITOR.replace('question_content', {
+				height: 100,
+			});
 
-		window.CKEDITOR.replace('option_A', {
-			height: 100,
-		});
+			window.CKEDITOR.instances['question_content'].on(
+				'change',
+				handleEditorChange('question_content')
+			);
+		}
+		if (!window.CKEDITOR.instances['option_A']) {
+			window.CKEDITOR.replace('option_A', {
+				height: 100,
+			});
 
-		window.CKEDITOR.replace('option_B', {
-			height: 100,
-		});
-
-		window.CKEDITOR.replace('option_C', {
-			height: 100,
-		});
-
-		window.CKEDITOR.replace('option_D', {
-			height: 100,
-		});
-
-		window.CKEDITOR.instances['question_content'].on(
-			'change',
-			handleEditorChange('question_content')
-		);
-		window.CKEDITOR.instances['option_A'].on(
-			'change',
-			handleEditorChange('option_A')
-		);
-		window.CKEDITOR.instances['option_B'].on(
-			'change',
-			handleEditorChange('option_B')
-		);
-		window.CKEDITOR.instances['option_C'].on(
-			'change',
-			handleEditorChange('option_C')
-		);
-		window.CKEDITOR.instances['option_D'].on(
-			'change',
-			handleEditorChange('option_D')
-		);
+			window.CKEDITOR.instances['option_A'].on(
+				'change',
+				handleEditorChange('option_A')
+			);
+		}
+		if (!window.CKEDITOR.instances['option_B']) {
+			window.CKEDITOR.replace('option_B', {
+				height: 100,
+			});
+			window.CKEDITOR.instances['option_B'].on(
+				'change',
+				handleEditorChange('option_B')
+			);
+		}
+		if (!window.CKEDITOR.instances['option_C']) {
+			window.CKEDITOR.replace('option_C', {
+				height: 100,
+			});
+			window.CKEDITOR.instances['option_C'].on(
+				'change',
+				handleEditorChange('option_C')
+			);
+		}
+		if (!window.CKEDITOR.instances['option_D']) {
+			window.CKEDITOR.replace('option_D', {
+				height: 100,
+			});
+			window.CKEDITOR.instances['option_D'].on(
+				'change',
+				handleEditorChange('option_D')
+			);
+		}
 
 		return () => {
 			destroyEditorInstances();
 		};
 	}, []);
 
-	useEffect(() => {
-		if (!window.CKEDITOR.instances['option_E'] && !showNewInputField) {
-			return;
-		}
+	// useEffect(() => {
+	// 	if (!window.CKEDITOR.instances['option_E'] && !showNewInputField) {
+	// 		return;
+	// 	}
 
-		if (window.CKEDITOR.instances['option_E']) {
-			window.CKEDITOR.instances['option_E'].destroy(true);
-			return;
-		}
+	// 	if (window.CKEDITOR.instances['option_E']) {
+	// 		window.CKEDITOR.instances['option_E'].destroy(true);
+	// 		return;
+	// 	}
 
-		window.CKEDITOR.replace(`option_E`, {
-			height: 100,
-		});
+	// 	window.CKEDITOR.replace(`option_E`, {
+	// 		height: 100,
+	// 	});
 
-		window.CKEDITOR.instances[`option_E`].on('change', function () {
-			dispatch(
-				QuestionFormActions.handleInputChange({
-					key: `option_E`,
-					value: window.CKEDITOR.instances[`option_E`].getData(),
-				})
-			);
-		});
+	// 	window.CKEDITOR.instances[`option_E`].on('change', function () {
+	// 		dispatch(
+	// 			QuestionFormActions.handleInputChange({
+	// 				key: `option_E`,
+	// 				value: window.CKEDITOR.instances[`option_E`].getData(),
+	// 			})
+	// 		);
+	// 	});
 
-		return () => {
-			if (window.CKEDITOR.instances['option_E']) {
-				window.CKEDITOR.instances['option_E'].destroy(true);
-			}
-		};
-	}, [showNewInputField]);
+	// 	return () => {
+	// 		if (window.CKEDITOR.instances['option_E']) {
+	// 			window.CKEDITOR.instances['option_E'].destroy(true);
+	// 		}
+	// 	};
+	// }, [showNewInputField]);
 
 	return (
 		<>
