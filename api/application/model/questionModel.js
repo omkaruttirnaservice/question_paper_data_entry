@@ -74,34 +74,47 @@ const questionModel = {
 
 	getEditQuestionData: (id) => {
 		const q = `
-                    SELECT
-                        q.*,
-                        s.*,
-                        t.*
-                        FROM
-                        question q
-                        JOIN
-                        subject s ON q.subject_id = s.id
-                        JOIN
-                        topic t ON q.topic_id = t.id
-                        WHERE
-                        q.id = ?;
-                    `;
-		return db.query(q, [id]);
+							SELECT 
+								mqs.id id,
+								mqs.mqs_question question_content,
+								mqs.mqs_opt_one option_A,
+								mqs.mqs_opt_two option_B,
+								mqs.mqs_opt_three option_C,
+								mqs.mqs_opt_four option_D,
+								mqs.mqs_opt_five option_E,
+								mqs.mqs_ans correct_option,
+								mqs.mqs_solution explanation,
+								mqs.mqs_leval difficulty,
+								mqs.mqs_section_id subject_id,
+								mqs.mqs_chapter_id topic_id,
+								mqs.msq_publication_name pub_name,
+								mqs.msq_book_name book_name,
+								mqs.maq_page_number pg_no,
+								mqs.mqs_ask_in_month month,
+								mqs.mqs_ask_in_year year,
+								mtl.mtl_name subject_name,
+								stl.stl_name topic_name 
+							FROM
+									tm_mega_question_set AS mqs
+											LEFT JOIN
+									tm_main_topic_list AS mtl ON mqs.mqs_section_id = mtl.id
+											LEFT JOIN
+									tm_sub_topic_list AS stl ON mqs.mqs_chapter_id = stl.id
+							WHERE
+								mqs.id = ?`;
+		return db.query(q, [+id]);
 	},
 
-	editQuestion: (data) => {
-		const q = `UPDATE question SET 
-                question_content = ?,
-                option_A = ?,
-                option_B = ?,
-                option_C = ?,
-                option_D = ?,
-                option_E = ?,
-                correct_option = ?,
-                explanation = ?,
-                pub_name = ?,
-                pg_no = ?
+	saveEditQuestion: (data) => {
+		const q = `UPDATE tm_mega_question_set SET 
+                mqs_question = ?,
+								mqs_opt_one = ?,
+								mqs_opt_two = ?,
+								mqs_opt_three = ?,
+								mqs_opt_four = ?,
+								mqs_opt_five = ?,
+                mqs_ans = ?,
+                mqs_solution = ?
             WHERE id = ?`;
 		return db.query(q, [
 			data.question_content,
@@ -112,8 +125,6 @@ const questionModel = {
 			data.option_E,
 			data.correct_option,
 			data.explanation,
-			data.pub_name,
-			data.pg_no,
 			data.id,
 		]);
 	},

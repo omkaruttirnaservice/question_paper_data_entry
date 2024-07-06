@@ -14,8 +14,9 @@ router.delete('/delete', questionController.deleteQuestion);
 router.delete('/delete-permenant', questionController.deleteQuestionPermenant);
 router.delete('/restore', questionController.restoreQuestion);
 
-router.put('/edit-question', questionController.editQuestion);
+router.put('/update-question', questionController.saveEditQuestion);
 
+// getting edit question data
 router.post('/edit-question-data', questionController.editQuestionData);
 
 router.get('/publications-list', questionController.getPublicationList);

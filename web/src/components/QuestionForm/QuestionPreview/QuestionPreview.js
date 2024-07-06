@@ -77,7 +77,7 @@ function QuestionPreview() {
 				className={`text-gray-600 pt-6 pb-10 px-5 w-[90%] overflow-auto h-[100svh] bg-gray-100 transition-all duration-200 fixed top-0  z-[100] ${
 					isQuestionPreview ? 'left-0' : 'left-[-100%]'
 				}`}>
-				<div className="flex items-center py-3 gap-3">
+				{/* <div className="flex items-center py-3 gap-3">
 					<p>Data entry for</p>
 					<FaAngleRight />
 					<span className="underline">{dataEntryFor.postName}</span>
@@ -93,7 +93,7 @@ function QuestionPreview() {
 					[<span>{_formData.pub_name}</span>] [
 					<span>{_formData.book_name}</span>] [
 					<span>Pg. No. {_formData.pg_no}</span>]
-				</div>
+				</div> */}
 
 				<div className="flex flex-col gap-6">
 					<p className="font-bold">

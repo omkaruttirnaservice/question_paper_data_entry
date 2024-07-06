@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { loaderActions } from './loader-slice.js';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 let initialState = {
 	data: {
@@ -213,23 +214,25 @@ export const getTopicsListThunk = (subject_id, sendRequest) => {
 	};
 };
 
-// export const getEditQuestionDetailsThunk = (questionId, sendRequest) => {
-// 	return async (dispatch) => {
-// 		try {
-// 			let requestData = {
-// 				url: '/questions/edit-question-data',
-// 				method: 'POST',
-// 				body: JSON.stringify({ questionId }),
-// 			};
+export const getEditQuestionDetailsThunk = (
+	questionId,
+	sendRequest,
+	post_id
+) => {
+	return async (dispatch) => {
+		let requestData = {
+			url: '/questions/edit-question-data',
+			method: 'POST',
+			body: JSON.stringify({ questionId }),
+		};
 
-// 			sendRequest(requestData, ({ data }) => {
-// 				dispatch(QuestionFormActions.setEditQuestionDetails(data[0]));
-// 			});
-// 		} catch (error) {
-// 			dispatch(notificationActions.hideLoader());
-// 		}
-// 	};
-// };
+		sendRequest(requestData, ({ data }) => {
+			data[0]['post_id'] = post_id;
+			console.log(data[0], 'edit question data');
+			dispatch(QuestionFormActions.setEditQuestionDetails(data[0]));
+		});
+	};
+};
 
 export const QuestionFormActions = QuestionFormSlice.actions;
 export default QuestionFormSlice;

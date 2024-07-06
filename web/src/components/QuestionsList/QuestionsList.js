@@ -7,6 +7,7 @@ import { FaPencil } from 'react-icons/fa6';
 import { FaAngleRight } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+	getEditQuestionDetailsThunk,
 	getPostListThunk,
 	getSubjectsListThunk,
 	getTopicsListThunk,
@@ -25,14 +26,17 @@ import {
 } from 'react-accessible-accordion';
 import Swal from 'sweetalert2';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 function QuestionsList() {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const {
 		data: _formData,
 		postsList,
 		subjectsList,
 		topicsList,
+		isEdit,
 	} = useSelector((state) => state.questionForm);
 
 	const { isLoading } = useSelector((state) => state.loader);
@@ -110,6 +114,16 @@ function QuestionsList() {
 		});
 	};
 
+	const handleEditQuestion = (id) => {
+		dispatch(getEditQuestionDetailsThunk(id, sendRequest, _formData.post_id));
+	};
+
+	useEffect(() => {
+		if (isEdit) {
+			navigate('/edit-question-form');
+		}
+	}, [isEdit]);
+
 	const [expandedItem, setExpandedItem] = useState(null);
 	const handleAccordionChange = (e) => {
 		if (e == expandedItem) {
@@ -168,7 +182,10 @@ function QuestionsList() {
 												<span>Question: {el.id}</span>
 
 												<div className="flex items-center gap-5">
-													<FaPencil className="text-green-800 hover:scale-[1.2] transition-all duration-300" />
+													<FaPencil
+														className="text-green-800 hover:scale-[1.2] transition-all duration-300"
+														onClick={handleEditQuestion.bind(null, el.id)}
+													/>
 
 													<FaTrash
 														className="text-red-800 hover:scale-[1.2] transition-all duration-300"

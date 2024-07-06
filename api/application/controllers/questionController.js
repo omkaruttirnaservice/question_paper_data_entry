@@ -76,10 +76,11 @@ const questionController = {
 		}
 	},
 
-	editQuestion: async (req, res) => {
+	saveEditQuestion: async (req, res) => {
 		try {
 			console.log(req.body, '==req.body edit question controller==');
-			let _editRes = await questionModel.editQuestion(req.body);
+
+			let _editRes = await questionModel.saveEditQuestion(req.body);
 			return sendSuccess(res, _editRes);
 		} catch (error) {
 			return sendError(res, error);
@@ -89,8 +90,8 @@ const questionController = {
 	editQuestionData: async (req, res) => {
 		try {
 			let qId = req.body.questionId;
+			console.log(qId, 'gettting data');
 			if (!qId) throw new Error('No question id sent');
-
 			let _data = await questionModel.getEditQuestionData(qId);
 			return sendSuccess(res, _data[0]);
 		} catch (error) {

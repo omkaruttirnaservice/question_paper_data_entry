@@ -1,36 +1,36 @@
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
+import QuestionPreview from './QuestionPreview/QuestionPreview.js';
 
-import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { QuestionFormActions } from '../../Store/question-form-slice.js';
 import useHttp from '../Hooks/use-http.js';
 import CButton from '../UI/CButton.js';
 import ExplanationInput from './ExplanationInput.js';
-import OptionsInput from './OptionsInput.js';
+
+import { FaAngleDoubleRight } from 'react-icons/fa';
+import { FaAngleRight } from 'react-icons/fa6';
+import EditOptionsInput from './EditOptionsInput.js';
 import editQuestionFormSchema from './editQuestionFormSchema.js';
-import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const EditQuestionForm = () => {
-	let { data: _formData, errors } = useSelector((state) => state.questionForm);
 	const dispatch = useDispatch();
-
 	const navigate = useNavigate();
-
 	const { sendRequest } = useHttp();
+	let { data: _formData, isEdit } = useSelector((state) => state.questionForm);
 
 	const [showNewInputField, setShowNewInputField] = useState(false);
 
-	const handleChange = async (e) => {
-		dispatch(
-			QuestionFormActions.handleInputChange({
-				key: e.target.name,
-				value: e.target.value,
-			})
-		);
-	};
+	useLayoutEffect(() => {
+		if (!isEdit) {
+			navigate('/questions-list');
+		}
+	}, [isEdit]);
 
-	const handleEditQuestion = async (e) => {
+	const handleUpdateQuestion = async (e) => {
 		e.preventDefault();
 		try {
 			await editQuestionFormSchema.validate(_formData, { abortEarly: false });
@@ -38,7 +38,6 @@ const EditQuestionForm = () => {
 
 			dispatch(QuestionFormActions.setErrors({}));
 		} catch (error) {
-			console.log(error);
 			const errorsObj = {};
 			error.inner.forEach((el) => {
 				errorsObj[el.path] = el.message;
@@ -49,88 +48,72 @@ const EditQuestionForm = () => {
 
 	async function postQuestionData() {
 		let reqData = {
-			url: '/questions/edit-question',
+			url: '/questions/update-question',
 			method: 'PUT',
 			body: JSON.stringify(_formData),
 		};
 		sendRequest(reqData, (data) => {
 			if (data.success == 1) {
-				toast('Successfully updated question');
-				dispatch(QuestionFormActions.setEditingFalse());
-				navigate('/questions-list');
+				Swal.fire({
+					title: 'Success!',
+					text: 'Question has been updated.',
+					icon: 'success',
+				});
+				// dispatch(QuestionFormActions.resetFormData());
+				setTimeout(() => {
+					dispatch(QuestionFormActions.setEditingFalse());
+				}, 1);
 			}
 		});
 	}
 
 	return (
 		<>
-			<div className="">
+			<div className="container mx-auto sticky top-0 bg-white z-50">
+				<div className="flex items-center py-3 gap-3">
+					<p>Edit data for</p>
+					<FaAngleRight />
+					<span className="underline">Post Name</span>
+					<FaAngleDoubleRight />
+					<span className="underline">{_formData.subject_name}</span>
+					<FaAngleDoubleRight />
+					<span className="underline">{_formData.topic_name}</span>
+				</div>
+
+				<div className="flex justify-end py-3 items-center gap-3">
+					[<span>{_formData.pub_name}</span>] [
+					<span>{_formData.book_name}</span>] [
+					<span>Pg. No. {_formData.pg_no}</span>]
+				</div>
+			</div>
+
+			<div className="container mx-auto mt-6 pb-10 ">
 				<form
-					id="edit-question-form"
-					className=""
-					onSubmit={handleEditQuestion}>
-					<div>
-						{_formData.subject_name} / {_formData.topic_name}
+					id="add-question-form"
+					className="grid gap-10"
+					onSubmit={handleUpdateQuestion}>
+					<hr />
+
+					<div className="flex flex-col gap-10">
+						<EditOptionsInput
+							showNewInputField={showNewInputField}
+							setShowNewInputField={setShowNewInputField}
+						/>
 					</div>
 
-					<div className="">
-						<div className="">
-							<label htmlFor="">Pub Name</label>
-							<input
-								type="text"
-								onChange={handleChange}
-								name="pub_name"
-								value={_formData.pub_name}
-							/>
+					<hr />
 
-							{errors.pub_name && (
-								<div className=" error">{errors.pub_name}</div>
-							)}
-						</div>
-						<div className="">
-							<label htmlFor="">Pg No</label>
-							<input
-								type="number"
-								onChange={handleChange}
-								name="pg_no"
-								value={_formData.pg_no}
-							/>
-							{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
-						</div>
-						<div className="">
-							<div className="">
-								<OptionsInput
-									showNewInputField={showNewInputField}
-									setShowNewInputField={setShowNewInputField}
-								/>
-							</div>
-						</div>
-						<div className="">
-							<label htmlFor="">Correct Option</label>
-							<input
-								type="text"
-								id="correct-option"
-								className=""
-								name="correct_option"
-								onChange={handleChange}
-								value={_formData.correct_option}
-								maxLength="1"
-							/>
-
-							{errors.correct_option && (
-								<div className="error">{errors.correct_option}</div>
-							)}
-						</div>
-						<ExplanationInput />
-					</div>
+					<ExplanationInput />
 
 					<CButton
+						className="w-[10%] flex justify-center items-center"
 						type="submit"
 						isLoading={useSelector((state) => state.loader.isLoading)}>
-						Update
+						Save
 					</CButton>
 				</form>
 			</div>
+			<QuestionPreview />
 		</>
 	);
 };
