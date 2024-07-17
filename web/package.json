@@ -2,7 +2,7 @@
 	"name": "data-entry",
 	"version": "0.1.0",
 	"private": true,
-	"proxy": "http://localhost:3025/",
+	"proxy": "http://localhost:3026/",
 	"dependencies": {
 		"@reduxjs/toolkit": "^2.0.1",
 		"@testing-library/jest-dom": "^5.17.0",
@@ -17,6 +17,7 @@
 		"react-router-dom": "^6.20.1",
 		"react-scripts": "^5.0.1",
 		"react-toastify": "^10.0.5",
+		"sweetalert2": "^11.12.2",
 		"web-vitals": "^2.1.4",
 		"yup": "^1.4.0"
 	},
