@@ -22,9 +22,9 @@ const subjectController = {
 				mtl_master_test_list_id: postId,
 				mtl_name: subjectName,
 				mtp_added_aouth_id: 1,
-				mtl_added_time: '00:00:00',
-				mtl_added_date: new Date(),
-				mtl_time_stamp: '',
+				mtl_added_time: myDate.getTime(),
+				mtl_added_date: myDate.getDate(),
+				mtl_time_stamp: myDate.getTimeStamp(),
 				mtl_is_live: 1,
 				type: 1,
 			};
