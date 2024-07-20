@@ -70,12 +70,23 @@ const EditQuestionForm = () => {
 					text: 'Question has been updated.',
 					icon: 'success',
 				});
+				resetCkEditorInstances();
 				// dispatch(QuestionFormActions.resetFormData());
 				setTimeout(() => {
 					dispatch(QuestionFormActions.setEditingFalse());
 				}, 1);
 			}
 		});
+	}
+
+	function resetCkEditorInstances() {
+		window.CKEDITOR.instances[`question_content`].setData('');
+		window.CKEDITOR.instances[`option_A`].setData('');
+		window.CKEDITOR.instances[`option_B`].setData('');
+		window.CKEDITOR.instances[`option_C`].setData('');
+		window.CKEDITOR.instances[`option_D`].setData('');
+		window.CKEDITOR.instances[`option_E`].setData('');
+		window.CKEDITOR.instances[`explanation`].setData('');
 	}
 
 	return (
