@@ -70,8 +70,8 @@ const EditQuestionForm = () => {
 					text: 'Question has been updated.',
 					icon: 'success',
 				});
+				dispatch(QuestionFormActions.resetFormData());
 				resetCkEditorInstances();
-				// dispatch(QuestionFormActions.resetFormData());
 				setTimeout(() => {
 					dispatch(QuestionFormActions.setEditingFalse());
 				}, 1);
