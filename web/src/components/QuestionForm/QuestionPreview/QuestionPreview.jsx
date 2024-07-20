@@ -55,8 +55,8 @@ function QuestionPreview() {
 
 	return (
 		<>
-			<div className={`text-gray-600 bg-gray-100  sticky top-0 p-3 h-[100vh] overflow-auto`}>
-				<div className="flex items-center py-3 gap-3">
+			<div className={`text-gray-600 bg-gray-100  sticky top-0 p-2 h-[100vh] overflow-auto`}>
+				<div className="flex items-center gap-3 py-1">
 					<p>Data entry for</p>
 					<FaAngleRight />
 					<span className="underline">{dataEntryFor.postName}</span>
@@ -68,46 +68,53 @@ function QuestionPreview() {
 
 				<hr />
 
-				<div className="flex justify-end py-3 items-center gap-3">
+				<div className="flex justify-end py-1 items-center gap-3">
 					[<span>{_formData.pub_name}</span>] [<span>{_formData.book_name}</span>] [<span>Pg. No. {_formData.pg_no}</span>]
 				</div>
-				<div className="flex flex-col gap-6">
-					<p className="font-bold">
-						Question <span>{questionNumber}</span>
-					</p>
-					<div
-						dangerouslySetInnerHTML={{
-							__html: _formData.question_content,
-						}}
-						className="mb-2 bg-gray-50 p-3"></div>
-					<p className="font-bold">Option A</p>
-					<div className="mb-2 bg-gray-50 p-3" dangerouslySetInnerHTML={{ __html: _formData.option_A }}></div>
 
-					<p className="font-bold">Option B</p>
-					<div className="mb-2 bg-gray-50 p-3" dangerouslySetInnerHTML={{ __html: _formData.option_B }}></div>
+				<hr />
 
-					<p className="font-bold">Option C</p>
-					<div className="mb-2 bg-gray-50 p-3" dangerouslySetInnerHTML={{ __html: _formData.option_C }}></div>
+				<div className="flex flex-col gap-1 py-1">
+					<PreviewOptionContainer title={`Question-${questionNumber}`} html={_formData.question_content} />
 
-					<p className="font-bold">Option D</p>
-					<div className="mb-2 bg-gray-50 p-3" dangerouslySetInnerHTML={{ __html: _formData.option_D }}></div>
+					<PreviewOptionContainer title={`Option A`} html={_formData.option_A} />
+					<hr />
+					<PreviewOptionContainer title={`Option B`} html={_formData.option_B} />
+					<hr />
+					<PreviewOptionContainer title={`Option C`} html={_formData.option_C} />
+					<hr />
+					<PreviewOptionContainer title={`Option D`} html={_formData.option_D} />
+					<hr />
 
 					{_formData.option_E && (
 						<>
-							<p className="font-bold">Option E</p>
-							<div className="mb-2 bg-gray-50 p-3" dangerouslySetInnerHTML={{ __html: _formData.option_E }}></div>
+							<PreviewOptionContainer title={`Option E`} html={_formData.option_E} /> <hr />
 						</>
 					)}
 
-					<p className="font-bold">
+					<p className="font-semibold text-sm py-2">
 						Correct Option&nbsp;&nbsp;
-						<span className="bg-blue-300 py-2 px-3 font-bold">{_formData.correct_option}</span>
+						<span className="bg-gray-700 text-white p-1 font-bold">{_formData.correct_option}</span>
 					</p>
+					<hr />
 
-					<p className="font-bold">Explanation</p>
-					<div className="mb-2 bg-gray-50 p-3" dangerouslySetInnerHTML={{ __html: _formData.explanation }}></div>
+					<PreviewOptionContainer title={`Explanation`} html={_formData.explanation} />
+					<hr />
 				</div>
 			</div>
+		</>
+	);
+}
+
+function PreviewOptionContainer({ title, html }) {
+	return (
+		<>
+			<p className="font-semibold text-sm">{title}</p>
+			<div
+				dangerouslySetInnerHTML={{
+					__html: html,
+				}}
+				className="mb-2 bg-gray-50 p-1"></div>
 		</>
 	);
 }

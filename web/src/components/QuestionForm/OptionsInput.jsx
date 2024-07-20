@@ -211,7 +211,7 @@ function OptionsInput({}) {
 			<hr />
 
 			{_formData.showOptionE ? (
-				<div>
+				<div className="relative">
 					<div className="flex flex-col gap-3 relative mb-2">
 						<div className="flex gap-2 items-center">
 							<label htmlFor="option_E" className="question-option !top-[-3rem]">
@@ -226,7 +226,7 @@ function OptionsInput({}) {
 					</div>
 
 					<CButton
-						className="btn--danger w-fit mb-2"
+						className="btn--danger w-fit mb-2 absolute top-0 right-0"
 						id=""
 						onClick={() => {
 							window.CKEDITOR?.instances['option_E'].destroy(true);

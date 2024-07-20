@@ -130,9 +130,11 @@ const AddQuestionForm = () => {
 
 					<ExplanationInput />
 
-					<CButton className="w-[10%] flex justify-center items-center" type="submit" isLoading={useSelector((state) => state.loader.isLoading)}>
-						Save
-					</CButton>
+					<div className="flex justify-end m-3">
+						<CButton className="flex justify-center items-center text-2xl" type="submit" isLoading={useSelector((state) => state.loader.isLoading)}>
+							Save
+						</CButton>
+					</div>
 				</div>
 
 				<QuestionPreview />
