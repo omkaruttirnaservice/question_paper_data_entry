@@ -108,13 +108,15 @@ const questionModel = {
 	saveEditQuestion: (data) => {
 		const q = `UPDATE tm_mega_question_set SET 
                 mqs_question = ?,
-								mqs_opt_one = ?,
-								mqs_opt_two = ?,
-								mqs_opt_three = ?,
-								mqs_opt_four = ?,
-								mqs_opt_five = ?,
+				mqs_opt_one = ?,
+				mqs_opt_two = ?,
+				mqs_opt_three = ?,
+				mqs_opt_four = ?,
+				mqs_opt_five = ?,
                 mqs_ans = ?,
-                mqs_solution = ?
+                mqs_solution = ?,
+				mqs_ask_in_month = ?,
+				mqs_ask_in_year = ?
             WHERE id = ?`;
 		return db.query(q, [
 			data.question_content,
@@ -125,14 +127,14 @@ const questionModel = {
 			data.option_E,
 			data.correct_option,
 			data.explanation,
+			data.month,
+			data.year,
 			data.id,
 		]);
 	},
 
 	getQuestionNumber: () => {
-		return db.query(
-			`SELECT COUNT(id) AS total_questions FROM tm_mega_question_set;`
-		);
+		return db.query(`SELECT COUNT(id) AS total_questions FROM tm_mega_question_set;`);
 	},
 
 	getQuestionList: (d) => {

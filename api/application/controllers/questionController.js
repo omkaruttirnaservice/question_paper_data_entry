@@ -8,11 +8,10 @@ const questionController = {
 	addNewQuestion: async (req, res) => {
 		try {
 			let response = await questionModel.addNewQuestion(req.body);
-			if (response[0].affectedRows === 0)
-				throw new Error('Question was not saved');
+			if (response[0].affectedRows === 0) throw new Error('Question was not saved');
 			return sendSuccess(res);
-		} catch (err) {
-			return sendError(res, err);
+		} catch (error) {
+			return sendError(res, error.message);
 		}
 	},
 
@@ -20,9 +19,7 @@ const questionController = {
 		try {
 			const { questionId } = req.body;
 			if (!questionId) {
-				throw new Error(
-					'Invalid questionID for restoration, please send valid id'
-				);
+				throw new Error('Invalid questionID for restoration, please send valid id');
 			}
 			let _deleteResponse = await questionModel.restoreQuestion(questionId);
 			if (_deleteResponse[0].affectedRows == 1) {
@@ -30,7 +27,7 @@ const questionController = {
 			} else {
 				throw new Error(`Unable to restore questionID: ${questionId}`);
 			}
-		} catch (err) {
+		} catch (error) {
 			sendError(res, err);
 		}
 	},
@@ -39,9 +36,7 @@ const questionController = {
 		try {
 			const { questionId } = req.body;
 			if (!questionId) {
-				throw new Error(
-					'Invalid questionID for deletion, please send valid id'
-				);
+				throw new Error('Invalid questionID for deletion, please send valid id');
 			}
 			let _deleteResponse = await questionModel.deleteQuestion(questionId);
 			if (_deleteResponse[0].affectedRows == 1) {
@@ -49,7 +44,7 @@ const questionController = {
 			} else {
 				throw new Error(`Unable to delte questionID: ${questionId}`);
 			}
-		} catch (err) {
+		} catch (error) {
 			sendError(res, err);
 		}
 	},
@@ -58,20 +53,16 @@ const questionController = {
 		try {
 			const { questionId } = req.body;
 			if (!questionId) {
-				throw new Error(
-					'Invalid questionID for deletion, please send valid id'
-				);
+				throw new Error('Invalid questionID for deletion, please send valid id');
 			}
-			let _deleteResponse = await questionModel.deleteQuestionPermenant(
-				questionId
-			);
+			let _deleteResponse = await questionModel.deleteQuestionPermenant(questionId);
 			console.log(_deleteResponse, '-after permenet delete');
 			if (_deleteResponse[0].affectedRows == 1) {
 				return sendSuccess(res, 'Successfully deleted');
 			} else {
 				throw new Error(`Unable to delte questionID: ${questionId}`);
 			}
-		} catch (err) {
+		} catch (error) {
 			sendError(res, err);
 		}
 	},
@@ -105,8 +96,8 @@ const questionController = {
 			if (response[0].length !== 0) {
 				return sendSuccess(res, response[0][0]);
 			}
-		} catch (err) {
-			return sendError(res, err);
+		} catch (error) {
+			return sendError(res, error.message);
 		}
 	},
 
@@ -119,9 +110,9 @@ const questionController = {
 				topic_id,
 			});
 			return sendSuccess(res, questionList[0]);
-		} catch (err) {
+		} catch (error) {
 			console.log('Error whlie fetching the questions: ', err);
-			return sendError(res, err);
+			return sendError(res, error.message);
 		}
 	},
 
@@ -134,9 +125,9 @@ const questionController = {
 				topic_id,
 			});
 			return sendSuccess(res, questionList[0]);
-		} catch (err) {
+		} catch (error) {
 			console.log('Error whlie fetching the questions: ', err);
-			return sendError(res, err);
+			return sendError(res, error.message);
 		}
 	},
 
@@ -147,7 +138,7 @@ const questionController = {
 			let [publicationsList] = await questionModel.getPublicationList();
 			return sendSuccess(res, publicationsList);
 		} catch (error) {
-			return sendError(res, err);
+			return sendError(res, error.message);
 		}
 	},
 
@@ -158,7 +149,7 @@ const questionController = {
 			return sendSuccess(res, booksList);
 		} catch (error) {
 			console.log(error, '-error');
-			return sendError(res, err);
+			return sendError(res, error.message);
 		}
 	},
 };
