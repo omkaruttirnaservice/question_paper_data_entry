@@ -34,6 +34,8 @@ import TopicListDropdown from './TopicListDropdown/TopicListDropdown.jsx';
 import addQuestionFormSchema from './addQuestionFormSchema.jsx';
 import Swal from 'sweetalert2';
 
+let SERVER_IP = import.meta.env.VITE_API_IP;
+
 const AddQuestionForm = () => {
 	const dispatch = useDispatch();
 	const { sendRequest } = useHttp();
