@@ -17,6 +17,9 @@ import TopicListDropdown from '../QuestionForm/TopicListDropdown/TopicListDropdo
 import { Accordion, AccordionItem, AccordionItemButton, AccordionItemHeading, AccordionItemPanel } from 'react-accessible-accordion';
 import Swal from 'sweetalert2';
 import CButton from '../UI/CButton.jsx';
+
+let SERVER_IP = import.meta.env.VITE_API_IP;
+
 function TrashQuestionsList() {
 	const dispatch = useDispatch();
 
@@ -43,7 +46,7 @@ function TrashQuestionsList() {
 
 	async function getQuestions() {
 		let reqData = {
-			url: '/api/questions/list-trash',
+			url: SERVER_IP + '/api/questions/list-trash',
 			method: 'POST',
 			body: JSON.stringify({
 				post_id: _formData.post_id,
@@ -81,7 +84,7 @@ function TrashQuestionsList() {
 
 	const confirmDeleteQuestionPermenant = (id) => {
 		let reqData = {
-			url: '/api/questions/delete-permenant',
+			url: SERVER_IP + '/api/questions/delete-permenant',
 			method: 'DELETE',
 			body: JSON.stringify({ questionId: id }),
 		};
@@ -113,7 +116,7 @@ function TrashQuestionsList() {
 
 	const confirmRestoreQuestion = (id) => {
 		let reqData = {
-			url: '/api/questions/restore',
+			url: SERVER_IP + '/api/questions/restore',
 			method: 'DELETE',
 			body: JSON.stringify({ questionId: id }),
 		};

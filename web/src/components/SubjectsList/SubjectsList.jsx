@@ -9,6 +9,8 @@ import { FaRegFloppyDisk } from 'react-icons/fa6';
 import { GoPencil } from 'react-icons/go';
 import { IoCloseSharp } from 'react-icons/io5';
 
+let SERVER_IP = import.meta.env.VITE_API_IP;
+
 import CButton from '../UI/CButton.jsx';
 import './SubjectsList.css';
 import { toast } from 'react-toastify';
@@ -35,7 +37,7 @@ function SubjectsList() {
 
 	async function handleDeleteSubject(subjectId) {
 		let reqData = {
-			url: '/api/delete-subject',
+			url: SERVER_IP + '/api/delete-subject',
 			method: 'POST',
 			body: JSON.stringify({ subjectId }),
 		};
@@ -58,7 +60,7 @@ function SubjectsList() {
 	const handleSaveEditedSubjectName = async (subjectId) => {
 		let _editedSubjectName = editedSubjectName.current.value;
 		let reqData = {
-			url: '/api/post-edit-subject-name',
+			url: SERVER_IP + '/api/post-edit-subject-name',
 			method: 'POST',
 			body: JSON.stringify({ newSubjectName: _editedSubjectName, subjectId }),
 		};

@@ -8,6 +8,8 @@ import CButton from '../../UI/CButton.jsx';
 import CModal from '../../UI/CModal.jsx';
 import { toast } from 'react-toastify';
 
+let SERVER_IP = import.meta.env.VITE_API_IP;
+
 function AddSubjectModal() {
 	const subjectNameRef = useRef();
 	const [error, setError] = useState({});
@@ -52,7 +54,7 @@ function AddSubjectModal() {
 
 	function postSubjectAdd(postId, subjectName) {
 		const requestData = {
-			url: '/api/add-subject',
+			url: SERVER_IP + '/api/add-subject',
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

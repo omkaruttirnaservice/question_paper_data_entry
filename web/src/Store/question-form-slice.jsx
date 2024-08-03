@@ -3,6 +3,8 @@ import { loaderActions } from './loader-slice.jsx';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
+let SERVER_IP = import.meta.env.VITE_API_IP;
+
 let initialState = {
 	data: {
 		post_id: null,
@@ -121,7 +123,7 @@ const QuestionFormSlice = createSlice({
 
 export const getQuestionNumberThunk = () => {
 	return async (dispatch) => {
-		let response = await fetch('/api/questions/get-question-number');
+		let response = await fetch(SERVER_IP + '/api/questions/get-question-number');
 		let { data } = await response.json();
 		dispatch(QuestionFormActions.setQuestionNumber(data.total_questions));
 	};
@@ -130,7 +132,7 @@ export const getQuestionNumberThunk = () => {
 export const getBooksListThunk = (pubName, sendRequest) => {
 	return async (dispatch) => {
 		let requestData = {
-			url: '/api/questions/books-list',
+			url: SERVER_IP + '/api/questions/books-list',
 			method: 'POST',
 			body: JSON.stringify({ pubName: pubName }),
 		};
@@ -147,7 +149,7 @@ export const getBooksListThunk = (pubName, sendRequest) => {
 export const getPublicationsListThunk = (sendRequest) => {
 	return async (dispatch) => {
 		let requestData = {
-			url: '/api/questions/publications-list',
+			url: SERVER_IP + '/api/questions/publications-list',
 		};
 		sendRequest(requestData, ({ success, data }) => {
 			if (data.length == 0) {
@@ -160,10 +162,12 @@ export const getPublicationsListThunk = (sendRequest) => {
 };
 
 export const getPostListThunk = () => {
+	console.log(typeof import.meta.env.VITE_API_IP, '==import.env.==');
+	console.log(import.meta.env.VITE_API_IP, '==import.env.==');
 	return async (dispatch) => {
 		try {
 			dispatch(loaderActions.showLoader());
-			let response = await fetch('/api/posts/list');
+			let response = await fetch(SERVER_IP + '/api/posts/list');
 			let { success, data } = await response.json();
 			console.log(success, '==success==');
 
@@ -183,7 +187,7 @@ export const getPostListThunk = () => {
 export const getSubjectsListThunk = (post_id, sendRequest) => {
 	return async (dispatch) => {
 		const reqData = {
-			url: '/api/get-subject-list',
+			url: SERVER_IP + '/api/get-subject-list',
 			method: 'POST',
 			body: JSON.stringify({ post_id }),
 		};
@@ -204,7 +208,7 @@ export const getSubjectsListThunk = (post_id, sendRequest) => {
 export const getTopicsListThunk = (subject_id, sendRequest) => {
 	return async (dispatch) => {
 		const requestData = {
-			url: '/api/get-topic-list',
+			url: SERVER_IP + '/api/get-topic-list',
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -224,7 +228,7 @@ export const getTopicsListThunk = (subject_id, sendRequest) => {
 export const getEditQuestionDetailsThunk = (questionId, sendRequest, post_id) => {
 	return async (dispatch) => {
 		let requestData = {
-			url: '/api/questions/edit-question-data',
+			url: SERVER_IP + '/api/questions/edit-question-data',
 			method: 'POST',
 			body: JSON.stringify({ questionId }),
 		};

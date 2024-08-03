@@ -22,6 +22,8 @@ import QuestionMonthDropdown from './QuestionMonthDropdown/QuestionMonthDropdown
 import QuestionPgNo from './QuestionPgNo/QuestionPgNo.jsx';
 import QuestionYearDropdown from './QuestionYearDropdown/QuestionYearDropdown.jsx';
 
+let SERVER_IP = import.meta.env.VITE_API_IP;
+
 const EditQuestionForm = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -59,7 +61,7 @@ const EditQuestionForm = () => {
 
 	async function postQuestionData() {
 		let reqData = {
-			url: '/api/questions/update-question',
+			url: SERVER_IP + '/api/questions/update-question',
 			method: 'PUT',
 			body: JSON.stringify(_formData),
 		};
