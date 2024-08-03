@@ -2,7 +2,7 @@ module.exports = {
 	apps: [
 		{
 			name: 'QP-data-entry-API',
-			script: './bin/www',
+			script: 'app.js',
 
 			// Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
 			instances: 1,
