@@ -8,6 +8,8 @@ import useHttp from '../../Hooks/use-http.jsx';
 import CButton from '../../UI/CButton.jsx';
 import CModal from '../../UI/CModal.jsx';
 
+let SERVER_IP = import.meta.env.VITE_API_IP;
+
 function AddTopicFormModal() {
 	const topicNameRef = useRef();
 	const [error, setError] = useState({});
@@ -53,7 +55,7 @@ function AddTopicFormModal() {
 
 	function postTopicAdd(postId, subjectId, topicName) {
 		const requestData = {
-			url: '/api/add-topic',
+			url: SERVER_IP + '/api/add-topic',
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

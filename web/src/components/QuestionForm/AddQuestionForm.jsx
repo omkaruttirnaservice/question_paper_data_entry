@@ -75,7 +75,7 @@ const AddQuestionForm = () => {
 
 	async function postQuestionData() {
 		let reqData = {
-			url: '/api/questions/add-question',
+			url: SERVER_IP + '/api/questions/add-question',
 			method: 'POST',
 			body: JSON.stringify(_formData),
 		};

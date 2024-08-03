@@ -12,6 +12,8 @@ import PostListDropdown from '../QuestionForm/PostListDropdown/PostListDropdown.
 import SubjectListDropdown from '../QuestionForm/SubjectListDropdown/SubjectListDropdown.jsx';
 import TopicListDropdown from '../QuestionForm/TopicListDropdown/TopicListDropdown.jsx';
 
+let SERVER_IP = import.meta.env.VITE_API_IP;
+
 import { Accordion, AccordionItem, AccordionItemButton, AccordionItemHeading, AccordionItemPanel } from 'react-accessible-accordion';
 import Swal from 'sweetalert2';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
@@ -45,7 +47,7 @@ function QuestionsList() {
 
 	async function getQuestions() {
 		let reqData = {
-			url: '/api/questions/list',
+			url: SERVER_IP + '/api/questions/list',
 			method: 'POST',
 			body: JSON.stringify({
 				post_id: _formData.post_id,
@@ -84,7 +86,7 @@ function QuestionsList() {
 
 	const confirmDeleteQuestionTemp = (id) => {
 		let reqData = {
-			url: '/api/questions/delete',
+			url: SERVER_IP + '/api/questions/delete',
 			method: 'DELETE',
 			body: JSON.stringify({ questionId: id }),
 		};
