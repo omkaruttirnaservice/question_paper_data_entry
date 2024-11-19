@@ -19,6 +19,7 @@ import Swal from 'sweetalert2';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import CButton from '../UI/CButton.jsx';
+import { toast } from 'react-toastify';
 function QuestionsList() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -57,7 +58,6 @@ function QuestionsList() {
 		};
 		sendRequest(reqData, (data) => {
 			setQuestionList(data.data);
-			console.log(data, '---');
 		});
 	}
 
