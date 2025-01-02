@@ -6,6 +6,7 @@ import useHttp from '../../Hooks/use-http.jsx';
 import CButton from '../../UI/CButton.jsx';
 import CModal from '../../UI/CModal.jsx';
 import { toast } from 'react-toastify';
+import { SERVER_IP } from '../../utils/constants.jsx';
 
 function AddPostModal() {
 	const postNameRef = useRef();
@@ -20,7 +21,7 @@ function AddPostModal() {
 		}
 
 		const requestData = {
-			url: 'posts/add',
+			url: SERVER_IP +'/api/posts/add',
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

@@ -12,6 +12,7 @@ const sequelize = new Sequelize(
 		loggin: false,
 		define: {
 			freezeTableName: true,
+			
 		},
 		timezone: '+05:30',
 	}

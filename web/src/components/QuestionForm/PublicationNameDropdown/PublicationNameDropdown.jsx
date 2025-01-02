@@ -38,9 +38,9 @@ function PublicationNameDropdown() {
 				<select className="input-el grow" type="text" onChange={handleChange} name="pub_name" value={_formData.pub_name}>
 					<option value="">-- Select --</option>
 					{publicationsList.length >= 1 &&
-						publicationsList.map((el) => {
+						publicationsList.map((el, idx) => {
 							return (
-								<option value={el.msq_publication_name} selected={_formData.pub_name == el.msq_publication_name ? true : false}>
+								<option key={idx} value={el.msq_publication_name} selected={_formData.pub_name == el.msq_publication_name ? true : false}>
 									{el.msq_publication_name}
 								</option>
 							);

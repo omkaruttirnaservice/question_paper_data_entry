@@ -24,9 +24,9 @@ function QuestionMonthDropdown() {
 					<option value="" className="">
 						-- Select --
 					</option>
-					{months.map((el) => {
+					{months.map((el, idx) => {
 						return (
-							<option value={el} selected={_formData.month == el ? true : false}>
+							<option key={idx} value={el} selected={_formData.month == el ? true : false}>
 								{el}
 							</option>
 						);

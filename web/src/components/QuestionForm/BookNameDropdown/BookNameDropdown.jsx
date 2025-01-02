@@ -30,6 +30,8 @@ function BookNameDropdown() {
 		dispatch(ModalActions.toggleModal('add-book-modal'));
 	};
 
+	console.log(bookNamesList, '==bookNamesList==')
+
 	return (
 		<div className="flex flex-col gap-1 relative ">
 			<label htmlFor="pub-name">Book Name</label>
