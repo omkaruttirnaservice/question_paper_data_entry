@@ -1,10 +1,11 @@
 import { useDispatch } from 'react-redux';
-import { loaderActions } from '../../Store/loader-slice.jsx';
 import { toast } from 'react-toastify';
+import { loaderActions } from '../../Store/loader-slice.jsx';
 const useHttp = () => {
 	const dispatch = useDispatch();
 
 	const sendRequest = async (requestData, callback) => {
+		console.log(requestData, '==requestData==');
 		try {
 			dispatch(loaderActions.showLoader());
 			let res = await fetch(requestData.url, {

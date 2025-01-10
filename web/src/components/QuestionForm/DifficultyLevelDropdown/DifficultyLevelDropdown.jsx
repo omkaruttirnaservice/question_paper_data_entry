@@ -13,6 +13,7 @@ function DifficultyLevelDropdown() {
 			})
 		);
 	};
+	console.log(_formData, '==_formData==')
 	return (
 		<div className="flex flex-col gap-1 relative">
 			<label htmlFor="">Difficulty</label>

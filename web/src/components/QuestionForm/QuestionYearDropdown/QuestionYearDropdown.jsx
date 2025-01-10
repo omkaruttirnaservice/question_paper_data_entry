@@ -34,9 +34,9 @@ function QuestionYearDropdown() {
 						-- Select --
 					</option>
 					{years.length >= 1 &&
-						years.map((_y) => {
+						years.map((_y, idx) => {
 							return (
-								<option value={_y} selected={_formData.year == _y ? true : false}>
+								<option key={idx} value={_y} selected={_formData.year == _y ? true : false}>
 									{_y}
 								</option>
 							);
