@@ -11,6 +11,7 @@ const questionController = {
 			if (response[0].affectedRows === 0) throw new Error('Question was not saved');
 			return sendSuccess(res);
 		} catch (error) {
+			console.log(error, '==error==')
 			return sendError(res, error.message);
 		}
 	},
