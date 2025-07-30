@@ -34,7 +34,7 @@ function BookNameDropdown() {
 
 	return (
 		<div className="flex flex-col gap-1 relative ">
-			<label htmlFor="pub-name">Book Name</label>
+			<label htmlFor="pub-name" className='input-label'>Book Name</label>
 
 			<div className="flex">
 				<CButton onClick={handleAddBookModal} icon={<FaPlus />} />

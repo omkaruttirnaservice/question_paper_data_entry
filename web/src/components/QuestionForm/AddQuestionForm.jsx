@@ -122,7 +122,7 @@ const AddQuestionForm = () => {
 			<form id="add-question-form" className="grid grid-cols-1 md:grid-cols-2 gap-5 ms-5" onSubmit={handleSaveQuestion}>
 				<div>
 					<div className={`bg-white pb-2 sticky top-0 z-30 shadow-md my-2`}>
-						<div className="grid grid-cols-3 gap-y-6 gap-x-2">
+						<div className="grid grid-cols-3 gap-y-2 gap-x-2">
 							<PostListDropdown />
 							<SubjectListDropdown />
 							<TopicListDropdown />
@@ -171,7 +171,7 @@ export function OptionsDropdown() {
 		<>
 			<div className="flex flex-col gap-3 relative w-fit">
 				<div className="flex items-center gap-2">
-					<label htmlFor="option_C" className="question-option !top-[-3rem]">
+					<label htmlFor="option_C" className="input-label question-option !top-[-3rem]">
 						Correct Option
 					</label>
 					<select id="post-id" className="input-el grow w-48" name="correct_option" onChange={handleOptionChange}>

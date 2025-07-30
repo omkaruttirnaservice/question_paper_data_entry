@@ -31,12 +31,12 @@ function PublicationNameDropdown() {
 
 	return (
 		<div className="flex flex-col gap-1 relative ">
-			<label htmlFor="pub-name">Publication Name</label>
+			<label htmlFor="pub-name" className='input-label'>Publication Name</label>
 
 			<div className="flex">
 				<CButton onClick={handleAddPulicationModal} icon={<FaPlus />} />
 				<select className="input-el grow" type="text" onChange={handleChange} name="pub_name" value={_formData.pub_name}>
-					<option value="">-- Select --</option>
+					<option value="" className='input-label'>-- Select --</option>
 					{publicationsList.length >= 1 &&
 						publicationsList.map((el, idx) => {
 							return (

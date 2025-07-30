@@ -26,7 +26,7 @@ function TopicListDropdown({ isShowAddNewBtn = true }) {
 	};
 	return (
 		<div className="flex flex-col gap-1 relative">
-			<label htmlFor="">Topic *</label>
+			<label htmlFor="" className='input-label'>Topic *</label>
 			<div className="flex">
 				{isShowAddNewBtn && <CButton onClick={handleTopicAddModal} icon={<FaPlus />} />}
 				<select className="input-el grow w-48" name="topic_id" onChange={handleChange}>

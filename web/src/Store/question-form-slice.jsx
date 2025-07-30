@@ -67,8 +67,6 @@ const QuestionFormSlice = createSlice({
 			state.data.difficulty = null;
 			state.data.month = null;
 			state.data.year = null;
-			state.data.pub_name = null;
-			state.data.book_name = null;
 		},
 
 		setPublicationsList(state, action) {
@@ -80,8 +78,8 @@ const QuestionFormSlice = createSlice({
 		},
 
 		setPostsList(state, action) {
-			state.data.subject_id = null;
-			state.data.topic_id = null;
+			// state.data.subject_id = null;
+			// state.data.topic_id = null;
 			state.postsList = action.payload;
 		},
 

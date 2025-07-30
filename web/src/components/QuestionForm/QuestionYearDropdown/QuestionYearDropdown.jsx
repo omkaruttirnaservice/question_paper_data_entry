@@ -27,7 +27,7 @@ function QuestionYearDropdown() {
 	};
 	return (
 		<div className="flex flex-col gap-1 relative">
-			<label htmlFor="">Year</label>
+			<label htmlFor="" className='input-label'>Year</label>
 			<div className="flex">
 				<select className="input-el grow w-48" name="year" onChange={handleChange}>
 					<option value="" className="">

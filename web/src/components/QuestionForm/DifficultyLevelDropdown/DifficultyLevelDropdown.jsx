@@ -16,7 +16,7 @@ function DifficultyLevelDropdown() {
 	console.log(_formData, '==_formData==')
 	return (
 		<div className="flex flex-col gap-1 relative">
-			<label htmlFor="">Difficulty</label>
+			<label htmlFor="" className='input-label'>Difficulty</label>
 			<div className="flex">
 				<select className="input-el grow w-48" name="difficulty" onChange={handleChange}>
 					<option value="" className="">
