@@ -2,6 +2,7 @@ import { IoClose } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import { ModalActions } from '../../Store/modal-slice.jsx';
 import CButton from './CButton.jsx';
+import { useEffect } from 'react';
 
 export default function CModal({ id, children, title, showCloseBtn = true, className = '' }) {
     const _modalSlice = useSelector((state) => state.modal);
@@ -9,6 +10,20 @@ export default function CModal({ id, children, title, showCloseBtn = true, class
     function _isModalOpen(key) {
         return !!_modalSlice[key];
     }
+
+    useEffect(() => {
+        if (_isModalOpen(id)) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        // Cleanup when modal unmounts
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [_isModalOpen(id)]);
+
     return (
         <>
             {_isModalOpen(id) && (

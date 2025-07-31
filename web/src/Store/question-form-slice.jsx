@@ -12,14 +12,14 @@ let initialState = {
         pub_name: null,
         book_name: null,
         pg_no: null,
-        question_content: null,
-        option_A: null,
-        option_B: null,
-        option_C: null,
-        option_D: null,
-        option_E: null,
-        correct_option: null,
-        explanation: null,
+        mqs_question: null,
+        mqs_opt_one: null,
+        mqs_opt_two: null,
+        mqs_opt_three: null,
+        mqs_opt_four: null,
+        mqs_opt_five: null,
+        mqs_ans: null,
+        mqs_solution: null,
         difficulty: null,
         month: null,
         year: null,
@@ -62,14 +62,14 @@ const QuestionFormSlice = createSlice({
 
         resetFormData(state, action) {
             state.data.pg_no = null;
-            state.data.question_content = null;
-            state.data.option_A = null;
-            state.data.option_B = null;
-            state.data.option_C = null;
-            state.data.option_D = null;
-            state.data.option_E = null;
-            state.data.correct_option = null;
-            state.data.explanation = null;
+            state.data.mqs_question = null;
+            state.data.mqs_opt_one = null;
+            state.data.mqs_opt_two = null;
+            state.data.mqs_opt_three = null;
+            state.data.mqs_opt_four = null;
+            state.data.mqs_opt_five = null;
+            state.data.mqs_ans = null;
+            state.data.mqs_solution = null;
             state.data.difficulty = null;
             state.data.month = null;
             state.data.year = null;

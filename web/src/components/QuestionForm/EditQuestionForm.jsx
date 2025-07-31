@@ -79,7 +79,7 @@ const EditQuestionForm = () => {
                 // dispatch(QuestionFormActions.resetFormData());
                 updateQuestionInReduxState(_formData);
                 setTimeout(() => {
-                    // dispatch(ModalActions.toggleModal('edit-question-modal'));
+                    dispatch(ModalActions.toggleModal('edit-question-modal'));
                     dispatch(QuestionFormActions.setEditingFalse());
                 }, 1);
             }
@@ -97,13 +97,13 @@ const EditQuestionForm = () => {
     }
 
     function resetCkEditorInstances() {
-        window.CKEDITOR.instances[`question_content`].setData('');
-        window.CKEDITOR.instances[`option_A`].setData('');
-        window.CKEDITOR.instances[`option_B`].setData('');
-        window.CKEDITOR.instances[`option_C`].setData('');
-        window.CKEDITOR.instances[`option_D`].setData('');
-        window.CKEDITOR.instances[`option_E`].setData('');
-        window.CKEDITOR.instances[`explanation`].setData('');
+        window.CKEDITOR.instances[`mqs_question`].setData('');
+        window.CKEDITOR.instances[`mqs_opt_one`].setData('');
+        window.CKEDITOR.instances[`mqs_opt_two`].setData('');
+        window.CKEDITOR.instances[`mqs_opt_three`].setData('');
+        window.CKEDITOR.instances[`mqs_opt_four`].setData('');
+        window.CKEDITOR.instances[`mqs_opt_five`].setData('');
+        window.CKEDITOR.instances[`mqs_solution`].setData('');
     }
 
     return (

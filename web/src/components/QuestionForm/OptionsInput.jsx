@@ -10,11 +10,11 @@ function OptionsInput({}) {
         /**
          * Replace function replaces the textarea element with ck editor instance
          * */
-        let questionContentInstance = window.CKEDITOR.instances['question_content'];
-        let optionAInstance = window.CKEDITOR.instances['option_A'];
-        let optionBInstance = window.CKEDITOR.instances['option_B'];
-        let optionCInstance = window.CKEDITOR.instances['option_C'];
-        let optionDInstance = window.CKEDITOR.instances['option_D'];
+        let questionContentInstance = window.CKEDITOR.instances['mqs_question'];
+        let optionAInstance = window.CKEDITOR.instances['mqs_opt_one'];
+        let optionBInstance = window.CKEDITOR.instances['mqs_opt_two'];
+        let optionCInstance = window.CKEDITOR.instances['mqs_opt_three'];
+        let optionDInstance = window.CKEDITOR.instances['mqs_opt_four'];
 
         if (questionContentInstance) {
             questionContentInstance.destroy(true);
@@ -35,22 +35,22 @@ function OptionsInput({}) {
             optionDInstance.destroy(true);
         }
 
-        window.CKEDITOR.replace(`question_content`, {
+        window.CKEDITOR.replace(`mqs_question`, {
             height: 100,
         });
 
-        window.CKEDITOR.replace(`option_A`, {
+        window.CKEDITOR.replace(`mqs_opt_one`, {
             height: 100,
         });
 
-        window.CKEDITOR.replace(`option_B`, {
+        window.CKEDITOR.replace(`mqs_opt_two`, {
             height: 100,
         });
-        window.CKEDITOR.replace(`option_C`, {
+        window.CKEDITOR.replace(`mqs_opt_three`, {
             height: 100,
         });
 
-        window.CKEDITOR.replace(`option_D`, {
+        window.CKEDITOR.replace(`mqs_opt_four`, {
             height: 100,
         });
 
@@ -58,53 +58,53 @@ function OptionsInput({}) {
          * Get value of the editor by listening to change event
          * Value is available by calling .getData() function
          * */
-        window.CKEDITOR.instances[`question_content`].on('change', function () {
+        window.CKEDITOR.instances[`mqs_question`].on('change', function () {
             dispatch(
                 QuestionFormActions.handleInputChange({
-                    key: `question_content`,
-                    value: window.CKEDITOR.instances[`question_content`].getData(),
+                    key: `mqs_question`,
+                    value: window.CKEDITOR.instances[`mqs_question`].getData(),
                 })
             );
         });
 
-        window.CKEDITOR.instances[`option_A`].on('change', function () {
+        window.CKEDITOR.instances[`mqs_opt_one`].on('change', function () {
             dispatch(
                 QuestionFormActions.handleInputChange({
-                    key: `option_A`,
-                    value: window.CKEDITOR.instances[`option_A`].getData(),
+                    key: `mqs_opt_one`,
+                    value: window.CKEDITOR.instances[`mqs_opt_one`].getData(),
                 })
             );
         });
 
-        window.CKEDITOR.instances[`option_B`].on('change', function () {
+        window.CKEDITOR.instances[`mqs_opt_two`].on('change', function () {
             dispatch(
                 QuestionFormActions.handleInputChange({
-                    key: `option_B`,
-                    value: window.CKEDITOR.instances[`option_B`].getData(),
+                    key: `mqs_opt_two`,
+                    value: window.CKEDITOR.instances[`mqs_opt_two`].getData(),
                 })
             );
         });
 
-        window.CKEDITOR.instances[`option_C`].on('change', function () {
+        window.CKEDITOR.instances[`mqs_opt_three`].on('change', function () {
             dispatch(
                 QuestionFormActions.handleInputChange({
-                    key: `option_C`,
-                    value: window.CKEDITOR.instances[`option_C`].getData(),
+                    key: `mqs_opt_three`,
+                    value: window.CKEDITOR.instances[`mqs_opt_three`].getData(),
                 })
             );
         });
-        window.CKEDITOR.instances[`option_D`].on('change', function () {
+        window.CKEDITOR.instances[`mqs_opt_four`].on('change', function () {
             dispatch(
                 QuestionFormActions.handleInputChange({
-                    key: `option_D`,
-                    value: window.CKEDITOR.instances[`option_D`].getData(),
+                    key: `mqs_opt_four`,
+                    value: window.CKEDITOR.instances[`mqs_opt_four`].getData(),
                 })
             );
         });
     }, []);
 
     useEffect(() => {
-        let optionEInstance = window.CKEDITOR?.instances['option_E'];
+        let optionEInstance = window.CKEDITOR?.instances['mqs_opt_five'];
 
         if (!optionEInstance && !_formData.showOptionE) {
             return;
@@ -115,15 +115,15 @@ function OptionsInput({}) {
             return;
         }
 
-        window.CKEDITOR.replace(`option_E`, {
+        window.CKEDITOR.replace(`mqs_opt_five`, {
             height: 100,
         });
 
-        window.CKEDITOR.instances[`option_E`].on('change', function () {
+        window.CKEDITOR.instances[`mqs_opt_five`].on('change', function () {
             dispatch(
                 QuestionFormActions.handleInputChange({
-                    key: `option_E`,
-                    value: window.CKEDITOR.instances[`option_E`].getData(),
+                    key: `mqs_opt_five`,
+                    value: window.CKEDITOR.instances[`mqs_opt_five`].getData(),
                 })
             );
         });
@@ -138,7 +138,7 @@ function OptionsInput({}) {
             <div className="flex flex-col gap-3 relative">
                 <div className="flex gap-6">
                     <label
-                        htmlFor="question_content"
+                        htmlFor="mqs_question"
                         className="question-option !top-[-3rem] !rounded-sm">
                         Question *
                     </label>
@@ -149,88 +149,88 @@ function OptionsInput({}) {
                 </div>
 
                 <textarea
-                    name={`question_content`}
-                    id={`question_content`}
-                    value={_formData.question_content}
+                    name={`mqs_question`}
+                    id={`mqs_question`}
+                    value={_formData.mqs_question}
                     className="top-10"></textarea>
-                <ImageInputComp label="Question image" inputFor="question_content" />
+                <ImageInputComp label="Question image" inputFor="mqs_question" />
             </div>
-            {errors.question_content && <div className="error">{errors.question_content}</div>}
+            {errors.mqs_question && <div className="error">{errors.mqs_question}</div>}
 
             <hr />
 
             <div className="flex flex-col gap-3 relative">
                 <div className="flex items-center gap-2">
-                    <label htmlFor="option_A" className="question-option !top-[-3rem]">
+                    <label htmlFor="mqs_opt_one" className="question-option !top-[-3rem]">
                         Option A *
                     </label>
                     <AnswerOptionRadioBox value={'A'} />
                 </div>
                 <textarea
-                    name={`option_A`}
-                    id={`option_A`}
-                    value={_formData.option_A}
+                    name={`mqs_opt_one`}
+                    id={`mqs_opt_one`}
+                    value={_formData.mqs_opt_one}
                     className="top-10"></textarea>
-                <ImageInputComp label="Option A image" inputFor="option_A" />
+                <ImageInputComp label="Option A image" inputFor="mqs_opt_one" />
             </div>
-            {errors.option_A && <div className=" error">{errors.option_A}</div>}
+            {errors.mqs_opt_one && <div className=" error">{errors.mqs_opt_one}</div>}
 
             <hr />
 
             <div className="flex flex-col gap-3 relative">
                 <div className="flex items-center gap-2">
-                    <label htmlFor="option_B" className="question-option !top-[-3rem]">
+                    <label htmlFor="mqs_opt_two" className="question-option !top-[-3rem]">
                         Option B *
                     </label>
 
                     <AnswerOptionRadioBox value={'B'} />
                 </div>
                 <textarea
-                    name={`option_B`}
-                    id={`option_B`}
-                    value={_formData.option_B}
+                    name={`mqs_opt_two`}
+                    id={`mqs_opt_two`}
+                    value={_formData.mqs_opt_two}
                     className="top-10"></textarea>
-                <ImageInputComp label="Option B image" inputFor="option_B" />
+                <ImageInputComp label="Option B image" inputFor="mqs_opt_two" />
             </div>
-            {errors.option_B && <div className=" error">{errors.option_B}</div>}
+            {errors.mqs_opt_two && <div className=" error">{errors.mqs_opt_two}</div>}
 
             <hr />
 
             <div className="flex flex-col gap-3 relative">
                 <div className="flex items-center gap-2">
-                    <label htmlFor="option_C" className="question-option !top-[-3rem]">
+                    <label htmlFor="mqs_opt_three" className="question-option !top-[-3rem]">
                         Option C *
                     </label>
 
                     <AnswerOptionRadioBox value={'C'} />
                 </div>
                 <textarea
-                    name={`option_C`}
-                    id={`option_C`}
-                    value={_formData.option_C}
+                    name={`mqs_opt_three`}
+                    id={`mqs_opt_three`}
+                    value={_formData.mqs_opt_three}
                     className="top-10"></textarea>
-                <ImageInputComp label="Option C image" inputFor="option_C" />
+                <ImageInputComp label="Option C image" inputFor="mqs_opt_three" />
             </div>
-            {errors.option_C && <div className=" error">{errors.option_C}</div>}
+            {errors.mqs_opt_three && <div className=" error">{errors.mqs_opt_three}</div>}
 
             <hr />
 
             <div className="flex flex-col gap-3 relative">
                 <div className="flex items-center gap-2">
-                    <label htmlFor="option_D" className="question-option !top-[-3rem]">
+                    <label htmlFor="mqs_opt_four" className="question-option !top-[-3rem]">
                         Option D *
                     </label>
 
                     <AnswerOptionRadioBox value={'D'} />
                 </div>
                 <textarea
-                    name={`option_D`}
-                    id={`option_D`}
-                    value={_formData.option_D}
+                    name={`mqs_opt_four`}
+                    id={`mqs_opt_four`}
+                    value={_formData.mqs_opt_four}
                     className="top-10"></textarea>
-                <ImageInputComp label="Option D image" inputFor="option_D" />
+                <ImageInputComp label="Option D image" inputFor="mqs_opt_four" />
             </div>
-            {errors.option_D && <div className=" error">{errors.option_D}</div>}
+            {errors.mqs_opt_four && <div className=" error">{errors.mqs_opt_four}</div>}
 
             <hr />
 
@@ -238,29 +238,31 @@ function OptionsInput({}) {
                 <div className="relative">
                     <div className="flex flex-col gap-3 relative mb-2">
                         <div className="flex gap-2 items-center">
-                            <label htmlFor="option_E" className="question-option !top-[-3rem]">
+                            <label htmlFor="mqs_opt_five" className="question-option !top-[-3rem]">
                                 Option E
                             </label>
 
                             <AnswerOptionRadioBox value={'E'} />
                         </div>
                         <textarea
-                            name={`option_E`}
-                            id={`option_E`}
-                            value={_formData.option_E}
+                            name={`mqs_opt_five`}
+                            id={`mqs_opt_five`}
+                            value={_formData.mqs_opt_five}
                             className="top-10"></textarea>
-                        <ImageInputComp label="Option E image" inputFor="option_E" />
+                        <ImageInputComp label="Option E image" inputFor="mqs_opt_five" />
                     </div>
-                    {errors.option_E && <div className="!top-[1rem]">{errors.option_E}</div>}
+                    {errors.mqs_opt_five && (
+                        <div className="!top-[1rem]">{errors.mqs_opt_five}</div>
+                    )}
 
                     <CButton
                         className="btn--danger w-fit mb-2 absolute top-0 right-0"
                         id=""
                         onClick={() => {
-                            window.CKEDITOR?.instances['option_E'].destroy(true);
+                            window.CKEDITOR?.instances['mqs_opt_five'].destroy(true);
                             dispatch(
                                 QuestionFormActions.handleInputChange({
-                                    key: 'option_E',
+                                    key: 'mqs_opt_five',
                                     value: null,
                                 })
                             );
@@ -296,27 +298,27 @@ function ImageInputComp({ label, inputFor }) {
         reader.onloadend = function () {
             let _fileB64 = reader.result;
             switch (pasteImageFor) {
-                case 'question_content':
-                    appendImage('question_content', _fileB64);
+                case 'mqs_question':
+                    appendImage('mqs_question', _fileB64);
                     break;
-                case 'option_A':
-                    appendImage('option_A', _fileB64);
-                    break;
-
-                case 'option_B':
-                    appendImage('option_B', _fileB64);
+                case 'mqs_opt_one':
+                    appendImage('mqs_opt_one', _fileB64);
                     break;
 
-                case 'option_C':
-                    appendImage('option_C', _fileB64);
+                case 'mqs_opt_two':
+                    appendImage('mqs_opt_two', _fileB64);
                     break;
 
-                case 'option_D':
-                    appendImage('option_D', _fileB64);
+                case 'mqs_opt_three':
+                    appendImage('mqs_opt_three', _fileB64);
                     break;
 
-                case 'option_E':
-                    appendImage('option_E', _fileB64);
+                case 'mqs_opt_four':
+                    appendImage('mqs_opt_four', _fileB64);
+                    break;
+
+                case 'mqs_opt_five':
+                    appendImage('mqs_opt_five', _fileB64);
                     break;
             }
         };
@@ -371,9 +373,9 @@ function AnswerOptionRadioBox({ value, className }) {
         <input
             className={`w-6 h-6 ${className}`}
             type="radio"
-            name="correct_option"
+            name="mqs_ans"
             value={value}
-            checked={_formData.correct_option == value ? true : false}
+            checked={_formData.mqs_ans == value ? true : false}
             onChange={handleOptionChange}
         />
     );

@@ -264,12 +264,18 @@ function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDelet
                                             <div className="flex items-center gap-5">
                                                 <FaPencil
                                                     className="text-green-800 hover:scale-[1.2] transition-all duration-300"
-                                                    onClick={handleEditQuestion.bind(null, el.id)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleEditQuestion(el.id);
+                                                    }}
                                                 />
 
                                                 <FaTrash
                                                     className="text-red-800 hover:scale-[1.2] transition-all duration-300"
-                                                    onClick={handleDeleteQuestion.bind(null, el.id)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteQuestion(el.id);
+                                                    }}
                                                 />
                                             </div>
                                         </div>
