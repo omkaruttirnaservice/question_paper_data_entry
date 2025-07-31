@@ -39,7 +39,7 @@ let SERVER_IP = import.meta.env.VITE_API_IP;
 const AddQuestionForm = () => {
     const dispatch = useDispatch();
     const { sendRequest } = useHttp();
-    let { data: _formData } = useSelector((state) => state.questionForm);
+    let { data: _formData, questionNumber } = useSelector((state) => state.questionForm);
 
     useEffect(() => {
         dispatch(getQuestionNumberThunk());
@@ -90,6 +90,7 @@ const AddQuestionForm = () => {
                 });
                 dispatch(QuestionFormActions.resetFormData());
                 resetCkEditorInstances();
+                dispatch(QuestionFormActions.setQuestionNumber(questionNumber));
             }
         });
     }
