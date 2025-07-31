@@ -280,10 +280,11 @@ function QuestionsList() {
 function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDeleteQuestion }) {
     const [expandedItem, setExpandedItem] = useState(null);
     const handleAccordionChange = (e) => {
+        console.log({ e });
         if (e == expandedItem) {
             setExpandedItem(null);
         } else {
-            setExpandedItem(e);
+            setExpandedItem(e[0]);
         }
     };
 
@@ -293,41 +294,13 @@ function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDelet
                 questionsList.map((el, idx) => {
                     return (
                         <AccordionItem className="border  mb-1" key={idx} uuid={idx}>
-                            <AccordionItemHeading
-                                className={`border-b py-3 bg-gray-200 px-4 ${
-                                    expandedItem == idx ? 'bg-cyan-500' : ''
-                                }`}>
-                                <AccordionItemButton>
-                                    <div className="flex justify-between items-center ">
-                                        <div className=" w-full max-h-28 overflow-hidden">
-                                            <span>Q: {el.id}</span>
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_question,
-                                                }}></p>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <div className="flex items-center gap-5">
-                                                <FaPencil
-                                                    className="text-green-800 hover:scale-[1.2] transition-all duration-300"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleEditQuestion(el.id);
-                                                    }}
-                                                />
-
-                                                <FaTrash
-                                                    className="text-red-800 hover:scale-[1.2] transition-all duration-300"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDeleteQuestion(el.id);
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </AccordionItemButton>
-                            </AccordionItemHeading>
+                            <AccordionHeadingItem
+                                expandedItem={expandedItem}
+                                idx={idx}
+                                el={el}
+                                handleEditQuestion={handleEditQuestion}
+                                handleDeleteQuestion={handleDeleteQuestion}
+                            />
                             <AccordionItemPanel className="py-3 px-4">
                                 <div className="py-3">
                                     <span className="font-bold text-[#555] mb-4 block">
@@ -430,6 +403,52 @@ function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDelet
                     );
                 })}
         </Accordion>
+    );
+}
+
+function AccordionHeadingItem({ expandedItem, idx, el, handleEditQuestion, handleDeleteQuestion }) {
+    const [questionSortPreview, setQuestionShortPreview] = useState(false);
+
+    return (
+        <>
+            <AccordionItemHeading
+                className={`border-b py-3 bg-gray-200 px-4 ${
+                    expandedItem == idx ? 'bg-cyan-500' : ''
+                }`}>
+                <AccordionItemButton>
+                    <div className="flex justify-between items-center ">
+                        <div className=" w-full max-h-28 overflow-hidden">
+                            <span>Q: {el.id}</span>
+                            {expandedItem != idx && (
+                                <p
+                                    dangerouslySetInnerHTML={{
+                                        __html: el.mqs_question,
+                                    }}></p>
+                            )}
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-5">
+                                <FaPencil
+                                    className="text-green-800 hover:scale-[1.2] transition-all duration-300"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEditQuestion(el.id);
+                                    }}
+                                />
+
+                                <FaTrash
+                                    className="text-red-800 hover:scale-[1.2] transition-all duration-300"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteQuestion(el.id);
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </AccordionItemButton>
+            </AccordionItemHeading>
+        </>
     );
 }
 
