@@ -136,7 +136,6 @@ const EditQuestionForm = () => {
                             <PublicationNameDropdown />
                             <BookNameDropdown />
                             <QuestionPgNo />
-                            <QuestionMonthDropdown />
                             <QuestionYearDropdown />
                         </div>
                     </div>

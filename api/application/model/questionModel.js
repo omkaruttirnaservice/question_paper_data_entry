@@ -113,7 +113,6 @@ const questionModel = {
 				mqs_opt_five = ?,
                 mqs_ans = ?,
                 mqs_solution = ?,
-				mqs_ask_in_month = ?,
 				mqs_ask_in_year = ?
             WHERE id = ?`;
         return db.query(q, [
@@ -125,8 +124,7 @@ const questionModel = {
             data.mqs_opt_five,
             data.mqs_ans,
             data.mqs_solution,
-            data.month,
-            data.year,
+            JSON.stringify(data.year),
             data.id,
         ]);
     },
