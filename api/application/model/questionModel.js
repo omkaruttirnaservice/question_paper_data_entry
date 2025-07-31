@@ -141,10 +141,11 @@ const questionModel = {
         console.log(d, 'in model');
         const q = `SELECT 
                         *
-
                     FROM tm_mega_question_set AS mqs
                     WHERE 
-                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 0`;
+                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 0
+					ORDER BY mqs.id
+						`;
 
         return db.query(q, [+d.subject_id, +d.topic_id]);
     },
