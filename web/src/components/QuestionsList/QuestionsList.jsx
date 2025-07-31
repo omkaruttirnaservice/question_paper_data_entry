@@ -1,12 +1,20 @@
+import { IoGridOutline } from 'react-icons/io5';
+
 import { useEffect, useState } from 'react';
-import { FaGripLinesVertical, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaGripLinesVertical, FaListUl } from 'react-icons/fa';
 
 import { FaTrash } from 'react-icons/fa';
 import { FaPencil } from 'react-icons/fa6';
 
 import { FaAngleRight } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { getEditQuestionDetailsThunk, getPostListThunk, getSubjectsListThunk, getTopicsListThunk } from '../../Store/question-form-slice.jsx';
+import {
+    getEditQuestionDetailsThunk,
+    getPostListThunk,
+    getSubjectsListThunk,
+    getTopicsListThunk,
+    QuestionFormActions,
+} from '../../Store/question-form-slice.jsx';
 import useHttp from '../Hooks/use-http.jsx';
 import PostListDropdown from '../QuestionForm/PostListDropdown/PostListDropdown.jsx';
 import SubjectListDropdown from '../QuestionForm/SubjectListDropdown/SubjectListDropdown.jsx';
@@ -14,325 +22,514 @@ import TopicListDropdown from '../QuestionForm/TopicListDropdown/TopicListDropdo
 
 let SERVER_IP = import.meta.env.VITE_API_IP;
 
-import { Accordion, AccordionItem, AccordionItemButton, AccordionItemHeading, AccordionItemPanel } from 'react-accessible-accordion';
-import Swal from 'sweetalert2';
+import {
+    Accordion,
+    AccordionItem,
+    AccordionItemButton,
+    AccordionItemHeading,
+    AccordionItemPanel,
+} from 'react-accessible-accordion';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import CButton from '../UI/CButton.jsx';
-import { toast } from 'react-toastify';
+import CModal from '../UI/CModal.jsx';
+import EditQuestionForm from '../QuestionForm/EditQuestionForm.jsx';
+import { ModalActions } from '../../Store/modal-slice.jsx';
 function QuestionsList() {
-	const dispatch = useDispatch();
-	const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-	const { data: _formData, postsList, subjectsList, topicsList, isEdit } = useSelector((state) => state.questionForm);
+    const {
+        data: _formData,
+        postsList,
+        subjectsList,
+        topicsList,
+        isEdit,
+    } = useSelector((state) => state.questionForm);
 
-	const { isLoading } = useSelector((state) => state.loader);
+    const { isLoading } = useSelector((state) => state.loader);
+    const questionsList = useSelector((state) => state.questionForm.questionsList);
+    console.log(questionsList);
 
-	const { sendRequest } = useHttp();
+    const { sendRequest } = useHttp();
 
-	useEffect(() => {
-		if (postsList.length === 0) {
-			dispatch(getPostListThunk());
-		}
-	}, []);
+    useEffect(() => {
+        if (postsList.length === 0) {
+            dispatch(getPostListThunk());
+        }
+    }, []);
 
-	useEffect(() => {
-		dispatch(getSubjectsListThunk(_formData.post_id, sendRequest));
-	}, [_formData.post_id]);
+    useEffect(() => {
+        dispatch(getSubjectsListThunk(_formData.post_id, sendRequest));
+    }, [_formData.post_id]);
 
-	useEffect(() => {
-		dispatch(getTopicsListThunk(_formData.subject_id, sendRequest));
-	}, [_formData.subject_id]);
+    useEffect(() => {
+        dispatch(getTopicsListThunk(_formData.subject_id, sendRequest));
+    }, [_formData.subject_id]);
 
-	const [questionList, setQuestionList] = useState([]);
+    async function getQuestions() {
+        let reqData = {
+            url: SERVER_IP + '/api/questions/list',
+            method: 'POST',
+            body: JSON.stringify({
+                post_id: _formData.post_id,
+                subject_id: _formData.subject_id,
+                topic_id: _formData.topic_id,
+            }),
+        };
+        sendRequest(reqData, (data) => {
+            dispatch(QuestionFormActions.setQuestionsList(data.data));
+        });
+    }
 
-	async function getQuestions() {
-		let reqData = {
-			url: SERVER_IP + '/api/questions/list',
-			method: 'POST',
-			body: JSON.stringify({
-				post_id: _formData.post_id,
-				subject_id: _formData.subject_id,
-				topic_id: _formData.topic_id,
-			}),
-		};
-		sendRequest(reqData, (data) => {
-			setQuestionList(data.data);
-		});
-	}
+    useEffect(() => {
+        if (!_formData.topic_id && !_formData.subject_id && !_formData.topic_id) {
+            return;
+        }
+        getQuestions();
+    }, [_formData.topic_id]);
 
-	useEffect(() => {
-		if (!_formData.topic_id && !_formData.subject_id && !_formData.topic_id) {
-			return;
-		}
-		getQuestions();
-	}, [_formData.topic_id]);
+    const handleGetQuestionsList = () => getQuestions();
 
-	const handleGetQuestionsList = () => getQuestions();
+    const handleDeleteQuestion = (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This question will move to recycle bin!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                confirmDeleteQuestionTemp(id);
+            }
+        });
+    };
 
-	const handleDeleteQuestion = (id) => {
-		Swal.fire({
-			title: 'Are you sure?',
-			text: 'This question will move to recycle bin!',
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonText: 'Yes',
-		}).then((result) => {
-			if (result.isConfirmed) {
-				confirmDeleteQuestionTemp(id);
-			}
-		});
-	};
+    const confirmDeleteQuestionTemp = (id) => {
+        let reqData = {
+            url: SERVER_IP + '/api/questions/delete',
+            method: 'DELETE',
+            body: JSON.stringify({ questionId: id }),
+        };
+        sendRequest(reqData, (data) => {
+            if (data.success == 1) {
+                dispatch(
+                    QuestionFormActions.setQuestionsList(questionsList.filter((el) => el.id != id))
+                );
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'Question has been moved to recycle bin.',
+                    icon: 'success',
+                });
+            }
+        });
+    };
 
-	const confirmDeleteQuestionTemp = (id) => {
-		let reqData = {
-			url: SERVER_IP + '/api/questions/delete',
-			method: 'DELETE',
-			body: JSON.stringify({ questionId: id }),
-		};
-		sendRequest(reqData, (data) => {
-			if (data.success == 1) {
-				setQuestionList(questionList.filter((el) => el.id != id));
-				Swal.fire({
-					title: 'Deleted!',
-					text: 'Question has been moved to recycle bin.',
-					icon: 'success',
-				});
-			}
-		});
-	};
+    const handleEditQuestion = (id) => {
+        dispatch(getEditQuestionDetailsThunk(id, sendRequest, _formData.post_id));
+    };
 
-	const handleEditQuestion = (id) => {
-		dispatch(getEditQuestionDetailsThunk(id, sendRequest, _formData.post_id));
-	};
+    useEffect(() => {
+        if (isEdit) {
+            dispatch(ModalActions.toggleModal('edit-question-modal'));
+        }
+    }, [isEdit]);
 
-	useEffect(() => {
-		if (isEdit) {
-			navigate('/edit-question-form');
-		}
-	}, [isEdit]);
+    const [listMode, setListMode] = useState(true);
 
-	const [expandedItem, setExpandedItem] = useState(null);
-	const handleAccordionChange = (e) => {
-		if (e == expandedItem) {
-			setExpandedItem(null);
-		} else {
-			setExpandedItem(e);
-		}
-	};
+    const toggleListMode = (val) => setListMode(val);
 
-	return (
-		<>
-			<div className="container mx-auto mt-6">
-				<div className="grid grid-cols-5 gap-3 mb-6">
-					<PostListDropdown isShowAddNewBtn={false} />
-					<SubjectListDropdown isShowAddNewBtn={false} />
-					<TopicListDropdown isShowAddNewBtn={false} />
-					<CButton className={'h-fit mt-auto'} onClick={handleGetQuestionsList}>
-						Search
-					</CButton>
-				</div>
+    return (
+        <>
+            <CModal id={'edit-question-modal'} title={'Edit Question'} className={`min-w-[95vw] `}>
+                <EditQuestionForm />
+            </CModal>
 
-				<div className="bg-cyan-100 px-4">
-					<div className="flex items-center py-3 gap-3">
-						<p>Total posts</p>
-						<FaAngleRight />
-						<span className="underline">{postsList.length}</span>
+            <div className="container mx-auto mt-6">
+                <div className="grid grid-cols-5 gap-3 mb-6 items-end">
+                    <PostListDropdown isShowAddNewBtn={false} />
+                    <SubjectListDropdown isShowAddNewBtn={false} />
+                    <TopicListDropdown isShowAddNewBtn={false} />
+                    <CButton className={'h-fit mt-auto'} onClick={handleGetQuestionsList}>
+                        Search
+                    </CButton>
 
-						<FaGripLinesVertical />
-						<p>Total Subjets</p>
-						<FaAngleRight />
-						<span className="underline">{subjectsList.length}</span>
+                    {/* View Toggle button */}
 
-						<FaGripLinesVertical />
-						<p>Total Topics</p>
-						<FaAngleRight />
-						<span className="underline">{topicsList.length}</span>
-					</div>
-				</div>
-			</div>
+                    <div className="border w-fit flex items-center h-fit justify-self-end">
+                        <div
+                            onClick={toggleListMode.bind(null, true)}
+                            className={`${
+                                listMode ? 'bg-gray-200' : 'bg-white'
+                            } p-3 cursor-pointer`}>
+                            <FaListUl className="" />
+                        </div>
+                        <div
+                            onClick={toggleListMode.bind(null, false)}
+                            className={`${
+                                !listMode ? 'bg-gray-200' : 'bg-white'
+                            } p-3 cursor-pointer`}>
+                            <IoGridOutline />
+                        </div>
+                    </div>
+                </div>
 
-			<div className="container mx-auto mt-6">
-				{isLoading && <AiOutlineLoading3Quarters className="animate-spin text-2xl m-3 mx-auto" />}
-				{!isLoading && questionList.length === 0 && (
-					<p className="text-center text-[#555]">
-						Woops! no questions found!&nbsp;
-						<span
-							className="underline text-blue-600 cursor-pointer"
-							onClick={() => {
-								navigate('/question-form');
-							}}>
-							Add Question
-						</span>
-					</p>
-				)}
-				<Accordion allowZeroExpanded={true} onChange={handleAccordionChange}>
-					{questionList.length >= 1 &&
-						questionList.map((el, idx) => {
-							return (
-								<AccordionItem className="border  mb-1" key={idx} uuid={idx}>
-									<AccordionItemHeading className={`border-b py-3 bg-gray-200 px-4 ${expandedItem == idx ? 'bg-cyan-500' : ''}`}>
-										<AccordionItemButton>
-											<div className="flex justify-between items-center">
-												<span>Question: {el.id}</span>
+                <div className="bg-cyan-100 px-4">
+                    <div className="flex items-center py-3 gap-3">
+                        <p>Total posts</p>
+                        <FaAngleRight />
+                        <span className="underline">{postsList.length}</span>
 
-												<div className="flex items-center gap-5">
-													<FaPencil
-														className="text-green-800 hover:scale-[1.2] transition-all duration-300"
-														onClick={handleEditQuestion.bind(null, el.id)}
-													/>
+                        <FaGripLinesVertical />
+                        <p>Total Subjets</p>
+                        <FaAngleRight />
+                        <span className="underline">{subjectsList.length}</span>
 
-													<FaTrash
-														className="text-red-800 hover:scale-[1.2] transition-all duration-300"
-														onClick={handleDeleteQuestion.bind(null, el.id)}
-													/>
-												</div>
-											</div>
-										</AccordionItemButton>
-									</AccordionItemHeading>
-									<AccordionItemPanel className="py-3 px-4">
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Question</span>
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_question,
-												}}></p>
-										</div>
+                        <FaGripLinesVertical />
+                        <p>Total Topics</p>
+                        <FaAngleRight />
+                        <span className="underline">{topicsList.length}</span>
+                    </div>
+                </div>
+            </div>
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Option A</span>
+            <div className="container mx-auto mt-6">
+                {isLoading && (
+                    <AiOutlineLoading3Quarters className="animate-spin text-2xl m-3 mx-auto" />
+                )}
+                {!isLoading && questionsList.length === 0 && (
+                    <p className="text-center text-[#555]">
+                        Woops! no questions found!&nbsp;
+                        <span
+                            className="underline text-blue-600 cursor-pointer"
+                            onClick={() => {
+                                navigate('/question-form');
+                            }}>
+                            Add Question
+                        </span>
+                    </p>
+                )}
 
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_opt_one,
-												}}></p>
-										</div>
+                {questionsList.length > 0 && listMode && (
+                    <QuestionsListAccordion
+                        questionsList={questionsList}
+                        handleEditQuestion={handleEditQuestion}
+                        handleDeleteQuestion={handleDeleteQuestion}
+                    />
+                )}
 
-										<hr />
+                {questionsList.length > 0 && !listMode && (
+                    <QuestionsListIEEFormat
+                        questionsList={questionsList}
+                        handleEditQuestion={handleEditQuestion}
+                        handleDeleteQuestion={handleDeleteQuestion}
+                    />
+                )}
+            </div>
+        </>
+    );
+}
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Option B</span>
+function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDeleteQuestion }) {
+    const [expandedItem, setExpandedItem] = useState(null);
+    const handleAccordionChange = (e) => {
+        if (e == expandedItem) {
+            setExpandedItem(null);
+        } else {
+            setExpandedItem(e);
+        }
+    };
 
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_opt_two,
-												}}></p>
-										</div>
+    return (
+        <Accordion allowZeroExpanded={true} onChange={handleAccordionChange}>
+            {questionsList.length >= 1 &&
+                questionsList.map((el, idx) => {
+                    return (
+                        <AccordionItem className="border  mb-1" key={idx} uuid={idx}>
+                            <AccordionItemHeading
+                                className={`border-b py-3 bg-gray-200 px-4 ${
+                                    expandedItem == idx ? 'bg-cyan-500' : ''
+                                }`}>
+                                <AccordionItemButton>
+                                    <div className="flex justify-between items-center ">
+                                        <div className=" w-full max-h-28 overflow-hidden">
+                                            <span>Q: {el.id}</span>
+                                            <p
+                                                dangerouslySetInnerHTML={{
+                                                    __html: el.mqs_question,
+                                                }}></p>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-5">
+                                                <FaPencil
+                                                    className="text-green-800 hover:scale-[1.2] transition-all duration-300"
+                                                    onClick={handleEditQuestion.bind(null, el.id)}
+                                                />
 
-										<hr />
+                                                <FaTrash
+                                                    className="text-red-800 hover:scale-[1.2] transition-all duration-300"
+                                                    onClick={handleDeleteQuestion.bind(null, el.id)}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </AccordionItemButton>
+                            </AccordionItemHeading>
+                            <AccordionItemPanel className="py-3 px-4">
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 block">
+                                        Question
+                                    </span>
+                                    <p
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_question,
+                                        }}></p>
+                                </div>
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Option C</span>
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_opt_three,
-												}}></p>
-										</div>
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 block">
+                                        Option A
+                                    </span>
 
-										<hr />
+                                    <p
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_opt_one,
+                                        }}></p>
+                                </div>
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Option D</span>
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_opt_four,
-												}}></p>
-										</div>
+                                <hr />
 
-										<hr />
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 block">
+                                        Option B
+                                    </span>
 
-										{el.mqs_opt_five && (
-											<div className="py-3">
-												<span className="font-bold text-[#555] mb-4 block">Option E</span>
-												<p
-													dangerouslySetInnerHTML={{
-														__html: el.mqs_opt_five,
-													}}></p>
-											</div>
-										)}
+                                    <p
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_opt_two,
+                                        }}></p>
+                                </div>
 
-										<hr />
+                                <hr />
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 me-3">Correct Option</span>
-											<span className="mb-6 bg-blue-200 px-2 py-1 w-fit">{el.mqs_ans}</span>
-										</div>
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 block">
+                                        Option C
+                                    </span>
+                                    <p
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_opt_three,
+                                        }}></p>
+                                </div>
 
-										<hr />
+                                <hr />
 
-										{el.mqs_solution && (
-											<div className="py-3">
-												<span className="font-bold text-[#555] my-4 block">Solution</span>
-												<p
-													dangerouslySetInnerHTML={{
-														__html: el.mqs_solution,
-													}}></p>
-											</div>
-										)}
-									</AccordionItemPanel>
-								</AccordionItem>
-							);
-						})}
-				</Accordion>
-			</div>
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 block">
+                                        Option D
+                                    </span>
+                                    <p
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_opt_four,
+                                        }}></p>
+                                </div>
 
-			{/* <div className="container mx-auto mt-6">
-				<h3 className="heading-3__dark ">Post List</h3>
-				<div class="relative overflow-x-auto">
-					<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-						<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-							<tr className="bg-blue-200">
-								<th scope="col" class="px-6 py-3">
-									#
-								</th>
-								<th scope="col" class="px-6 py-3">
-									Post Name
-								</th>
-								<th scope="col" class="px-6 py-3 text-center">
-									Topic For Post
-								</th>
+                                <hr />
 
-								<th scope="col" class="px-6 py-3">
-									View
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							{postsList.length >= 1 &&
-								postsList.map((el, i) => {
-									return (
-										<tr class="border-b dark:bg-gray-800 dark:border-gray-700 transition-all duration-300 bg-gray-100 hover:bg-white">
-											<td
-												width={'4%'}
-												scope="row"
-												class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-												{i + 1}
-											</td>
-											<td
-												scope="row"
-												class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-												{el.mtl_test_name}
-											</td>
-											<td width={'15%'} class="px-6 py-2 text-center">
-												{el.total_topics}
-											</td>
-											<td class="px-6 py-2">
-												<CButton
-													className=""
-													icon={<FaEye className="text-2xl" />}
-													varient="btn--warning"
-													onClick={handleGetSubjectsList.bind(null, el.id)}
-												/>
-											</td>
-										</tr>
-									);
-								})}
-						</tbody>
-					</table>
-				</div>
-			</div> */}
-		</>
-	);
+                                {el.mqs_opt_five && (
+                                    <div className="py-3">
+                                        <span className="font-bold text-[#555] mb-4 block">
+                                            Option E
+                                        </span>
+                                        <p
+                                            dangerouslySetInnerHTML={{
+                                                __html: el.mqs_opt_five,
+                                            }}></p>
+                                    </div>
+                                )}
+
+                                <hr />
+
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 me-3">
+                                        Correct Option
+                                    </span>
+                                    <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
+                                        {el.mqs_ans}
+                                    </span>
+                                </div>
+
+                                <hr />
+
+                                {el.mqs_solution && (
+                                    <div className="py-3">
+                                        <span className="font-bold text-[#555] my-4 block">
+                                            Solution
+                                        </span>
+                                        <p
+                                            dangerouslySetInnerHTML={{
+                                                __html: el.mqs_solution,
+                                            }}></p>
+                                    </div>
+                                )}
+                            </AccordionItemPanel>
+                        </AccordionItem>
+                    );
+                })}
+        </Accordion>
+    );
+}
+
+function QuestionsListIEEFormat({ questionsList, handleEditQuestion, handleDeleteQuestion }) {
+    return (
+        <>
+            <div className="columns-2">
+                {questionsList.map((el, idx) => {
+                    return (
+                        <div
+                            className={`border transition-all duration-300  mb-5 shadow-sm bg-gray-100 relative que-container`}
+                            key={idx}>
+                            <CButton
+                                icon={<FaEdit />}
+                                onClick={handleEditQuestion.bind(null, el.id)}
+                                className={'absolute top-0 right-0 edit-que-btn'}>
+                                Edit
+                            </CButton>
+                            <div className="py-3 px-4 text-start">
+                                <div className="py-3">
+                                    <p className="font-bold text-[#555] mb-4 block text-start">
+                                        (<span>#{idx + 1}</span>) (
+                                        <span className="text-slate-500 ">Qid:{el.id}</span>)
+                                    </p>
+                                    <p
+                                        className="text-start"
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_question,
+                                        }}></p>
+                                </div>
+
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 block text-start">
+                                        Option A
+                                    </span>
+
+                                    <p
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_opt_one,
+                                        }}></p>
+                                </div>
+
+                                <hr />
+
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 block text-start">
+                                        Option B
+                                    </span>
+
+                                    <p
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_opt_two,
+                                        }}></p>
+                                </div>
+
+                                <hr />
+
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 block text-start">
+                                        Option C
+                                    </span>
+                                    <p
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_opt_three,
+                                        }}></p>
+                                </div>
+
+                                <hr />
+
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 block text-start">
+                                        Option D
+                                    </span>
+                                    <p
+                                        dangerouslySetInnerHTML={{
+                                            __html: el.mqs_opt_four,
+                                        }}></p>
+                                </div>
+
+                                <hr />
+
+                                {el.mqs_opt_five && (
+                                    <div className="py-3">
+                                        <span className="font-bold text-[#555] mb-4 block text-start">
+                                            Option E
+                                        </span>
+                                        <p
+                                            dangerouslySetInnerHTML={{
+                                                __html: el.mqs_opt_five,
+                                            }}></p>
+                                    </div>
+                                )}
+
+                                <hr />
+
+                                <div className="py-3">
+                                    <span className="font-bold text-[#555] mb-4 me-3">
+                                        Correct Option
+                                    </span>
+                                    <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
+                                        {el.mqs_ans?.toUpperCase()}
+                                    </span>
+                                </div>
+
+                                <hr />
+
+                                {el.mqs_solution && (
+                                    <div className="py-3">
+                                        <span className="font-bold text-[#555] my-4 block text-start">
+                                            Solution
+                                        </span>
+                                        <p
+                                            className="text-start"
+                                            dangerouslySetInnerHTML={{
+                                                __html: el.mqs_solution,
+                                            }}></p>
+                                    </div>
+                                )}
+
+                                <hr />
+
+                                <div className=" bg-gray-300 p-3 ">
+                                    <h3>Publication Info</h3>
+
+                                    <table className="w-full">
+                                        <thead>
+                                            <th className="border px-2 py-1">Pub. Name</th>
+                                            <th className="border px-2 py-1">Book Name</th>
+                                            <th className="border px-2 py-1">Pg No</th>
+                                        </thead>
+                                        <tr className="text-center">
+                                            <td className="border px-2 py-1">
+                                                {el.msq_publication_name
+                                                    ? el.msq_publication_name
+                                                    : 'NA'}
+                                            </td>
+                                            <td className="border px-2 py-1">
+                                                {el.msq_book_name ? el.msq_book_name : 'NA'}
+                                            </td>
+                                            <td className="border px-2 py-1">
+                                                {el.maq_page_number ? el.maq_page_number : 'NA'}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </>
+    );
 }
 
 export default QuestionsList;
