@@ -1,4 +1,5 @@
 import { IoGridOutline } from 'react-icons/io5';
+import { TbSortAscending, TbSortDescending } from 'react-icons/tb';
 
 import { useEffect, useState } from 'react';
 import { FaEdit, FaGripLinesVertical, FaListUl } from 'react-icons/fa';
@@ -137,8 +138,46 @@ function QuestionsList() {
     }, [isEdit]);
 
     const [listMode, setListMode] = useState(true);
+    const [isAscending, setIsAscending] = useState(true);
 
     const toggleListMode = (val) => setListMode(val);
+
+    useEffect(() => {
+        if (questionsList.length > 0) {
+            const sorted = sortQuestionsList(questionsList);
+            dispatch(QuestionFormActions.setQuestionsList(sorted));
+        }
+    }, [isAscending]);
+
+    function sortQuestionsList(questionsList) {
+        const updatedList = [...questionsList];
+        const n = updatedList.length;
+
+        if (isAscending) {
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    if (updatedList[j].id > updatedList[j + 1].id) {
+                        let temp = updatedList[j];
+                        updatedList[j] = updatedList[j + 1];
+                        updatedList[j + 1] = temp;
+                    }
+                }
+            }
+        }
+
+        if (!isAscending) {
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    if (updatedList[j].id < updatedList[j + 1].id) {
+                        let temp = updatedList[j];
+                        updatedList[j] = updatedList[j + 1];
+                        updatedList[j + 1] = temp;
+                    }
+                }
+            }
+        }
+        return updatedList;
+    }
 
     return (
         <>
@@ -155,9 +194,16 @@ function QuestionsList() {
                         Search
                     </CButton>
 
-                    {/* View Toggle button */}
-
                     <div className="border w-fit flex items-center h-fit justify-self-end">
+                        {/* ASCENDING | DESCENGING FILTERS BUTTON */}
+                        <div
+                            className={`bg-white p-3 cursor-pointer`}
+                            onClick={() => setIsAscending(!isAscending)}>
+                            {!isAscending && <TbSortAscending className="" />}
+                            {isAscending && <TbSortDescending className="" />}
+                        </div>
+
+                        {/* View Toggle button */}
                         <div
                             onClick={toggleListMode.bind(null, true)}
                             className={`${
