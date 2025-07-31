@@ -25,11 +25,10 @@ const questionModel = {
                         msq_publication_name, 
                         msq_book_name, 
                         maq_page_number, 
-                        mqs_ask_in_month, 
                         mqs_ask_in_year
                         )
                     VALUES
-                    ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 data.mqs_question,
                 data.mqs_opt_one,
@@ -51,8 +50,7 @@ const questionModel = {
                 data.pub_name,
                 data.book_name,
                 data.pg_no,
-                data.month,
-                data.year,
+                JSON.stringify(data.year),
             ]
         );
     },

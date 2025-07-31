@@ -22,7 +22,7 @@ let initialState = {
         mqs_solution: null,
         difficulty: null,
         month: null,
-        year: null,
+        year: [],
         showOptionE: false,
     },
     questionsList: [],
@@ -72,7 +72,7 @@ const QuestionFormSlice = createSlice({
             state.data.mqs_solution = null;
             state.data.difficulty = null;
             state.data.month = null;
-            state.data.year = null;
+            state.data.year = [];
         },
 
         setPublicationsList(state, action) {

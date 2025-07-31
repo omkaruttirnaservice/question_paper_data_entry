@@ -39,7 +39,9 @@ let SERVER_IP = import.meta.env.VITE_API_IP;
 const AddQuestionForm = () => {
     const dispatch = useDispatch();
     const { sendRequest } = useHttp();
-    let { data: _formData, questionNumber } = useSelector((state) => state.questionForm);
+    let { data: _formData, questionNumber, errors } = useSelector((state) => state.questionForm);
+
+    console.log({ errors });
 
     useEffect(() => {
         dispatch(getQuestionNumberThunk());
@@ -135,7 +137,7 @@ const AddQuestionForm = () => {
                             <PublicationNameDropdown />
                             <BookNameDropdown />
                             <QuestionPgNo />
-                            <QuestionMonthDropdown />
+                            {/* <QuestionMonthDropdown /> */}
                             <QuestionYearDropdown />
                         </div>
                     </div>
@@ -147,13 +149,21 @@ const AddQuestionForm = () => {
 
                     <ExplanationInput />
 
-                    <div className="flex justify-end m-3">
-                        <CButton
-                            className="flex justify-center items-center text-2xl"
-                            type="submit"
-                            isLoading={useSelector((state) => state.loader.isLoading)}>
-                            Save
-                        </CButton>
+                    <div className="flex items-center justify-center flex-col">
+                        {Object.values(errors).length > 0 && (
+                            <p className="error text-center mt-4">
+                                Some errors are there in form please check{' '}
+                            </p>
+                        )}
+
+                        <div className="flex justify-end m-3">
+                            <CButton
+                                className="flex justify-center items-center text-2xl"
+                                type="submit"
+                                isLoading={useSelector((state) => state.loader.isLoading)}>
+                                Save
+                            </CButton>
+                        </div>
                     </div>
                 </div>
 
@@ -165,7 +175,7 @@ const AddQuestionForm = () => {
 
 export function OptionsDropdown() {
     const dispatch = useDispatch();
-    const { data: _formData } = useSelector((state) => state.questionForm);
+    const { data: _formData, errors } = useSelector((state) => state.questionForm);
     const handleOptionChange = (e) => {
         dispatch(
             QuestionFormActions.handleInputChange({
@@ -210,6 +220,7 @@ export function OptionsDropdown() {
                         )}
                     </select>
                 </div>
+                {errors.mqs_ans && <div className="error">{errors.mqs_ans}</div>}
             </div>
         </>
     );

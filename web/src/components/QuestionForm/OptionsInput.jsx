@@ -252,7 +252,7 @@ function OptionsInput({}) {
                         <ImageInputComp label="Option E image" inputFor="mqs_opt_five" />
                     </div>
                     {errors.mqs_opt_five && (
-                        <div className="!top-[1rem]">{errors.mqs_opt_five}</div>
+                        <div className="error">{errors.mqs_opt_five}</div>
                     )}
 
                     <CButton
