@@ -9,7 +9,14 @@ const app = express();
 dotenv.config();
 
 app.use(upload());
-app.use(cors());
+app.use(
+    cors({
+        origin: 'http://localhost:3000',
+        credentials: true,
+    })
+);
+
+app.options('*', cors());
 app.use(json({ limit: '1024mb' }));
 app.use(urlencoded({ extended: true, limit: '1024mb' }));
 app.use(cookieParser());
@@ -17,5 +24,5 @@ app.use(cookieParser());
 app.use('/api', indexRoutes);
 
 app.listen(process.env.PORT, () => {
-	console.log('Server started on', process.env.PORT);
+    console.log('Server started on', process.env.PORT);
 });

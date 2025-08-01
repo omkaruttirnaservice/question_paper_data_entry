@@ -7,48 +7,57 @@ import useHttp from '../../Hooks/use-http.jsx';
 import CButton from '../../UI/CButton.jsx';
 
 function BookNameDropdown() {
-	const dispatch = useDispatch();
-	const { sendRequest } = useHttp();
+    const dispatch = useDispatch();
+    const { sendRequest } = useHttp();
 
-	const { data: _formData, errors, bookNamesList } = useSelector((state) => state.questionForm);
-	const handleChange = async (e) => {
-		dispatch(
-			QuestionFormActions.handleInputChange({
-				key: e.target.name,
-				value: e.target.value,
-			})
-		);
-	};
+    const { data: _formData, errors, bookNamesList } = useSelector((state) => state.questionForm);
+    const handleChange = async (e) => {
+        dispatch(
+            QuestionFormActions.handleInputChange({
+                key: e.target.name,
+                value: e.target.value,
+            })
+        );
+    };
 
-	useEffect(() => {
-		if (bookNamesList.length == 0) {
-			dispatch(getBooksListThunk(_formData.pub_name, sendRequest));
-		}
-	}, []);
+    useEffect(() => {
+        if (bookNamesList.length == 0) {
+            dispatch(getBooksListThunk(_formData.pub_name, sendRequest));
+        }
+    }, []);
 
-	const handleAddBookModal = () => {
-		dispatch(ModalActions.toggleModal('add-book-modal'));
-	};
+    const handleAddBookModal = () => {
+        dispatch(ModalActions.toggleModal('add-book-modal'));
+    };
 
-	console.log(bookNamesList, '==bookNamesList==')
+    return (
+        <div className="flex flex-col gap-1 relative ">
+            <label htmlFor="pub-name" className="input-label">
+                Book Name
+            </label>
 
-	return (
-		<div className="flex flex-col gap-1 relative ">
-			<label htmlFor="pub-name" className='input-label'>Book Name</label>
-
-			<div className="flex">
-				<CButton onClick={handleAddBookModal} icon={<FaPlus />} />
-				<select className="input-el grow" type="text" onChange={handleChange} name="book_name" value={_formData.book_name}>
-					<option value="">-- Select --</option>
-					{bookNamesList.length >= 1 &&
-						bookNamesList.map((el) => {
-							return <option value={el.msq_book_name}>{el.msq_book_name}</option>;
-						})}
-				</select>
-			</div>
-			{errors.book_name && <div className=" error">{errors.book_name}</div>}
-		</div>
-	);
+            <div className="flex">
+                <CButton onClick={handleAddBookModal} icon={<FaPlus />} />
+                <select
+                    className="input-el grow"
+                    type="text"
+                    onChange={handleChange}
+                    name="book_name"
+                    value={_formData.book_name}>
+                    <option value="">-- Select --</option>
+                    {bookNamesList.length >= 1 &&
+                        bookNamesList.map((el, idx) => {
+                            return (
+                                <option key={idx} value={el.msq_book_name}>
+                                    {el.msq_book_name}
+                                </option>
+                            );
+                        })}
+                </select>
+            </div>
+            {errors.book_name && <div className=" error">{errors.book_name}</div>}
+        </div>
+    );
 }
 
 export default BookNameDropdown;

@@ -14469,7 +14469,7 @@ const hy = cf({
     ),
     Bs = (e, t) => async (n) => {
         const r = {
-            url: go + '/api/get-subject-list',
+            url: go + '/api/subject/list',
             method: 'POST',
             body: JSON.stringify({ post_id: e }),
         };
@@ -14481,7 +14481,7 @@ const hy = cf({
     },
     zs = (e, t) => async (n) => {
         const r = {
-            url: go + '/api/get-topic-list',
+            url: go + '/api/topic/list',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ subjectId: e }),
@@ -16730,7 +16730,7 @@ function pC() {
     };
     function g(m, y) {
         const S = {
-            url: fC + '/api/add-subject',
+            url: fC + '/api/subject/add',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ postId: m, subjectName: y }),
@@ -16833,7 +16833,7 @@ function mC() {
     };
     function g(m, y, S) {
         const E = {
-            url: hC + '/api/add-topic',
+            url: hC + '/api/topic/add',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ postId: m, subjectId: y, topicName: S }),

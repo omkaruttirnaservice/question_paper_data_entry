@@ -9,7 +9,7 @@ export const sendSuccess = (res, data = '', usrMsg = '') => {
 export const sendError = (res, error, usrMsg = '') => {
 	res.status(500).json({
 		success: 0,
-		data: error.message,
+		data: error?.message || 'Server error',
 		usrMsg,
 	});
 };

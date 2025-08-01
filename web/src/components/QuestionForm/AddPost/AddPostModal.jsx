@@ -32,7 +32,7 @@ function AddPostModal() {
 			dispatch(ModalActions.toggleModal('add-post-modal'));
 			if (data.success === 1) {
 				toast('Post added successfully');
-				dispatch(getPostListThunk());
+				dispatch(getPostListThunk(sendRequest));
 			} else {
 				toast('Something went wrong1');
 			}

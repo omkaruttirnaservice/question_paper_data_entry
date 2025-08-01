@@ -45,7 +45,7 @@ const AddQuestionForm = () => {
 
     useEffect(() => {
         dispatch(getQuestionNumberThunk());
-        dispatch(getPostListThunk());
+        dispatch(getPostListThunk(sendRequest));
         dispatch(getPublicationsListThunk(sendRequest));
     }, []);
 

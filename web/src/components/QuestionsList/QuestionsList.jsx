@@ -57,7 +57,7 @@ function QuestionsList() {
 
     useEffect(() => {
         if (postsList.length === 0) {
-            dispatch(getPostListThunk());
+            dispatch(getPostListThunk(sendRequest));
         }
     }, []);
 

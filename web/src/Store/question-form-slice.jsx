@@ -127,7 +127,9 @@ const QuestionFormSlice = createSlice({
 
 export const getQuestionNumberThunk = () => {
     return async (dispatch) => {
-        let response = await fetch(SERVER_IP + '/api/questions/get-question-number');
+        let response = await fetch(SERVER_IP + '/api/questions/get-question-number', {
+            credentials: 'include',
+        });
         let { data } = await response.json();
         dispatch(QuestionFormActions.setQuestionNumber(data.total_questions));
     };
@@ -165,25 +167,27 @@ export const getPublicationsListThunk = (sendRequest) => {
     };
 };
 
-export const getPostListThunk = () => {
+export const getPostListThunk = (sendRequest) => {
     console.log(typeof import.meta.env.VITE_API_IP, '==import.env.==');
     console.log(import.meta.env.VITE_API_IP, '==import.env.==');
     return async (dispatch) => {
         try {
             dispatch(loaderActions.showLoader());
-            let response = await fetch(SERVER_IP + '/api/posts/list');
-            let { success, data } = await response.json();
-            console.log(success, '==success==');
 
-            if (success === 1) {
-                dispatch(QuestionFormActions.setPostsList(data));
-            }
-
-            dispatch(loaderActions.hideLoader());
+            const requestData = {
+                url: SERVER_IP + '/api/posts/list',
+            };
+            sendRequest(requestData, ({ success, data }) => {
+                if (success === 1) {
+                    console.log(data, '=================================');
+                    dispatch(QuestionFormActions.setPostsList(data));
+                }
+            });
         } catch (error) {
             console.log(error);
-            dispatch(loaderActions.hideLoader());
             toast('Error getting questions list');
+        } finally {
+            dispatch(loaderActions.hideLoader());
         }
     };
 };
@@ -191,7 +195,7 @@ export const getPostListThunk = () => {
 export const getSubjectsListThunk = (post_id, sendRequest) => {
     return async (dispatch) => {
         const reqData = {
-            url: SERVER_IP + '/api/get-subject-list',
+            url: SERVER_IP + '/api/subject/list',
             method: 'POST',
             body: JSON.stringify({ post_id }),
         };
@@ -212,7 +216,7 @@ export const getSubjectsListThunk = (post_id, sendRequest) => {
 export const getTopicsListThunk = (subject_id, sendRequest) => {
     return async (dispatch) => {
         const requestData = {
-            url: SERVER_IP + '/api/get-topic-list',
+            url: SERVER_IP + '/api/topic/list',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
