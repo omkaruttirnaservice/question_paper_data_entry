@@ -1,46 +1,90 @@
-import react from 'react';
-import { NavLink } from 'react-router-dom';
-
-import './MenuBar.css';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 function MenuBar() {
-	const menuButtons = [
-		{
-			name: 'Add Questions',
-			icon: 'fa-solid fa-square-plus',
-			path: '/question-form',
-		},
-		{
-			name: 'Questions List',
-			icon: 'fa-solid fa-house',
-			path: '/questions-list',
-		},
-		{
-			name: 'Deleted Questions',
-			icon: 'fa-solid fa-house',
-			path: '/deleted-questions-list',
-		},
-	];
+    const auth = useSelector((state) => state.auth);
+    const navigate = useNavigate();
 
-	return (
-		<>
-			<div className="flex p-2 gap-2 justify-start container mx-auto">
-				{menuButtons?.map((el, index) => {
-					return (
-						<NavLink
-							key={index}
-							to={el.path}
-							className={({ isActive }) =>
-								isActive ? 'menu-item active' : 'menu-item'
-							}>
-							<i className={el.icon}></i>
-							<span>{el.name}</span>
-						</NavLink>
-					);
-				})}
-			</div>
-		</>
-	);
+    const menuButtons = [
+        {
+            name: 'Add Questions',
+            icon: 'fa-solid fa-square-plus',
+            path: '/question-form',
+        },
+        {
+            name: 'Questions List',
+            icon: 'fa-solid fa-list',
+            path: '/questions-list',
+        },
+        {
+            name: 'Deleted Questions',
+            icon: 'fa-solid fa-trash',
+            path: '/deleted-questions-list',
+        },
+    ];
+
+    return (
+        <div className="bg-white shadow-lg px-6 py-3 flex justify-between items-center w-full sticky top-0 z-10">
+            {/* Left side - Navigation buttons */}
+            <div className="flex gap-3">
+                {menuButtons.map((el, index) => (
+                    <NavLink
+                        key={index}
+                        to={el.path}
+                        className={({ isActive }) =>
+                            `flex items-center gap-2 px-4 py-2 text-sm font-medium transition duration-200 ${
+                                isActive
+                                    ? 'bg-blue-100 text-blue-600'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                            }`
+                        }>
+                        <i className={el.icon}></i>
+                        <span>{el.name}</span>
+                    </NavLink>
+                ))}
+            </div>
+
+            {/* Right side - User Info */}
+            <div className="flex items-center gap-4">
+                {auth?.username && (
+                    <>
+                        <CurrentTime />
+                        <span className="text-sm text-gray-700 font-medium">
+                            👤 Welcome, {auth.username} (#{auth.userId})
+                        </span>
+                    </>
+                )}
+                <button
+                    onClick={() => navigate('/logout')}
+                    className="text-sm text-white bg-red-500 hover:bg-red-600 transition px-4 py-1 ">
+                    Logout
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function CurrentTime() {
+    const [time, setTime] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTime(new Date());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    const formattedTime = time.toLocaleTimeString();
+    const formattedDate = time.toLocaleDateString();
+
+    return (
+        <div className="text-sm text-gray-600 font-medium px-2 py-1 bg-gray-100 rounded">
+            🕒 {formattedDate} | {formattedTime}
+        </div>
+    );
 }
 
 export default MenuBar;

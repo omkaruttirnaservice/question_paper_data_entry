@@ -15,7 +15,7 @@ function QuestionPgNo() {
 	};
 	return (
 		<div className="flex flex-col gap-1 relative">
-			<label htmlFor="pg_no">Page No</label>
+			<label htmlFor="pg_no" className='input-label'>Page No</label>
 			<input className="input-el grow" type="number" min="0" onChange={handleChange} name="pg_no" value={_formData.pg_no} />
 			{errors.pg_no && <div className=" error">{errors.pg_no}</div>}
 		</div>
