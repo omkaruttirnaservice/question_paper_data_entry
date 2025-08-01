@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import {
     QuestionFormActions,
     getBooksListThunk,
@@ -25,14 +26,13 @@ import ExplanationInput from './ExplanationInput.jsx';
 import OptionsInput from './OptionsInput.jsx';
 import PostListDropdown from './PostListDropdown/PostListDropdown.jsx';
 import PublicationNameDropdown from './PublicationNameDropdown/PublicationNameDropdown.jsx';
-import QuestionMonthDropdown from './QuestionMonthDropdown/QuestionMonthDropdown.jsx';
 import QuestionPgNo from './QuestionPgNo/QuestionPgNo.jsx';
 import QuestionPreview from './QuestionPreview/QuestionPreview.jsx';
 import QuestionYearDropdown from './QuestionYearDropdown/QuestionYearDropdown.jsx';
 import SubjectListDropdown from './SubjectListDropdown/SubjectListDropdown.jsx';
 import TopicListDropdown from './TopicListDropdown/TopicListDropdown.jsx';
 import addQuestionFormSchema from './addQuestionFormSchema.jsx';
-import Swal from 'sweetalert2';
+import { resetCkEditorInstances } from '../utils/utils.jsx';
 
 let SERVER_IP = import.meta.env.VITE_API_IP;
 
@@ -40,6 +40,7 @@ const AddQuestionForm = () => {
     const dispatch = useDispatch();
     const { sendRequest } = useHttp();
     let { data: _formData, questionNumber, errors } = useSelector((state) => state.questionForm);
+    console.log(_formData);
 
     useEffect(() => {
         dispatch(getQuestionNumberThunk());
@@ -93,16 +94,6 @@ const AddQuestionForm = () => {
                 dispatch(QuestionFormActions.setQuestionNumber(questionNumber));
             }
         });
-    }
-
-    function resetCkEditorInstances() {
-        window.CKEDITOR.instances[`mqs_question`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_one`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_two`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_three`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_four`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_five`].setData('');
-        window.CKEDITOR.instances[`mqs_solution`].setData('');
     }
 
     // useEffect(() => {

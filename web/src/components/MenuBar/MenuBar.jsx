@@ -52,7 +52,7 @@ function MenuBar() {
                     <>
                         <CurrentTime />
                         <span className="text-sm text-gray-700 font-medium">
-                            👤 Welcome, {auth.username}
+                            👤 Welcome, {auth.username} (#{auth.userId})
                         </span>
                     </>
                 )}
