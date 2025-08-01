@@ -1,3 +1,4 @@
+import { ROLES } from '../config/constants.js';
 import db from '../config/db.connect.js';
 import { myDate } from '../config/utils.js';
 const questionModel = {
@@ -133,26 +134,40 @@ const questionModel = {
         return db.query(`SELECT COUNT(id) AS total_questions FROM tm_mega_question_set;`);
     },
 
-    getQuestionList: (d) => {
+    getQuestionList: (d, user) => {
         console.log(d, 'in model');
+
+        let where = '';
+        if (user.role !== ROLES.ADMIN) {
+            where += ` AND mqs_added_by = ${user.id} `;
+        }
+
         const q = `SELECT 
                         *
                     FROM tm_mega_question_set AS mqs
                     WHERE 
-                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 0
+                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 0 
+                        ${where}
 					ORDER BY mqs.id
 						`;
 
         return db.query(q, [+d.subject_id, +d.topic_id]);
     },
 
-    getQuestionListTrash: (d) => {
+    getQuestionListTrash: (d, user) => {
         console.log(d, 'in model');
+
+        let where = '';
+        if (user.role !== ROLES.ADMIN) {
+            where += ` AND mqs_added_by = ${user.id} `;
+        }
         const q = `SELECT 
                         *
                     FROM tm_mega_question_set AS mqs
                     WHERE 
-                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 1`;
+                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 1
+                        ${where}
+                        `;
 
         return db.query(q, [+d.subject_id, +d.topic_id]);
     },

@@ -10,6 +10,5 @@ const pool = mysql.createPool({
 });
 
 const db = pool.promise();
-console.log(db);
 
 export default db;
