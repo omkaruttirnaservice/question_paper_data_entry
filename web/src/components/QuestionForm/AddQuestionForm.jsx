@@ -77,14 +77,16 @@ const AddQuestionForm = () => {
     };
 
     async function postQuestionData() {
-        if (!_formData.userId) {
+        const copiedFormData = {..._formData}
+
+        if (!copiedFormData.userId) {
             // This is only if the userid is not added in redux state when app initially starts
-            _formData.userId = getCookie('userId');
+            copiedFormData.userId = getCookie('userId');
         }
         let reqData = {
             url: SERVER_IP + '/api/questions/add-question',
             method: 'POST',
-            body: JSON.stringify(_formData),
+            body: JSON.stringify(copiedFormData),
         };
         sendRequest(reqData, (data) => {
             if (data.success == 1) {
