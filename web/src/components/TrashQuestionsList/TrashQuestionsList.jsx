@@ -8,284 +8,339 @@ import { FaTrash } from 'react-icons/fa';
 
 import { FaAngleRight } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPostListThunk, getSubjectsListThunk, getTopicsListThunk } from '../../Store/question-form-slice.jsx';
+import {
+    getPostListThunk,
+    getSubjectsListThunk,
+    getTopicsListThunk,
+} from '../../Store/question-form-slice.jsx';
 import useHttp from '../Hooks/use-http.jsx';
 import PostListDropdown from '../QuestionForm/PostListDropdown/PostListDropdown.jsx';
 import SubjectListDropdown from '../QuestionForm/SubjectListDropdown/SubjectListDropdown.jsx';
 import TopicListDropdown from '../QuestionForm/TopicListDropdown/TopicListDropdown.jsx';
 
-import { Accordion, AccordionItem, AccordionItemButton, AccordionItemHeading, AccordionItemPanel } from 'react-accessible-accordion';
+import {
+    Accordion,
+    AccordionItem,
+    AccordionItemButton,
+    AccordionItemHeading,
+    AccordionItemPanel,
+} from 'react-accessible-accordion';
 import Swal from 'sweetalert2';
 import CButton from '../UI/CButton.jsx';
 
 let SERVER_IP = import.meta.env.VITE_API_IP;
 
 function TrashQuestionsList() {
-	const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
-	const { data: _formData, postsList, subjectsList, topicsList } = useSelector((state) => state.questionForm);
-	const { isLoading } = useSelector((state) => state.loader);
+    const {
+        data: _formData,
+        postsList,
+        subjectsList,
+        topicsList,
+    } = useSelector((state) => state.questionForm);
+    const { isLoading } = useSelector((state) => state.loader);
 
-	const { sendRequest } = useHttp();
+    const { sendRequest } = useHttp();
 
-	useEffect(() => {
-		if (postsList.length === 0) {
-			dispatch(getPostListThunk(sendRequest));
-		}
-	}, []);
+    useEffect(() => {
+        if (postsList.length === 0) {
+            dispatch(getPostListThunk(sendRequest));
+        }
+    }, []);
 
-	useEffect(() => {
-		dispatch(getSubjectsListThunk(_formData.post_id, sendRequest));
-	}, [_formData.post_id]);
+    useEffect(() => {
+        dispatch(getSubjectsListThunk(_formData.post_id, sendRequest));
+    }, [_formData.post_id]);
 
-	useEffect(() => {
-		dispatch(getTopicsListThunk(_formData.subject_id, sendRequest));
-	}, [_formData.subject_id]);
+    useEffect(() => {
+        dispatch(getTopicsListThunk(_formData.subject_id, sendRequest));
+    }, [_formData.subject_id]);
 
-	const [questionList, setQuestionList] = useState([]);
+    const [questionList, setQuestionList] = useState([]);
 
-	async function getQuestions() {
-		let reqData = {
-			url: SERVER_IP + '/api/questions/list-trash',
-			method: 'POST',
-			body: JSON.stringify({
-				post_id: _formData.post_id,
-				subject_id: _formData.subject_id,
-				topic_id: _formData.topic_id,
-			}),
-		};
-		sendRequest(reqData, (data) => {
-			setQuestionList(data.data);
-		});
-	}
+    async function getQuestions() {
+        let reqData = {
+            url: SERVER_IP + '/api/questions/list-trash',
+            method: 'POST',
+            body: JSON.stringify({
+                post_id: _formData.post_id,
+                subject_id: _formData.subject_id,
+                topic_id: _formData.topic_id,
+            }),
+        };
+        sendRequest(reqData, (data) => {
+            setQuestionList(data.data);
+        });
+    }
 
-	useEffect(() => {
-		if (!_formData.topic_id && !_formData.subject_id && !_formData.topic_id) {
-			return;
-		}
-		getQuestions();
-	}, [_formData.topic_id]);
+    useEffect(() => {
+        if (!_formData.topic_id && !_formData.subject_id && !_formData.topic_id) {
+            return;
+        }
+        getQuestions();
+    }, [_formData.topic_id]);
 
-	const handleGetQuestionsList = () => getQuestions();
+    const handleGetQuestionsList = () => getQuestions();
 
-	const handleDeleteQuestion = (id) => {
-		Swal.fire({
-			title: 'Are you sure?',
-			text: 'This question will delete permently!',
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonText: 'Yes',
-		}).then((result) => {
-			if (result.isConfirmed) {
-				confirmDeleteQuestionPermenant(id);
-			}
-		});
-	};
+    const handleDeleteQuestion = (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This question will delete permently!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                confirmDeleteQuestionPermenant(id);
+            }
+        });
+    };
 
-	const confirmDeleteQuestionPermenant = (id) => {
-		let reqData = {
-			url: SERVER_IP + '/api/questions/delete-permenant',
-			method: 'DELETE',
-			body: JSON.stringify({ questionId: id }),
-		};
-		sendRequest(reqData, (data) => {
-			if (data.success == 1) {
-				setQuestionList(questionList.filter((el) => el.id != id));
-				Swal.fire({
-					title: 'Deleted!',
-					text: 'Question has been removed permenantly.',
-					icon: 'success',
-				});
-			}
-		});
-	};
+    const confirmDeleteQuestionPermenant = (id) => {
+        let reqData = {
+            url: SERVER_IP + '/api/questions/delete-permenant',
+            method: 'DELETE',
+            body: JSON.stringify({ questionId: id }),
+        };
+        sendRequest(reqData, (data) => {
+            if (data.success == 1) {
+                setQuestionList(questionList.filter((el) => el.id != id));
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'Question has been removed permenantly.',
+                    icon: 'success',
+                });
+            }
+        });
+    };
 
-	const handleRestoreQuestion = (id) => {
-		Swal.fire({
-			title: 'Are you sure?',
-			text: 'Question will restored!',
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonText: 'Yes',
-		}).then((result) => {
-			if (result.isConfirmed) {
-				confirmRestoreQuestion(id);
-			}
-		});
-	};
+    const handleRestoreQuestion = (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Question will restored!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                confirmRestoreQuestion(id);
+            }
+        });
+    };
 
-	const confirmRestoreQuestion = (id) => {
-		let reqData = {
-			url: SERVER_IP + '/api/questions/restore',
-			method: 'DELETE',
-			body: JSON.stringify({ questionId: id }),
-		};
-		sendRequest(reqData, (data) => {
-			if (data.success == 1) {
-				setQuestionList(questionList.filter((el) => el.id != id));
-				Swal.fire({
-					title: 'Successful!',
-					text: 'Question has been restored.',
-					icon: 'success',
-				});
-			}
-		});
-	};
+    const confirmRestoreQuestion = (id) => {
+        let reqData = {
+            url: SERVER_IP + '/api/questions/restore',
+            method: 'DELETE',
+            body: JSON.stringify({ questionId: id }),
+        };
+        sendRequest(reqData, (data) => {
+            if (data.success == 1) {
+                setQuestionList(questionList.filter((el) => el.id != id));
+                Swal.fire({
+                    title: 'Successful!',
+                    text: 'Question has been restored.',
+                    icon: 'success',
+                });
+            }
+        });
+    };
 
-	const [expandedItem, setExpandedItem] = useState(null);
-	const handleAccordionChange = (e) => {
-		if (e == expandedItem) {
-			setExpandedItem(null);
-		} else {
-			setExpandedItem(e);
-		}
-	};
+    const [expandedItem, setExpandedItem] = useState(null);
+    const handleAccordionChange = (e) => {
+        if (e == expandedItem) {
+            setExpandedItem(null);
+        } else {
+            setExpandedItem(e[0]);
+        }
+    };
 
-	return (
-		<>
-			<div className="container mx-auto mt-6">
-				<div className="grid grid-cols-5 gap-3 mb-6">
-					<PostListDropdown isShowAddNewBtn={false} />
-					<SubjectListDropdown isShowAddNewBtn={false} />
-					<TopicListDropdown isShowAddNewBtn={false} />
-					<CButton className={'h-fit mt-auto'} onClick={handleGetQuestionsList}>
-						Search
-					</CButton>
-				</div>
+    return (
+        <>
+            <div className="container mx-auto mt-6">
+                <div className="grid grid-cols-5 gap-3 mb-6">
+                    <PostListDropdown isShowAddNewBtn={false} />
+                    <SubjectListDropdown isShowAddNewBtn={false} />
+                    <TopicListDropdown isShowAddNewBtn={false} />
+                    <CButton className={'h-fit mt-auto'} onClick={handleGetQuestionsList}>
+                        Search
+                    </CButton>
+                </div>
 
-				<div className="bg-cyan-100 px-4">
-					<div className="flex items-center py-3 gap-3">
-						<p>Total posts</p>
-						<FaAngleRight />
-						<span className="underline">{postsList.length}</span>
+                <div className="bg-cyan-100 px-4">
+                    <div className="flex items-center py-3 gap-3">
+                        <p>Total posts</p>
+                        <FaAngleRight />
+                        <span className="underline">{postsList.length}</span>
 
-						<FaGripLinesVertical />
-						<p>Total Subjets</p>
-						<FaAngleRight />
-						<span className="underline">{subjectsList.length}</span>
+                        <FaGripLinesVertical />
+                        <p>Total Subjets</p>
+                        <FaAngleRight />
+                        <span className="underline">{subjectsList.length}</span>
 
-						<FaGripLinesVertical />
-						<p>Total Topics</p>
-						<FaAngleRight />
-						<span className="underline">{topicsList.length}</span>
-					</div>
-				</div>
-			</div>
+                        <FaGripLinesVertical />
+                        <p>Total Topics</p>
+                        <FaAngleRight />
+                        <span className="underline">{topicsList.length}</span>
+                    </div>
+                </div>
+            </div>
 
-			<div className="container mx-auto mt-6">
-				{isLoading && <AiOutlineLoading3Quarters className="animate-spin text-2xl m-3 mx-auto" />}
-				{!isLoading && questionList.length === 0 && <p className="text-center text-[#555]">Woops! no questions found!</p>}
-				<Accordion allowZeroExpanded={true} onChange={handleAccordionChange}>
-					{questionList.length >= 1 &&
-						questionList.map((el, idx) => {
-							return (
-								<AccordionItem className="border  mb-1" key={idx} uuid={idx}>
-									<AccordionItemHeading className={`border-b py-3 bg-gray-200 px-4 ${expandedItem == idx ? 'bg-cyan-500' : ''}`}>
-										<AccordionItemButton>
-											<div className="flex justify-between items-center">
-												<span>Question: {el.id}</span>
+            <div className="container mx-auto mt-6">
+                {isLoading && (
+                    <AiOutlineLoading3Quarters className="animate-spin text-2xl m-3 mx-auto" />
+                )}
+                {!isLoading && questionList.length === 0 && (
+                    <p className="text-center text-[#555]">Woops! no questions found!</p>
+                )}
+                <Accordion allowZeroExpanded={true} onChange={handleAccordionChange}>
+                    {questionList.length >= 1 &&
+                        questionList.map((el, idx) => {
+                            return (
+                                <AccordionItem className="border  mb-1" key={idx} uuid={idx}>
+                                    <AccordionItemHeading
+                                        className={`border-b py-3 bg-gray-200 px-4 ${
+                                            expandedItem == idx ? 'bg-cyan-500' : ''
+                                        }`}>
+                                        <AccordionItemButton>
+                                            <div className="flex justify-between items-center ">
+                                                <div className=" w-full max-h-28 overflow-hidden">
+                                                    <span>Q: {el.id}</span>
+                                                    {expandedItem != idx && (
+                                                        <p
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: el.mqs_question,
+                                                            }}></p>
+                                                    )}
+                                                </div>
 
-												<div className="flex items-center gap-5">
-													<BiReset
-														className="text-green-800 text-xl hover:scale-[1.2] transition-all duration-300"
-														onClick={handleRestoreQuestion.bind(null, el.id)}
-													/>
+                                                <div className="flex items-center gap-5">
+                                                    <BiReset
+                                                        className="text-green-800 text-xl hover:scale-[1.2] transition-all duration-300"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleRestoreQuestion(el.id);
+                                                        }}
+                                                    />
 
-													<FaTrash
-														className="text-red-800 hover:scale-[1.2] transition-all duration-300"
-														onClick={handleDeleteQuestion.bind(null, el.id)}
-													/>
-												</div>
-											</div>
-										</AccordionItemButton>
-									</AccordionItemHeading>
-									<AccordionItemPanel className="py-3 px-4">
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Question</span>
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_question,
-												}}></p>
-										</div>
+                                                    <FaTrash
+                                                        className="text-red-800 hover:scale-[1.2] transition-all duration-300"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeleteQuestion(el.id);
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </AccordionItemButton>
+                                    </AccordionItemHeading>
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Option A</span>
+                                    <AccordionItemPanel className="py-3 px-4">
+                                        <div className="py-3">
+                                            <span className="font-bold text-[#555] mb-4 block">
+                                                Question
+                                            </span>
+                                            <p
+                                                dangerouslySetInnerHTML={{
+                                                    __html: el.mqs_question,
+                                                }}></p>
+                                        </div>
 
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_opt_one,
-												}}></p>
-										</div>
+                                        <div className="py-3">
+                                            <span className="font-bold text-[#555] mb-4 block">
+                                                Option A
+                                            </span>
 
-										<hr />
+                                            <p
+                                                dangerouslySetInnerHTML={{
+                                                    __html: el.mqs_opt_one,
+                                                }}></p>
+                                        </div>
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Option B</span>
+                                        <hr />
 
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_opt_two,
-												}}></p>
-										</div>
+                                        <div className="py-3">
+                                            <span className="font-bold text-[#555] mb-4 block">
+                                                Option B
+                                            </span>
 
-										<hr />
+                                            <p
+                                                dangerouslySetInnerHTML={{
+                                                    __html: el.mqs_opt_two,
+                                                }}></p>
+                                        </div>
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Option C</span>
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_opt_three,
-												}}></p>
-										</div>
+                                        <hr />
 
-										<hr />
+                                        <div className="py-3">
+                                            <span className="font-bold text-[#555] mb-4 block">
+                                                Option C
+                                            </span>
+                                            <p
+                                                dangerouslySetInnerHTML={{
+                                                    __html: el.mqs_opt_three,
+                                                }}></p>
+                                        </div>
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 block">Option D</span>
-											<p
-												dangerouslySetInnerHTML={{
-													__html: el.mqs_opt_four,
-												}}></p>
-										</div>
+                                        <hr />
 
-										<hr />
+                                        <div className="py-3">
+                                            <span className="font-bold text-[#555] mb-4 block">
+                                                Option D
+                                            </span>
+                                            <p
+                                                dangerouslySetInnerHTML={{
+                                                    __html: el.mqs_opt_four,
+                                                }}></p>
+                                        </div>
 
-										{el.mqs_opt_five && (
-											<div className="py-3">
-												<span className="font-bold text-[#555] mb-4 block">Option E</span>
-												<p
-													dangerouslySetInnerHTML={{
-														__html: el.mqs_opt_five,
-													}}></p>
-											</div>
-										)}
+                                        <hr />
 
-										<hr />
+                                        {el.mqs_opt_five && (
+                                            <div className="py-3">
+                                                <span className="font-bold text-[#555] mb-4 block">
+                                                    Option E
+                                                </span>
+                                                <p
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: el.mqs_opt_five,
+                                                    }}></p>
+                                            </div>
+                                        )}
 
-										<div className="py-3">
-											<span className="font-bold text-[#555] mb-4 me-3">Correct Option</span>
-											<span className="mb-6 bg-blue-200 px-2 py-1 w-fit">{el.mqs_ans}</span>
-										</div>
+                                        <hr />
 
-										<hr />
+                                        <div className="py-3">
+                                            <span className="font-bold text-[#555] mb-4 me-3">
+                                                Correct Option
+                                            </span>
+                                            <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
+                                                {el.mqs_ans}
+                                            </span>
+                                        </div>
 
-										{el.mqs_solution && (
-											<div className="py-3">
-												<span className="font-bold text-[#555] my-4 block">Solution</span>
-												<p
-													dangerouslySetInnerHTML={{
-														__html: el.mqs_solution,
-													}}></p>
-											</div>
-										)}
-									</AccordionItemPanel>
-								</AccordionItem>
-							);
-						})}
-				</Accordion>
-			</div>
+                                        <hr />
 
-			{/* <div className="container mx-auto mt-6">
+                                        {el.mqs_solution && (
+                                            <div className="py-3">
+                                                <span className="font-bold text-[#555] my-4 block">
+                                                    Solution
+                                                </span>
+                                                <p
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: el.mqs_solution,
+                                                    }}></p>
+                                            </div>
+                                        )}
+                                    </AccordionItemPanel>
+                                </AccordionItem>
+                            );
+                        })}
+                </Accordion>
+            </div>
+
+            {/* <div className="container mx-auto mt-6">
 				<h3 className="heading-3__dark ">Post List</h3>
 				<div class="relative overflow-x-auto">
 					<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -340,8 +395,8 @@ function TrashQuestionsList() {
 					</table>
 				</div>
 			</div> */}
-		</>
-	);
+        </>
+    );
 }
 
 export default TrashQuestionsList;

@@ -32,7 +32,7 @@ import QuestionYearDropdown from './QuestionYearDropdown/QuestionYearDropdown.js
 import SubjectListDropdown from './SubjectListDropdown/SubjectListDropdown.jsx';
 import TopicListDropdown from './TopicListDropdown/TopicListDropdown.jsx';
 import addQuestionFormSchema from './addQuestionFormSchema.jsx';
-import { resetCkEditorInstances } from '../utils/utils.jsx';
+import { getCookie, resetCkEditorInstances } from '../utils/utils.jsx';
 
 let SERVER_IP = import.meta.env.VITE_API_IP;
 
@@ -77,6 +77,10 @@ const AddQuestionForm = () => {
     };
 
     async function postQuestionData() {
+        if (!_formData.userId) {
+            // This is only if the userid is not added in redux state when app initially starts
+            _formData.userId = getCookie('userId');
+        }
         let reqData = {
             url: SERVER_IP + '/api/questions/add-question',
             method: 'POST',
