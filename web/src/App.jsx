@@ -1,22 +1,17 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './App.css';
+import LoginPage from './components/Login/Login.jsx';
+import Logout from './components/Logout/Logout.jsx';
 import AddQuestionForm from './components/QuestionForm/AddQuestionForm.jsx';
 import EditQuestionForm from './components/QuestionForm/EditQuestionForm.jsx';
 import QuestionsList from './components/QuestionsList/QuestionsList.jsx';
 import RootComponent from './components/RootComponent/RootComponent';
 import TrashQuestionsList from './components/TrashQuestionsList/TrashQuestionsList.jsx';
-import LoginPage from './components/Login/Login.jsx';
-import Logout from './components/Logout/Logout.jsx';
-import PrivateRoute from './components/PrivateRoute.jsx';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: (
-            <PrivateRoute>
-                <RootComponent />
-            </PrivateRoute>
-        ),
+        element: <RootComponent />,
         children: [
             { path: '/questions-list', element: <QuestionsList /> },
             { path: '/deleted-questions-list', element: <TrashQuestionsList /> },
