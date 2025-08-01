@@ -1,5 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 function MenuBar() {
     const auth = useSelector((state) => state.auth);
@@ -47,9 +49,12 @@ function MenuBar() {
             {/* Right side - User Info */}
             <div className="flex items-center gap-4">
                 {auth?.username && (
-                    <span className="text-sm text-gray-700 font-medium">
-                        👤 {auth.username}
-                    </span>
+                    <>
+                        <CurrentTime />
+                        <span className="text-sm text-gray-700 font-medium">
+                            👤 Welcome, {auth.username}
+                        </span>
+                    </>
                 )}
                 <button
                     onClick={() => navigate('/logout')}
@@ -57,6 +62,27 @@ function MenuBar() {
                     Logout
                 </button>
             </div>
+        </div>
+    );
+}
+
+function CurrentTime() {
+    const [time, setTime] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTime(new Date());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    const formattedTime = time.toLocaleTimeString();
+    const formattedDate = time.toLocaleDateString();
+
+    return (
+        <div className="text-sm text-gray-600 font-medium px-2 py-1 bg-gray-100 rounded">
+            🕒 {formattedDate} | {formattedTime}
         </div>
     );
 }
