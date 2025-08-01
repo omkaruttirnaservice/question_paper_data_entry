@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { authActions } from '../../Store/auth-slice';
 import useHttp from '../Hooks/use-http'; // adjust path if needed
 import { SERVER_IP } from '../utils/constants';
-import { useDispatch } from 'react-redux';
-import { authActions } from '../../Store/auth-slice';
+import { jwtDecode } from 'jwt-decode';
 
 function LoginPage() {
     const dispatch = useDispatch();
@@ -41,7 +41,16 @@ function LoginPage() {
             console.log({ res });
             if (res.success === 1) {
                 const token = res.data;
-                dispatch(authActions.login({ token }));
+                const { username, role, id: userId } = jwtDecode(token);
+
+                dispatch(
+                    authActions.login({
+                        token,
+                        username: username,
+                        role: role,
+                        userId: userId,
+                    })
+                );
                 navigate('/question-form');
             } else {
                 setError('Invalid login credentials');

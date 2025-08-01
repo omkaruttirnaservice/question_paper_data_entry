@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 const loginController = {
     login: async (req, res) => {
-        console.log("login controller");
+        console.log('login controller');
         try {
             const { username, password } = req.body;
 
@@ -21,10 +21,12 @@ const loginController = {
             }
 
             const user = result[0];
+            console.log({user},'===================');
             const token = jwt.sign(
                 {
-                    id: user.id,
-                    username: user.a_master_name,
+                    id: user.userId,
+                    username: user.username,
+                    role: user.role,
                 },
                 JWT_SECRET,
                 { expiresIn: '7d' }
