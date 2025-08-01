@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { loaderActions } from './loader-slice.jsx';
+import { getCookie } from '../components/utils/utils.jsx';
 
 let SERVER_IP = import.meta.env.VITE_API_IP;
 
@@ -24,6 +25,7 @@ let initialState = {
         month: null,
         year: [],
         showOptionE: false,
+        userId: getCookie('userId'),
     },
     questionsList: [],
     publicationsList: [],
@@ -55,9 +57,7 @@ const QuestionFormSlice = createSlice({
         },
 
         setQuestionsList(state, action) {
-            console.log('Info: updating state');
             state.questionsList = action.payload;
-            console.log('Info: updated state');
         },
 
         resetFormData(state, action) {
@@ -90,7 +90,6 @@ const QuestionFormSlice = createSlice({
         },
 
         setSubjectsList(state, action) {
-            console.log(action.payload, 'subjects list');
             let _subjectsList = action.payload;
             if (_subjectsList.length === 0) {
                 state.data.topic_id = null;
@@ -115,7 +114,6 @@ const QuestionFormSlice = createSlice({
 
         setEditQuestionDetails(state, action) {
             state.isEdit = true;
-            console.log(action.payload);
             state.data = action.payload;
         },
 
@@ -168,8 +166,6 @@ export const getPublicationsListThunk = (sendRequest) => {
 };
 
 export const getPostListThunk = (sendRequest) => {
-    console.log(typeof import.meta.env.VITE_API_IP, '==import.env.==');
-    console.log(import.meta.env.VITE_API_IP, '==import.env.==');
     return async (dispatch) => {
         try {
             dispatch(loaderActions.showLoader());
@@ -179,7 +175,6 @@ export const getPostListThunk = (sendRequest) => {
             };
             sendRequest(requestData, ({ success, data }) => {
                 if (success === 1) {
-                    console.log(data, '=================================');
                     dispatch(QuestionFormActions.setPostsList(data));
                 }
             });
@@ -243,7 +238,6 @@ export const getEditQuestionDetailsThunk = (questionId, sendRequest, post_id) =>
 
         sendRequest(requestData, ({ data }) => {
             data[0]['post_id'] = post_id;
-            console.log(data[0], 'edit question data');
             dispatch(QuestionFormActions.setEditQuestionDetails(data[0]));
         });
     };

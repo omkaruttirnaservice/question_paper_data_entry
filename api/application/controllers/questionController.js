@@ -1,8 +1,6 @@
 import questionModel from '../model/questionModel.js';
-import customValidate from '../utils/customValidate.js';
-
-const { isNonEmptyNullString, isNumber } = customValidate;
 import { sendError, sendSuccess } from '../utils/commonFunctions.js';
+
 
 const questionController = {
 	addNewQuestion: async (req, res) => {
@@ -29,7 +27,7 @@ const questionController = {
 				throw new Error(`Unable to restore questionID: ${questionId}`);
 			}
 		} catch (error) {
-			sendError(res, err);
+			sendError(res, error);
 		}
 	},
 

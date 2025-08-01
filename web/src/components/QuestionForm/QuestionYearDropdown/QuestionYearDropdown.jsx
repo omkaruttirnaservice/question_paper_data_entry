@@ -24,12 +24,10 @@ function QuestionYearDropdown() {
 
     const dispatch = useDispatch();
     const { data: _formData, errors } = useSelector((state) => state.questionForm);
-    console.log(_formData);
 
     const handleChange = async (e) => {
         const _month = monthRef.current.value;
         const _year = yearRef.current.value;
-        console.log(_month, _year);
         if (!_month || !_year) {
             return;
         }
@@ -45,7 +43,6 @@ function QuestionYearDropdown() {
         yearRef.current.value = '';
     };
 
-    console.log(_formData.year.length);
 
     function handleRemoveYear(_yearToRemove) {
         if (_formData.year.length === 0) return;

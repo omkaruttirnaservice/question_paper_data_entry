@@ -41,8 +41,6 @@ const AddQuestionForm = () => {
     const { sendRequest } = useHttp();
     let { data: _formData, questionNumber, errors } = useSelector((state) => state.questionForm);
 
-    console.log({ errors });
-
     useEffect(() => {
         dispatch(getQuestionNumberThunk());
         dispatch(getPostListThunk(sendRequest));

@@ -7,7 +7,6 @@ const useHttp = () => {
     const navigate = useNavigate();
 
     const sendRequest = async (requestData, callback) => {
-        console.log(requestData, '==requestData==');
         try {
             dispatch(loaderActions.showLoader());
             let res = await fetch(requestData.url, {

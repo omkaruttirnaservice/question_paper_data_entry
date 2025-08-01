@@ -40,7 +40,7 @@ const questionModel = {
                 data.mqs_ans,
                 data.mqs_solution,
                 data.difficulty,
-                '1', // hard coding to 1 because of added by admin
+                data.userId, // hard coding to 1 because of added by admin
                 data.subject_id,
                 data.topic_id,
                 myDate.getDate(),

@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
-
-const getCookie = (name) => Cookies.get(name);
+import { getCookie } from '../components/utils/utils.jsx';
 
 const authSlice = createSlice({
     name: 'auth',
