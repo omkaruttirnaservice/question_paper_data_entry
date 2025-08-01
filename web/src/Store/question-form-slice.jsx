@@ -31,7 +31,7 @@ let initialState = {
     postsList: [],
     subjectsList: [],
     topicsList: [],
-    questionNumber: null,
+    questionNumber: undefined,
     errors: {},
     isEdit: false,
     isQuestionPreview: false,

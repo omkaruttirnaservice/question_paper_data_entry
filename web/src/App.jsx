@@ -6,11 +6,17 @@ import QuestionsList from './components/QuestionsList/QuestionsList.jsx';
 import RootComponent from './components/RootComponent/RootComponent';
 import TrashQuestionsList from './components/TrashQuestionsList/TrashQuestionsList.jsx';
 import LoginPage from './components/Login/Login.jsx';
+import Logout from './components/Logout/Logout.jsx';
+import PrivateRoute from './components/PrivateRoute.jsx';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <RootComponent />,
+        element: (
+            <PrivateRoute>
+                <RootComponent />
+            </PrivateRoute>
+        ),
         children: [
             { path: '/questions-list', element: <QuestionsList /> },
             { path: '/deleted-questions-list', element: <TrashQuestionsList /> },
@@ -21,6 +27,10 @@ const router = createBrowserRouter([
     {
         path: '/login',
         element: <LoginPage />,
+    },
+    {
+        path: '/logout',
+        element: <Logout />,
     },
 ]);
 

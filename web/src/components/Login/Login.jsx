@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import useHttp from '../Hooks/use-http'; // adjust path if needed
 import { SERVER_IP } from '../utils/constants';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../../Store/auth-slice';
 
 function LoginPage() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { sendRequest } = useHttp();
 
@@ -38,7 +41,7 @@ function LoginPage() {
             console.log({ res });
             if (res.success === 1) {
                 const token = res.data;
-                Cookies.set('token', token, { expires: 7 }); // Store in cookies for 7 days
+                dispatch(authActions.login({ token }));
                 navigate('/question-form');
             } else {
                 setError('Invalid login credentials');

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { QuestionFormActions } from '../../Store/question-form-slice.jsx';
 import CButton from '../UI/CButton.jsx';
 
-function OptionsInput({}) {
+function OptionsInput() {
     const { data: _formData, errors, questionNumber } = useSelector((state) => state.questionForm);
     const dispatch = useDispatch();
     useEffect(() => {
@@ -144,7 +144,7 @@ function OptionsInput({}) {
                     </label>
 
                     <span className="bg-purple-200 text-gray-700 px-2 py-1 font-bold">
-                        {questionNumber}
+                        {questionNumber?.toString()}
                     </span>
                 </div>
 
