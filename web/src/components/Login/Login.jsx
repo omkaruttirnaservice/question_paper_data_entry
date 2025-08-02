@@ -40,12 +40,10 @@ function LoginPage() {
         sendRequest(requestData, (res) => {
             console.log({ res });
             if (res.success === 1) {
-                const token = res.data;
-                const { username, role, id: userId } = jwtDecode(token);
+                const { username, role, id: userId } = res.data;
 
                 dispatch(
                     authActions.login({
-                        token,
                         username: username,
                         role: role,
                         userId: userId,

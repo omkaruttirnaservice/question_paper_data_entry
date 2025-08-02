@@ -21,7 +21,7 @@ const loginController = {
             }
 
             const user = result[0];
-            console.log({user},'===================');
+            console.log({ user }, '===================');
             const token = jwt.sign(
                 {
                     id: user.userId,
@@ -32,7 +32,18 @@ const loginController = {
                 { expiresIn: '7d' }
             );
 
-            return sendSuccess(res, token);
+            res.cookie('token', token, {
+                maxAge: 36000000,
+                httpOnly: true,
+                secure: true,
+                sameSite: 'Strict',
+            });
+            // return sendSuccess(res, token);
+            return sendSuccess(res, {
+                id: user.userId,
+                username: user.username,
+                role: user.role,
+            });
         } catch (error) {
             console.error(error);
             return sendError(res, error);
