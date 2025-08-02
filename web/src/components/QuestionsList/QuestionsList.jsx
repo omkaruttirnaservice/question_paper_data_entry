@@ -295,10 +295,7 @@ function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDelet
                     {questionsList.length >= 1 &&
                         questionsList.map((el, idx) => {
                             return (
-                                <AccordionItem
-                                    className="border p-0.5 mb-1"
-                                    key={idx}
-                                    uuid={idx}>
+                                <AccordionItem className="border p-0.5 mb-1" key={idx} uuid={idx}>
                                     <AccordionHeadingItem
                                         expandedItem={expandedItem}
                                         idx={idx}
