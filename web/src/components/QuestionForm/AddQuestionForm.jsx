@@ -77,7 +77,7 @@ const AddQuestionForm = () => {
     };
 
     async function postQuestionData() {
-        const copiedFormData = {..._formData}
+        const copiedFormData = { ..._formData };
 
         if (!copiedFormData.userId) {
             // This is only if the userid is not added in redux state when app initially starts
@@ -122,7 +122,7 @@ const AddQuestionForm = () => {
                 className="grid grid-cols-1 md:grid-cols-2 gap-5 ms-5"
                 onSubmit={handleSaveQuestion}>
                 <div>
-                    <div className={`bg-white pb-2 sticky top-0 z-30 shadow-md my-2`}>
+                    <div className={`bg-white pb-2 sticky top-0 z-30 my-1 border p-2`}>
                         <div className="grid grid-cols-3 gap-y-2 gap-x-2">
                             <PostListDropdown />
                             <SubjectListDropdown />

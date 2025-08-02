@@ -185,7 +185,7 @@ function QuestionsList() {
                 <EditQuestionForm />
             </CModal>
 
-            <div className="container mx-auto mt-6">
+            <div className="container mx-auto mt-6 border p-2">
                 <div className="grid grid-cols-5 gap-3 mb-6 items-end">
                     <PostListDropdown isShowAddNewBtn={false} />
                     <SubjectListDropdown isShowAddNewBtn={false} />
@@ -279,136 +279,188 @@ function QuestionsList() {
 
 function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDeleteQuestion }) {
     const [expandedItem, setExpandedItem] = useState(null);
+
+    let totalContainerHeight = 500;
+    let itemHeight = 50;
+    let totalItemsInContaier = Math.floor(totalContainerHeight / itemHeight);
+    const [indices, setIndices] = useState([0, totalItemsInContaier]);
+
+    const slicedQuestionsList = questionsList.slice(indices[0], indices[1] + 1);
+    // console.log(slicedQuestionsList);
+
+    function handleScroll(e) {
+        if (expandedItem !== null) {
+            setExpandedItem(null);
+        }
+        const scrollTop = e.target.scrollTop;
+        const newStartIndex = Math.floor(scrollTop / itemHeight);
+        const newEndIndex = newStartIndex + totalItemsInContaier;
+        setIndices([newStartIndex, newEndIndex]);
+    }
+
     const handleAccordionChange = (e) => {
         console.log({ e });
-        if (e == expandedItem) {
+        if (e[0] == expandedItem) {
             setExpandedItem(null);
         } else {
             setExpandedItem(e[0]);
         }
     };
 
+    const offsetY = indices[0] * itemHeight;
     return (
-        <Accordion allowZeroExpanded={true} onChange={handleAccordionChange}>
-            {questionsList.length >= 1 &&
-                questionsList.map((el, idx) => {
-                    return (
-                        <AccordionItem className="border  mb-1" key={idx} uuid={idx}>
-                            <AccordionHeadingItem
-                                expandedItem={expandedItem}
-                                idx={idx}
-                                el={el}
-                                handleEditQuestion={handleEditQuestion}
-                                handleDeleteQuestion={handleDeleteQuestion}
-                            />
-                            <AccordionItemPanel className="py-3 px-4">
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 block">
-                                        Question
-                                    </span>
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_question,
-                                        }}></p>
-                                </div>
+        <>
+            <div
+                className={` overflow-auto border p-2`}
+                onScroll={handleScroll}
+                style={{ height: `${totalContainerHeight}px` }}>
+                <div
+                    style={{
+                        height: questionsList.length * itemHeight + 'px',
+                        position: 'relative',
+                    }}>
+                    <Accordion
+                        allowZeroExpanded={true}
+                        onChange={handleAccordionChange}
+                        preExpanded={expandedItem !== null ? [expandedItem] : []}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            transform: `translateY(${offsetY}px)`,
+                        }}>
+                        {slicedQuestionsList.length >= 1 &&
+                            slicedQuestionsList.map((el, idx) => {
+                                return (
+                                    <AccordionItem
+                                        className="border p-0.5  mb-1"
+                                        key={el.id}
+                                        uuid={el.id}>
+                                        <AccordionHeadingItem
+                                            expandedItem={expandedItem}
+                                            idx={idx}
+                                            el={el}
+                                            handleEditQuestion={handleEditQuestion}
+                                            handleDeleteQuestion={handleDeleteQuestion}
+                                            itemHeight={itemHeight}
+                                        />
+                                        <AccordionItemPanel className="py-3 px-4">
+                                            <div className="py-3">
+                                                <span className="font-bold text-[#555] mb-4 block">
+                                                    Question
+                                                </span>
+                                                <p
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: el.mqs_question,
+                                                    }}></p>
+                                            </div>
 
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 block">
-                                        Option A
-                                    </span>
+                                            <div className="py-3">
+                                                <span className="font-bold text-[#555] mb-4 block">
+                                                    Option A
+                                                </span>
 
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_opt_one,
-                                        }}></p>
-                                </div>
+                                                <p
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: el.mqs_opt_one,
+                                                    }}></p>
+                                            </div>
 
-                                <hr />
+                                            <hr />
 
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 block">
-                                        Option B
-                                    </span>
+                                            <div className="py-3">
+                                                <span className="font-bold text-[#555] mb-4 block">
+                                                    Option B
+                                                </span>
 
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_opt_two,
-                                        }}></p>
-                                </div>
+                                                <p
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: el.mqs_opt_two,
+                                                    }}></p>
+                                            </div>
 
-                                <hr />
+                                            <hr />
 
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 block">
-                                        Option C
-                                    </span>
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_opt_three,
-                                        }}></p>
-                                </div>
+                                            <div className="py-3">
+                                                <span className="font-bold text-[#555] mb-4 block">
+                                                    Option C
+                                                </span>
+                                                <p
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: el.mqs_opt_three,
+                                                    }}></p>
+                                            </div>
 
-                                <hr />
+                                            <hr />
 
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 block">
-                                        Option D
-                                    </span>
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_opt_four,
-                                        }}></p>
-                                </div>
+                                            <div className="py-3">
+                                                <span className="font-bold text-[#555] mb-4 block">
+                                                    Option D
+                                                </span>
+                                                <p
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: el.mqs_opt_four,
+                                                    }}></p>
+                                            </div>
 
-                                <hr />
+                                            <hr />
 
-                                {el.mqs_opt_five && (
-                                    <div className="py-3">
-                                        <span className="font-bold text-[#555] mb-4 block">
-                                            Option E
-                                        </span>
-                                        <p
-                                            dangerouslySetInnerHTML={{
-                                                __html: el.mqs_opt_five,
-                                            }}></p>
-                                    </div>
-                                )}
+                                            {el.mqs_opt_five && (
+                                                <div className="py-3">
+                                                    <span className="font-bold text-[#555] mb-4 block">
+                                                        Option E
+                                                    </span>
+                                                    <p
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: el.mqs_opt_five,
+                                                        }}></p>
+                                                </div>
+                                            )}
 
-                                <hr />
+                                            <hr />
 
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 me-3">
-                                        Correct Option
-                                    </span>
-                                    <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
-                                        {el.mqs_ans}
-                                    </span>
-                                </div>
+                                            <div className="py-3">
+                                                <span className="font-bold text-[#555] mb-4 me-3">
+                                                    Correct Option
+                                                </span>
+                                                <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
+                                                    {el.mqs_ans}
+                                                </span>
+                                            </div>
 
-                                <hr />
+                                            <hr />
 
-                                {el.mqs_solution && (
-                                    <div className="py-3">
-                                        <span className="font-bold text-[#555] my-4 block">
-                                            Solution
-                                        </span>
-                                        <p
-                                            dangerouslySetInnerHTML={{
-                                                __html: el.mqs_solution,
-                                            }}></p>
-                                    </div>
-                                )}
-                            </AccordionItemPanel>
-                        </AccordionItem>
-                    );
-                })}
-        </Accordion>
+                                            {el.mqs_solution && (
+                                                <div className="py-3">
+                                                    <span className="font-bold text-[#555] my-4 block">
+                                                        Solution
+                                                    </span>
+                                                    <p
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: el.mqs_solution,
+                                                        }}></p>
+                                                </div>
+                                            )}
+                                        </AccordionItemPanel>
+                                    </AccordionItem>
+                                );
+                            })}
+                    </Accordion>
+                </div>
+            </div>
+        </>
     );
 }
 
-function AccordionHeadingItem({ expandedItem, idx, el, handleEditQuestion, handleDeleteQuestion }) {
-    const [questionSortPreview, setQuestionShortPreview] = useState(false);
-
+function AccordionHeadingItem({
+    expandedItem,
+    idx,
+    el,
+    handleEditQuestion,
+    handleDeleteQuestion,
+    itemHeight,
+}) {
     return (
         <>
             <AccordionItemHeading
@@ -417,8 +469,11 @@ function AccordionHeadingItem({ expandedItem, idx, el, handleEditQuestion, handl
                 }`}>
                 <AccordionItemButton>
                     <div className="flex justify-between items-center ">
-                        <div className=" w-full max-h-28 overflow-hidden">
-                            <span>Q: {el.id}</span>
+                        <div className={` w-full overflow-hidden`}>
+                            <p className="font-bold text-[#555] mb-4 block text-start">
+                                (<span>#{idx + 1}</span>) (
+                                <span className="text-slate-500 ">Qid:{el.id}</span>)
+                            </p>
                             {expandedItem != idx && (
                                 <p
                                     dangerouslySetInnerHTML={{
@@ -455,149 +510,151 @@ function AccordionHeadingItem({ expandedItem, idx, el, handleEditQuestion, handl
 function QuestionsListIEEFormat({ questionsList, handleEditQuestion, handleDeleteQuestion }) {
     return (
         <>
-            <div className="columns-2">
-                {questionsList.map((el, idx) => {
-                    return (
-                        <div
-                            className={`border transition-all duration-300  mb-5 shadow-sm bg-gray-100 relative que-container`}
-                            key={idx}>
-                            <CButton
-                                icon={<FaEdit />}
-                                onClick={handleEditQuestion.bind(null, el.id)}
-                                className={'absolute top-0 right-0 edit-que-btn'}>
-                                Edit
-                            </CButton>
-                            <div className="py-3 px-4 text-start">
-                                <div className="py-3">
-                                    <p className="font-bold text-[#555] mb-4 block text-start">
-                                        (<span>#{idx + 1}</span>) (
-                                        <span className="text-slate-500 ">Qid:{el.id}</span>)
-                                    </p>
-                                    <p
-                                        className="text-start"
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_question,
-                                        }}></p>
-                                </div>
-
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 block text-start">
-                                        Option A
-                                    </span>
-
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_opt_one,
-                                        }}></p>
-                                </div>
-
-                                <hr />
-
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 block text-start">
-                                        Option B
-                                    </span>
-
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_opt_two,
-                                        }}></p>
-                                </div>
-
-                                <hr />
-
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 block text-start">
-                                        Option C
-                                    </span>
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_opt_three,
-                                        }}></p>
-                                </div>
-
-                                <hr />
-
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 block text-start">
-                                        Option D
-                                    </span>
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: el.mqs_opt_four,
-                                        }}></p>
-                                </div>
-
-                                <hr />
-
-                                {el.mqs_opt_five && (
+            <div className="h-[500px] overflow-auto border p-2">
+                <div className="columns-2">
+                    {questionsList.map((el, idx) => {
+                        return (
+                            <div
+                                className={`border transition-all duration-300  mb-5 shadow-sm bg-gray-100 relative que-container`}
+                                key={idx}>
+                                <CButton
+                                    icon={<FaEdit />}
+                                    onClick={handleEditQuestion.bind(null, el.id)}
+                                    className={'absolute top-0 right-0 edit-que-btn'}>
+                                    Edit
+                                </CButton>
+                                <div className="py-3 px-4 text-start">
                                     <div className="py-3">
-                                        <span className="font-bold text-[#555] mb-4 block text-start">
-                                            Option E
-                                        </span>
-                                        <p
-                                            dangerouslySetInnerHTML={{
-                                                __html: el.mqs_opt_five,
-                                            }}></p>
-                                    </div>
-                                )}
-
-                                <hr />
-
-                                <div className="py-3">
-                                    <span className="font-bold text-[#555] mb-4 me-3">
-                                        Correct Option
-                                    </span>
-                                    <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
-                                        {el.mqs_ans?.toUpperCase()}
-                                    </span>
-                                </div>
-
-                                <hr />
-
-                                {el.mqs_solution && (
-                                    <div className="py-3">
-                                        <span className="font-bold text-[#555] my-4 block text-start">
-                                            Solution
-                                        </span>
+                                        <p className="font-bold text-[#555] mb-4 block text-start">
+                                            (<span>#{idx + 1}</span>) (
+                                            <span className="text-slate-500 ">Qid:{el.id}</span>)
+                                        </p>
                                         <p
                                             className="text-start"
                                             dangerouslySetInnerHTML={{
-                                                __html: el.mqs_solution,
+                                                __html: el.mqs_question,
                                             }}></p>
                                     </div>
-                                )}
 
-                                <hr />
+                                    <div className="py-3">
+                                        <span className="font-bold text-[#555] mb-4 block text-start">
+                                            Option A
+                                        </span>
 
-                                <div className=" bg-gray-300 p-3 ">
-                                    <h3>Publication Info</h3>
+                                        <p
+                                            dangerouslySetInnerHTML={{
+                                                __html: el.mqs_opt_one,
+                                            }}></p>
+                                    </div>
 
-                                    <table className="w-full">
-                                        <thead>
-                                            <th className="border px-2 py-1">Pub. Name</th>
-                                            <th className="border px-2 py-1">Book Name</th>
-                                            <th className="border px-2 py-1">Pg No</th>
-                                        </thead>
-                                        <tr className="text-center">
-                                            <td className="border px-2 py-1">
-                                                {el.msq_publication_name
-                                                    ? el.msq_publication_name
-                                                    : 'NA'}
-                                            </td>
-                                            <td className="border px-2 py-1">
-                                                {el.msq_book_name ? el.msq_book_name : 'NA'}
-                                            </td>
-                                            <td className="border px-2 py-1">
-                                                {el.maq_page_number ? el.maq_page_number : 'NA'}
-                                            </td>
-                                        </tr>
-                                    </table>
+                                    <hr />
+
+                                    <div className="py-3">
+                                        <span className="font-bold text-[#555] mb-4 block text-start">
+                                            Option B
+                                        </span>
+
+                                        <p
+                                            dangerouslySetInnerHTML={{
+                                                __html: el.mqs_opt_two,
+                                            }}></p>
+                                    </div>
+
+                                    <hr />
+
+                                    <div className="py-3">
+                                        <span className="font-bold text-[#555] mb-4 block text-start">
+                                            Option C
+                                        </span>
+                                        <p
+                                            dangerouslySetInnerHTML={{
+                                                __html: el.mqs_opt_three,
+                                            }}></p>
+                                    </div>
+
+                                    <hr />
+
+                                    <div className="py-3">
+                                        <span className="font-bold text-[#555] mb-4 block text-start">
+                                            Option D
+                                        </span>
+                                        <p
+                                            dangerouslySetInnerHTML={{
+                                                __html: el.mqs_opt_four,
+                                            }}></p>
+                                    </div>
+
+                                    <hr />
+
+                                    {el.mqs_opt_five && (
+                                        <div className="py-3">
+                                            <span className="font-bold text-[#555] mb-4 block text-start">
+                                                Option E
+                                            </span>
+                                            <p
+                                                dangerouslySetInnerHTML={{
+                                                    __html: el.mqs_opt_five,
+                                                }}></p>
+                                        </div>
+                                    )}
+
+                                    <hr />
+
+                                    <div className="py-3">
+                                        <span className="font-bold text-[#555] mb-4 me-3">
+                                            Correct Option
+                                        </span>
+                                        <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
+                                            {el.mqs_ans?.toUpperCase()}
+                                        </span>
+                                    </div>
+
+                                    <hr />
+
+                                    {el.mqs_solution && (
+                                        <div className="py-3">
+                                            <span className="font-bold text-[#555] my-4 block text-start">
+                                                Solution
+                                            </span>
+                                            <p
+                                                className="text-start"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: el.mqs_solution,
+                                                }}></p>
+                                        </div>
+                                    )}
+
+                                    <hr />
+
+                                    <div className=" bg-gray-300 p-3 ">
+                                        <h3>Publication Info</h3>
+
+                                        <table className="w-full">
+                                            <thead>
+                                                <th className="border px-2 py-1">Pub. Name</th>
+                                                <th className="border px-2 py-1">Book Name</th>
+                                                <th className="border px-2 py-1">Pg No</th>
+                                            </thead>
+                                            <tr className="text-center">
+                                                <td className="border px-2 py-1">
+                                                    {el.msq_publication_name
+                                                        ? el.msq_publication_name
+                                                        : 'NA'}
+                                                </td>
+                                                <td className="border px-2 py-1">
+                                                    {el.msq_book_name ? el.msq_book_name : 'NA'}
+                                                </td>
+                                                <td className="border px-2 py-1">
+                                                    {el.maq_page_number ? el.maq_page_number : 'NA'}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
             </div>
         </>
     );
