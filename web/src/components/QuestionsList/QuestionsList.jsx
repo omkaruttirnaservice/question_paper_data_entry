@@ -2,7 +2,7 @@ import { IoGridOutline } from 'react-icons/io5';
 import { TbSortAscending, TbSortDescending } from 'react-icons/tb';
 
 import { useEffect, useState } from 'react';
-import { FaEdit, FaGripLinesVertical, FaListUl } from 'react-icons/fa';
+import { FaEdit, FaGripLinesVertical, FaListUl, FaPrint } from 'react-icons/fa';
 
 import { FaTrash } from 'react-icons/fa';
 import { FaPencil } from 'react-icons/fa6';
@@ -37,6 +37,8 @@ import CButton from '../UI/CButton.jsx';
 import CModal from '../UI/CModal.jsx';
 import EditQuestionForm from '../QuestionForm/EditQuestionForm.jsx';
 import { ModalActions } from '../../Store/modal-slice.jsx';
+import PDFGenerator from '../PDFGenerator.jsx';
+import Input from '../UI/Input.jsx';
 function QuestionsList() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -181,8 +183,12 @@ function QuestionsList() {
 
     return (
         <>
-            <CModal id={'edit-question-modal'} title={'Edit Question'} className={`min-w-[95vw] `}>
+            <CModal id={'edit-question-modal'} title={'Edit Question'} className={`min-w-[95vw]`}>
                 <EditQuestionForm />
+            </CModal>
+
+            <CModal id={'view-pdf-modal'} title={'Questions Print List'} className={`min-w-[95vw]`}>
+                <PDFGenerator questions={questionsList} />
             </CModal>
 
             <div className="container mx-auto mt-6 border p-2">
@@ -217,6 +223,19 @@ function QuestionsList() {
                                 !listMode ? 'bg-gray-200' : 'bg-white'
                             } p-3 cursor-pointer`}>
                             <IoGridOutline />
+                        </div>
+
+                        {/* Print buttons */}
+                        <div
+                            className="p-3 cursor-pointer"
+                            onClick={() => {
+                                dispatch(ModalActions.toggleModal('view-pdf-modal'));
+                                // navigate(`/print?post=${_formData.post_id}
+                                //                     &subject=${_formData.subject_id}
+                                //                     &topic=${_formData.topic_id}
+                                //                     &view=${listMode ? 'LIST' : 'SPLIT'}`);
+                            }}>
+                            <FaPrint />
                         </div>
                     </div>
                 </div>
