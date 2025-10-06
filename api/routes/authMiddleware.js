@@ -4,9 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const authenticateJWT = (req, res, next) => {
     try {
-        console.log(req.cookies);
         const authHeader = req.headers.authorization || req.cookies.token;
-        console.log({ authHeader });
 
         if (!authHeader) {
             return res.status(403).json(sendError(res, null, 'Invalid token'));

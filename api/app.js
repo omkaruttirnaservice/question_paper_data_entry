@@ -4,8 +4,12 @@ import cookieParser from 'cookie-parser';
 import upload from 'express-fileupload';
 import indexRoutes from './routes/indexRoutes.js';
 import cors from 'cors';
+import morgan from 'morgan';
 
 const app = express();
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+
 dotenv.config();
 
 app.use(upload());

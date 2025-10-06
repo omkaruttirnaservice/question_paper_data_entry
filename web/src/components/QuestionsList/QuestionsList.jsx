@@ -608,15 +608,17 @@ function QuestionsListIEEFormat({ questionsList, handleEditQuestion, handleDelet
                                             </thead>
                                             <tr className="text-center">
                                                 <td className="border px-2 py-1">
-                                                    {el.msq_publication_name
-                                                        ? el.msq_publication_name
+                                                    {el?.msq_publication_name || el?.pub_name
+                                                        ? el.msq_publication_name || el?.pub_name
                                                         : 'NA'}
                                                 </td>
                                                 <td className="border px-2 py-1">
                                                     {el.msq_book_name ? el.msq_book_name : 'NA'}
                                                 </td>
                                                 <td className="border px-2 py-1">
-                                                    {el.maq_page_number ? el.maq_page_number : 'NA'}
+                                                    {el?.maq_page_number || el?.pg_no
+                                                        ? el?.maq_page_number || el?.pg_no
+                                                        : 'NA'}
                                                 </td>
                                             </tr>
                                         </table>
