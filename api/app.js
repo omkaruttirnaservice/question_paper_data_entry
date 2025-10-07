@@ -13,14 +13,30 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 dotenv.config();
 
 app.use(upload());
-app.use(
-    cors({
-        origin: 'http://localhost:3000',
-        credentials: true,
-    })
-);
 
-app.options('*', cors());
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://de.uttirna.in',
+    'https://www.de.uttirna.in',
+];
+
+// ✅ CORS setup with dynamic origin checking
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true, // ✅ allow cookies or auth headers
+};
+
+app.use(cors(corsOptions));
+
 app.use(json({ limit: '1024mb' }));
 app.use(urlencoded({ extended: true, limit: '1024mb' }));
 app.use(cookieParser());
