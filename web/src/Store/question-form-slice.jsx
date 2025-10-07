@@ -189,6 +189,7 @@ export const getPostListThunk = (sendRequest) => {
 
 export const getSubjectsListThunk = (post_id, sendRequest) => {
     return async (dispatch) => {
+        dispatch(QuestionFormActions.setSubjectsList([]));
         const reqData = {
             url: SERVER_IP + '/api/subject/list',
             method: 'POST',
@@ -210,6 +211,7 @@ export const getSubjectsListThunk = (post_id, sendRequest) => {
 
 export const getTopicsListThunk = (subject_id, sendRequest) => {
     return async (dispatch) => {
+        dispatch(QuestionFormActions.setTopicsList([]));
         const requestData = {
             url: SERVER_IP + '/api/topic/list',
             method: 'POST',

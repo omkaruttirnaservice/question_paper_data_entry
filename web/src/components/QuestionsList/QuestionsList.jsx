@@ -53,7 +53,6 @@ function QuestionsList() {
 
     const { isLoading } = useSelector((state) => state.loader);
     const questionsList = useSelector((state) => state.questionForm.questionsList);
-    console.log(questionsList);
 
     const { sendRequest } = useHttp();
 
