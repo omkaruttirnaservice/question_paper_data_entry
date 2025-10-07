@@ -25,6 +25,10 @@ app.use(json({ limit: '1024mb' }));
 app.use(urlencoded({ extended: true, limit: '1024mb' }));
 app.use(cookieParser());
 
+app.get('/', (req, res) => {
+    res.send('API is running....');
+});
+
 app.use('/api', indexRoutes);
 
 app.use((err, req, res, next) => {
