@@ -27,6 +27,10 @@ app.use(cookieParser());
 
 app.use('/api', indexRoutes);
 
+app.use((err, req, res, next) => {
+    console.error(err);
+});
+
 app.listen(process.env.PORT, () => {
     console.log('Server started on', process.env.PORT);
 });
