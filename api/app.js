@@ -18,6 +18,9 @@ const allowedOrigins = [
     'http://localhost:3000',
     'https://de.uttirna.in',
     'https://www.de.uttirna.in',
+
+    'https://de105.uttirna.in',
+    'https://www.de105.uttirna.in',
 ];
 
 // ✅ CORS setup with dynamic origin checking
