@@ -98,7 +98,7 @@ function QuestionYearDropdown() {
                 </div>
             </div>
             <div className="col-span-3 flex gap-1">
-                {_formData.year.length > 0 &&
+                {_formData?.year?.length > 0 &&
                     _formData.year.map((_el) => {
                         return (
                             <div className="relative ">

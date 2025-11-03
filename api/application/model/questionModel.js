@@ -114,7 +114,10 @@ const questionModel = {
 				mqs_opt_five = ?,
                 mqs_ans = ?,
                 mqs_solution = ?,
-				mqs_ask_in_year = ?
+				mqs_ask_in_year = ?,
+                msq_publication_name = ?,
+                msq_book_name = ?,
+                maq_page_number = ?
             WHERE id = ?`;
         return db.query(q, [
             data.mqs_question,
@@ -126,6 +129,9 @@ const questionModel = {
             data.mqs_ans,
             data.mqs_solution,
             JSON.stringify(data.year),
+            data.pub_name,
+            data.book_name,
+            data.pg_no,
             data.id,
         ]);
     },
@@ -135,41 +141,57 @@ const questionModel = {
     },
 
     getQuestionList: (d, user) => {
-        console.log(d, 'in model');
-
         let where = '';
         if (user.role !== ROLES.ADMIN) {
             where += ` AND mqs_added_by = ${user.id} `;
         }
 
+        // const q = `SELECT
+        //                 *
+        //             FROM tm_mega_question_set AS mqs
+        //             WHERE
+        //                 mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 0
+        //                 ${where}
+        // 			ORDER BY mqs.id
+        //             `;
+        // return db.query(q, [+d.subject_id, +d.topic_id]);
+
         const q = `SELECT 
                         *
                     FROM tm_mega_question_set AS mqs
                     WHERE 
-                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 0 
+                        mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 0 
                         ${where}
 					ORDER BY mqs.id
 						`;
 
-        return db.query(q, [+d.subject_id, +d.topic_id]);
+        return db.query(q, [Number(d.topic_id)]);
     },
 
     getQuestionListTrash: (d, user) => {
-        console.log(d, 'in model');
-
         let where = '';
         if (user.role !== ROLES.ADMIN) {
             where += ` AND mqs_added_by = ${user.id} `;
         }
+        // const q = `SELECT
+        //                 *
+        //             FROM tm_mega_question_set AS mqs
+        //             WHERE
+        //                 mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 1
+        //                 ${where}
+        //                 `;
+
+        // return db.query(q, [+d.subject_id, +d.topic_id]);
+
         const q = `SELECT 
                         *
                     FROM tm_mega_question_set AS mqs
                     WHERE 
-                        mqs.mqs_section_id = ? AND mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 1
+                        mqs.mqs_chapter_id = ? AND mqs.mqs_is_trash = 1
                         ${where}
                         `;
 
-        return db.query(q, [+d.subject_id, +d.topic_id]);
+        return db.query(q, [Number(d.topic_id)]);
     },
 
     getPublicationList: async () => {

@@ -4,10 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ModalActions } from '../../../Store/modal-slice.jsx';
 import { FaPlus } from 'react-icons/fa';
 import { QuestionFormActions } from '../../../Store/question-form-slice.jsx';
+import { memo } from 'react';
 
 function PostListDropdown({ isShowAddNewBtn = true }) {
     const dispatch = useDispatch();
-    const { data: _formData, postsList, errors } = useSelector((state) => state.questionForm);
+    const postId = useSelector((state) => state.questionForm.data.post_id);
+
+    const { postsList, errors } = useSelector((state) => state.questionForm);
     const handleChange = async (e) => {
         dispatch(
             QuestionFormActions.handleInputChange({
@@ -21,6 +24,7 @@ function PostListDropdown({ isShowAddNewBtn = true }) {
         dispatch(ModalActions.toggleModal('add-post-modal'));
     };
 
+    console.log('rendering post list dropdown');
     return (
         <div className="flex flex-col gap-1 relative">
             <label htmlFor="" className="input-label">
@@ -33,7 +37,7 @@ function PostListDropdown({ isShowAddNewBtn = true }) {
                     className="input-el grow w-48"
                     name="post_id"
                     onChange={handleChange}
-                    defaultValue={_formData.post_id}>
+                    defaultValue={postId}>
                     <option value="" className="" name="">
                         -- Select --
                     </option>
@@ -50,4 +54,4 @@ function PostListDropdown({ isShowAddNewBtn = true }) {
     );
 }
 
-export default PostListDropdown;
+export default memo(PostListDropdown);

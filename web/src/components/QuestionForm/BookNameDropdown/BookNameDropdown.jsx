@@ -5,6 +5,7 @@ import { ModalActions } from '../../../Store/modal-slice.jsx';
 import { getBooksListThunk, QuestionFormActions } from '../../../Store/question-form-slice.jsx';
 import useHttp from '../../Hooks/use-http.jsx';
 import CButton from '../../UI/CButton.jsx';
+import AddBookModal from '../AddBook/AddBookModal.jsx';
 
 function BookNameDropdown() {
     const dispatch = useDispatch();
@@ -32,6 +33,7 @@ function BookNameDropdown() {
 
     return (
         <div className="flex flex-col gap-1 relative ">
+            <AddBookModal />
             <label htmlFor="pub-name" className="input-label">
                 Book Name
             </label>

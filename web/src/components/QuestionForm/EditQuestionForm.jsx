@@ -133,7 +133,7 @@ const EditQuestionForm = () => {
                         <div className="grid grid-cols-3 gap-y-6 gap-x-2">
                             <DifficultyLevelDropdown />
 
-                            <PublicationNameDropdown />
+                            <PublicationNameDropdown isShowAddNewBtn={false} />
                             <BookNameDropdown />
                             <QuestionPgNo />
                             <QuestionYearDropdown />
@@ -146,18 +146,17 @@ const EditQuestionForm = () => {
                     <hr />
 
                     <ExplanationInput />
-
-                    <div className="flex justify-end m-3">
-                        <CButton
-                            className="flex justify-center items-center text-2xl"
-                            type="submit"
-                            isLoading={useSelector((state) => state.loader.isLoading)}>
-                            Save
-                        </CButton>
-                    </div>
                 </div>
 
                 <QuestionPreview />
+                <div className="flex justify-end m-3 sticky bottom-0 right-5 z-50">
+                    <CButton
+                        className="flex justify-center items-center text-xl shadow-lg"
+                        type="submit"
+                        isLoading={useSelector((state) => state.loader.isLoading)}>
+                        Update
+                    </CButton>
+                </div>
             </form>
         </>
     );

@@ -111,6 +111,7 @@ const questionController = {
                 },
                 user
             );
+            console.log(questionList[0],'=questionList');
             return sendSuccess(res, questionList[0]);
         } catch (error) {
             console.log('Error whlie fetching the questions: ', error);
