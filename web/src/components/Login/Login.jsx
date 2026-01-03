@@ -5,6 +5,7 @@ import { authActions } from '../../Store/auth-slice';
 import useHttp from '../Hooks/use-http'; // adjust path if needed
 import { SERVER_IP } from '../utils/constants';
 import { jwtDecode } from 'jwt-decode';
+import { isDevEnv } from '../utils/utils';
 
 function LoginPage() {
     const dispatch = useDispatch();
@@ -15,6 +16,7 @@ function LoginPage() {
         username: '',
         password: '',
     });
+    const [selectedDb, setSelectedDb] = useState('');
 
     const [error, setError] = useState(null);
 
@@ -34,6 +36,7 @@ function LoginPage() {
             body: JSON.stringify({
                 username: formData.username,
                 password: formData.password,
+                dbConfig: selectedDb ? JSON.parse(selectedDb) : null,
             }),
         };
 
@@ -55,6 +58,28 @@ function LoginPage() {
             }
         });
     };
+
+    const [databases, setDatabases] = useState([]);
+    // get databases list from backend on component mount
+    useState(() => {
+        const requestData = {
+            url: SERVER_IP + '/api/auth/databases',
+            method: 'GET',
+        };
+
+        sendRequest(requestData, (res) => {
+            console.log({ res });
+            if (res.success) {
+                // handle databases list if needed
+                console.log('Databases List:', res.data);
+                if (!isDevEnv()) {
+                    setDatabases(res?.data?.production || []);
+                } else {
+                    setDatabases(res?.data?.developement || []);
+                }
+            }
+        });
+    }, []);
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -87,6 +112,24 @@ function LoginPage() {
                         className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
                         required
                     />
+                </div>
+
+                <div className="mb-6">
+                    <label className="block text-gray-700 mb-2">Select Database</label>
+                    {databases.length > 0 && (
+                        <select
+                            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+                            value={selectedDb}
+                            onChange={(e) => setSelectedDb(e.target.value)}
+                            required>
+                            <option value="">-- Select Database --</option>
+                            {databases.map((db, index) => (
+                                <option key={index} value={JSON.stringify(db)}>
+                                    {db.processName} ({db.dbName})
+                                </option>
+                            ))}
+                        </select>
+                    )}
                 </div>
 
                 <button

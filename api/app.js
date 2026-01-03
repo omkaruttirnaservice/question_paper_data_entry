@@ -14,29 +14,20 @@ dotenv.config();
 
 app.use(upload());
 
-// const allowedOrigins = [
-//     'http://localhost:3000',
-//     'https://de.uttirna.in',
-//     'https://www.de.uttirna.in',
-
-//     'https://de105.uttirna.in',
-//     'https://www.de105.uttirna.in',
-// ];
-
-// ✅ CORS setup with dynamic origin checking
+// CORS setup with dynamic origin checking
 const corsOptions = {
     origin: function (origin, callback) {
+        console.log(origin, '=origin');
         // Allow requests with no origin (like mobile apps, curl)
         if (!origin) return callback(null, true);
 
-        // if (allowedOrigins.includes(origin)) {
-        if (origin.includes('uttirna.in') || origin.includes('localhost')) {
+        if (origin.includes('uttirna.in') || origin.includes('localhost') || origin.includes('192.168.1.5')) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true, // ✅ allow cookies or auth headers
+    credentials: true, // allow cookies or auth headers
 };
 
 app.use(cors(corsOptions));

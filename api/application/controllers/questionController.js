@@ -9,7 +9,7 @@ const questionController = {
             return sendSuccess(res);
         } catch (error) {
             console.log(error, '==error==');
-            return sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -26,7 +26,7 @@ const questionController = {
                 throw new Error(`Unable to restore questionID: ${questionId}`);
             }
         } catch (error) {
-            sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -43,7 +43,7 @@ const questionController = {
                 throw new Error(`Unable to delte questionID: ${questionId}`);
             }
         } catch (error) {
-            sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -61,7 +61,7 @@ const questionController = {
                 throw new Error(`Unable to delte questionID: ${questionId}`);
             }
         } catch (error) {
-            sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -72,7 +72,7 @@ const questionController = {
             let _editRes = await questionModel.saveEditQuestion(req.body);
             return sendSuccess(res, _editRes);
         } catch (error) {
-            return sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -84,7 +84,7 @@ const questionController = {
             let _data = await questionModel.getEditQuestionData(qId);
             return sendSuccess(res, _data[0]);
         } catch (error) {
-            return sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -95,7 +95,7 @@ const questionController = {
                 return sendSuccess(res, response[0][0]);
             }
         } catch (error) {
-            return sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -111,11 +111,11 @@ const questionController = {
                 },
                 user
             );
-            console.log(questionList[0],'=questionList');
+            console.log(questionList[0], '=questionList');
             return sendSuccess(res, questionList[0]);
         } catch (error) {
             console.log('Error whlie fetching the questions: ', error);
-            return sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -134,7 +134,7 @@ const questionController = {
             return sendSuccess(res, questionList[0]);
         } catch (error) {
             console.log('Error whlie fetching the questions: ', err);
-            return sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -145,7 +145,7 @@ const questionController = {
             let [publicationsList] = await questionModel.getPublicationList();
             return sendSuccess(res, publicationsList);
         } catch (error) {
-            return sendError(res, error);
+            return sendError(res, error?.message, error);
         }
     },
 
@@ -156,7 +156,7 @@ const questionController = {
             return sendSuccess(res, booksList);
         } catch (error) {
             console.log(error, '-error');
-            return sendError(res, error);
+return sendError(res, error?.message, error);
         }
     },
 };
