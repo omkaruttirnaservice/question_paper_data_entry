@@ -1,8 +1,16 @@
-import { IoGridOutline } from 'react-icons/io5';
+import { IoGridOutline, IoNewspaper } from 'react-icons/io5';
 import { TbSortAscending, TbSortDescending } from 'react-icons/tb';
 
 import { useEffect, useState } from 'react';
-import { FaEdit, FaGripLinesVertical, FaListUl, FaPrint } from 'react-icons/fa';
+import {
+    FaArrowAltCircleLeft,
+    FaArrowAltCircleRight,
+    FaEdit,
+    FaEye,
+    FaGripLinesVertical,
+    FaListUl,
+    FaPrint,
+} from 'react-icons/fa';
 
 import { FaTrash } from 'react-icons/fa';
 import { FaPencil } from 'react-icons/fa6';
@@ -39,6 +47,7 @@ import EditQuestionForm from '../QuestionForm/EditQuestionForm.jsx';
 import { ModalActions } from '../../Store/modal-slice.jsx';
 import PDFGenerator from '../PDFGenerator.jsx';
 import Input from '../UI/Input.jsx';
+import { _questionListView } from '../utils/constants.jsx';
 function QuestionsList() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -117,7 +126,7 @@ function QuestionsList() {
         sendRequest(reqData, (data) => {
             if (data.success == 1) {
                 dispatch(
-                    QuestionFormActions.setQuestionsList(questionsList.filter((el) => el.id != id))
+                    QuestionFormActions.setQuestionsList(questionsList.filter((el) => el.id != id)),
                 );
                 Swal.fire({
                     title: 'Deleted!',
@@ -138,7 +147,7 @@ function QuestionsList() {
         }
     }, [isEdit]);
 
-    const [listMode, setListMode] = useState(true);
+    const [listMode, setListMode] = useState(_questionListView.LIST);
     const [isAscending, setIsAscending] = useState(true);
 
     const toggleListMode = (val) => setListMode(val);
@@ -210,18 +219,28 @@ function QuestionsList() {
 
                         {/* View Toggle button */}
                         <div
-                            onClick={toggleListMode.bind(null, true)}
+                            onClick={toggleListMode.bind(null, _questionListView.LIST)}
                             className={`${
-                                listMode ? 'bg-gray-200' : 'bg-white'
+                                listMode === _questionListView.LIST ? 'bg-gray-200' : 'bg-white'
                             } p-3 cursor-pointer`}>
                             <FaListUl className="" />
                         </div>
                         <div
-                            onClick={toggleListMode.bind(null, false)}
+                            onClick={toggleListMode.bind(null, _questionListView.SPLIT)}
                             className={`${
-                                !listMode ? 'bg-gray-200' : 'bg-white'
+                                listMode === _questionListView.SPLIT ? 'bg-gray-200' : 'bg-white'
                             } p-3 cursor-pointer`}>
                             <IoGridOutline />
+                        </div>
+
+                        <div
+                            onClick={toggleListMode.bind(null, _questionListView.EXAM_THEME_1)}
+                            className={`${
+                                listMode === _questionListView.EXAM_THEME_1
+                                    ? 'bg-gray-200'
+                                    : 'bg-white'
+                            } p-3 cursor-pointer`}>
+                            <IoNewspaper />
                         </div>
 
                         {/* Print buttons */}
@@ -275,7 +294,7 @@ function QuestionsList() {
                     </p>
                 )}
 
-                {questionsList.length > 0 && listMode && (
+                {questionsList.length > 0 && listMode === _questionListView.LIST && (
                     <QuestionsListAccordion
                         questionsList={questionsList}
                         handleEditQuestion={handleEditQuestion}
@@ -283,11 +302,19 @@ function QuestionsList() {
                     />
                 )}
 
-                {questionsList.length > 0 && !listMode && (
+                {questionsList.length > 0 && listMode === _questionListView.SPLIT && (
                     <QuestionsListIEEFormat
                         questionsList={questionsList}
                         handleEditQuestion={handleEditQuestion}
                         handleDeleteQuestion={handleDeleteQuestion}
+                    />
+                )}
+
+                {questionsList.length > 0 && listMode === _questionListView.EXAM_THEME_1 && (
+                    <ExamThemeView
+                        questionsList={questionsList}
+                        renderTopicHeader={''}
+                        handleEditQuestion={handleEditQuestion}
                     />
                 )}
             </div>
@@ -629,6 +656,147 @@ function QuestionsListIEEFormat({ questionsList, handleEditQuestion, handleDelet
                 </div>
             </div>
         </>
+    );
+}
+
+export function ExamThemeView({ questionsList, handleEditQuestion, isEdit = true }) {
+    if (questionsList.length === 0) return null;
+    const dispatch = useDispatch();
+    const [idx, setIdx] = useState(0);
+    const [currentQuestion, setCurrentQuestion] = useState(questionsList[idx]);
+
+    useEffect(() => {
+        setCurrentQuestion(questionsList[idx]);
+    }, [idx, questionsList]);
+
+    return (
+        <>
+            {/* Trigger button */}
+            <div className="flex justify-center">
+                <CButton
+                    icon={<FaEye />}
+                    disabled={questionsList.length === 0}
+                    onClick={() => {
+                        dispatch(ModalActions.toggleModal('exam-theme-1-modal'));
+                    }}>
+                    <span>View</span>
+                </CButton>
+            </div>
+
+            <CModal
+                id="exam-theme-1-modal"
+                title={`Exam View`}
+                className="!w-[97vw] !h-[97vh] !z-40">
+                <div className="container mx-auto p-3 border h-[85vh]">
+                    <div className="grid grid-cols-7 gap-6 h-full">
+                        {/* Main Question Area */}
+                        <div className="col-span-5 flex flex-col h-full">
+                            <div className="flex-1 overflow-y-auto pr-2">
+                                {/* {topicHeader} */}
+                                <QuestionUi q={currentQuestion} idx={idx} />
+                            </div>
+
+                            {/* Navigation buttons */}
+                            <div className="flex justify-between mt-4">
+                                <CButton
+                                    disabled={idx === 0}
+                                    className="btn--success bg-blue-500 text-white hover:bg-blue-600"
+                                    icon={<FaArrowAltCircleLeft />}
+                                    onClick={() => setIdx((prev) => prev - 1)}>
+                                    Prev
+                                </CButton>
+                                {isEdit && (
+                                    <CButton
+                                        icon={<FaPencil />}
+                                        onClick={handleEditQuestion.bind(null, currentQuestion.id)}
+                                        className="bg-yellow-400 hover:bg-yellow-500 text-sm px-4 py-2 rounded">
+                                        Edit
+                                    </CButton>
+                                )}
+                                <CButton
+                                    disabled={questionsList.length === idx + 1}
+                                    className="bg-blue-500 text-white hover:bg-blue-600"
+                                    icon={<FaArrowAltCircleRight />}
+                                    onClick={() => setIdx((prev) => prev + 1)}>
+                                    Next
+                                </CButton>
+                            </div>
+                        </div>
+
+                        {/* Question numbers grid */}
+                        <div className="col-span-2 border border-blue-200 p-3 overflow-y-auto max-h-full">
+                            <div className="grid grid-cols-5 gap-3">
+                                {questionsList.map((_q, _i) => (
+                                    <div
+                                        key={_i}
+                                        className={`border rounded-md size-10 flex items-center justify-center cursor-pointer transition ${
+                                            idx === _i
+                                                ? 'bg-blue-500 text-white shadow-md'
+                                                : 'bg-white hover:bg-gray-100'
+                                        }`}
+                                        onClick={() => setIdx(_i)}>
+                                        {_i + 1}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </CModal>
+        </>
+    );
+}
+
+function QuestionUi({ idx, q }) {
+    return (
+        <div className="border p-4 rounded-md shadow-sm bg-gray-50">
+            <div className="text-lg mb-3 text-gray-900 flex">
+                Q {idx + 1}.{' '}
+                <span
+                    className="inline-block"
+                    dangerouslySetInnerHTML={{
+                        __html: q?.q || q?.mqs_question || '-',
+                    }}
+                />
+            </div>
+
+            <div className="pl-4 space-y-2">
+                {(q?.q_a || q?.mqs_opt_one) && (
+                    <QuestionOption option="A" html={q?.q_a || q?.mqs_opt_one || '-'} />
+                )}
+                {(q?.q_b || q?.mqs_opt_two) && (
+                    <QuestionOption option="B" html={q?.q_b || q?.mqs_opt_two || '-'} />
+                )}
+                {(q?.q_c || q?.mqs_opt_three) && (
+                    <QuestionOption option="C" html={q?.q_c || q?.mqs_opt_three || '-'} />
+                )}
+                {(q?.q_d || q?.mqs_opt_four) && (
+                    <QuestionOption option="D" html={q?.q_d || q?.mqs_opt_four || '-'} />
+                )}
+                {(q?.q_e || q?.mqs_opt_five) && (
+                    <QuestionOption option="E" html={q?.q_e || q?.mqs_opt_five || '-'} />
+                )}
+            </div>
+
+            <div className="mt-3 text-sm text-gray-700 border-t pt-2 flex justify-center">
+                Correct Answer:&nbsp;
+                <strong>{q?.q_ans?.toUpperCase() || q?.mqs_ans?.toUpperCase() || '-'}</strong>
+            </div>
+        </div>
+    );
+}
+
+function QuestionOption({ option, html }) {
+    return (
+        <div className="flex gap-2 items-start">
+            <span className="font-semibold text-gray-700">{option}.</span>
+            <span
+                className="inline-block text-gray-800"
+                dangerouslySetInnerHTML={{
+                    __html: html,
+                }}
+            />
+        </div>
     );
 }
 

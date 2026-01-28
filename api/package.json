@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "pm2 app.js",
-    "dev": "nodemon app.js",
+    "start": "NODE_ENV=prod pm2 start ecosystem.config.cjs && pm2 log de.api",
+    "dev": "NODE_ENV=dev nodemon app.js",
+    "uat": "NODE_ENV=uat nodemon app.js",
     "dbSync": "node ./bin/dbMigrate"
   },
   "nodemonConfig": {

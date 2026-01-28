@@ -20,4 +20,4 @@ export const resetCkEditorInstances = () => {
 };
 
 export const isDevEnv = () =>
-    import.meta.env.VITE_ENV === 'DEV' || import.meta.env.VITE_ENV === 'development';
+    import.meta.env.VITE_ENV === 'dev' || import.meta.env.VITE_ENV === 'development';
