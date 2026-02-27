@@ -1,14 +1,13 @@
 module.exports = {
     apps: [
         {
-            name: 'de.api',
+            name: 'api.de.uttirna.in',
             script: 'app.js',
-
-            // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
             instances: 1,
             autorestart: true,
             watch: false,
-            max_memory_restart: '2G',
+            mode: 'fork',
+            max_memory_restart: '500M',
             env: {},
             env_production: {},
         },
