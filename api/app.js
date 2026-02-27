@@ -14,32 +14,36 @@ dotenv.config();
 
 app.use(upload());
 
-// const allowedOrigins = [
-//     'http://localhost:3000',
-//     'https://de.uttirna.in',
-//     'https://www.de.uttirna.in',
+app.use(
+    cors({
+        origin: function (origin, callback) {
+            // allow non-browser tools like Postman
+            if (!origin || origin === 'null') return callback(null, true);
 
-//     'https://de105.uttirna.in',
-//     'https://www.de105.uttirna.in',
-// ];
+            const allowedOrigins = [
+                'https://psa.atomtech.in',
+                'kopbankasso',
+                'sznsbal',
+                'uttirna',
+                'localhost',
+                '192',
+                '10',
+            ];
 
-// ✅ CORS setup with dynamic origin checking
-const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps, curl)
-        if (!origin) return callback(null, true);
+            if (allowedOrigins.some((allowedOrigin) => origin.includes(allowedOrigin))) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+    }),
+);
 
-        // if (allowedOrigins.includes(origin)) {
-        if (origin.includes('uttirna.in') || origin.includes('localhost')) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true, // ✅ allow cookies or auth headers
-};
-
-app.use(cors(corsOptions));
+// IMPORTANT: allow preflight requests
+app.options('*', cors());
 
 app.use(json({ limit: '1024mb' }));
 app.use(urlencoded({ extended: true, limit: '1024mb' }));

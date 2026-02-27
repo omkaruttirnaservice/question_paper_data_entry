@@ -7,6 +7,7 @@ import EditQuestionForm from './components/QuestionForm/EditQuestionForm.jsx';
 import QuestionsList from './components/QuestionsList/QuestionsList.jsx';
 import TrashQuestionsList from './components/TrashQuestionsList/TrashQuestionsList.jsx';
 import { createBrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
 export const _router = createBrowserRouter([
     {
@@ -21,7 +22,12 @@ export const _router = createBrowserRouter([
     },
     {
         path: '/login',
-        element: <LoginPage />,
+        element: (
+            <>
+                <ToastContainer autoClose={2000} />
+                <LoginPage />
+            </>
+        ),
     },
     {
         path: '/logout',
@@ -31,6 +37,5 @@ export const _router = createBrowserRouter([
     // Print routes
     {
         path: '/print',
-
-    }
+    },
 ]);

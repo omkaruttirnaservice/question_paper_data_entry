@@ -34,6 +34,7 @@ const useHttp = () => {
             callback(data);
         } catch (err) {
             console.log(err, '----');
+            console.log(err.message,'-message')
             dispatch(loaderActions.hideLoader());
             toast(err?.message || 'Unable to connect to backend');
             if (err.message == 'Invalid token') {
