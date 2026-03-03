@@ -4,6 +4,13 @@ const KOP_DB_SERVER_2 = 'KOP_DB_SERVER_2';
 export const databasesList = {
     production: [
         {
+            dbName: 'qp_108',
+            processName: 'Kolhapur Urban (108)',
+            isShow: true,
+            dbServerId: KOP_DB_SERVER_2,
+        },
+
+        {
             dbName: 'qp_kbt_exam_04_02_2026',
             processName: 'KBT Exam 2',
             isShow: true,
