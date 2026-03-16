@@ -32,14 +32,14 @@ import QuestionYearDropdown from './QuestionYearDropdown/QuestionYearDropdown.js
 import SubjectListDropdown from './SubjectListDropdown/SubjectListDropdown.jsx';
 import TopicListDropdown from './TopicListDropdown/TopicListDropdown.jsx';
 import addQuestionFormSchema from './addQuestionFormSchema.jsx';
-import { getCookie, resetCkEditorInstances } from '../utils/utils.jsx';
+import { getCookie, resetCkEditorInstances, populateCkEditorFromExcel } from '../utils/utils.jsx';
 
 let SERVER_IP = import.meta.env.VITE_API_IP;
 
 const AddQuestionForm = () => {
     const dispatch = useDispatch();
     const { sendRequest } = useHttp();
-    let { data: _formData, questionNumber, errors } = useSelector((state) => state.questionForm);
+    let { data: _formData, questionNumber, errors, bulkMode, bulkData, bulkIndex } = useSelector((state) => state.questionForm);
     console.log(_formData);
 
     useEffect(() => {
@@ -91,13 +91,36 @@ const AddQuestionForm = () => {
         sendRequest(reqData, (data) => {
             if (data.success == 1) {
                 toast('Successfully added question');
-                Swal.fire({
-                    title: 'Success',
-                    text: 'Successfully saved question',
-                });
-                dispatch(QuestionFormActions.resetFormData());
-                resetCkEditorInstances();
-                dispatch(QuestionFormActions.setQuestionNumber(questionNumber));
+
+                if (bulkMode && bulkData && bulkData.length > 0) {
+                    let nextIndex = bulkIndex + 1;
+                    if (nextIndex < bulkData.length) {
+                        /** 
+                         * If question is added to the database, then move to the next question
+                         */
+                        dispatch(QuestionFormActions.advanceBulkIndex());
+                        dispatch(QuestionFormActions.setBulkFormData(bulkData[nextIndex]));
+                        dispatch(QuestionFormActions.setQuestionNumber(questionNumber));
+                        localStorage.setItem('bulkUploadIndex', nextIndex.toString());
+                        populateCkEditorFromExcel(bulkData[nextIndex]);
+                    } else {
+                        /**
+                         * If all questions are added clear up the state of bulk question
+                         * and set state to single question upload
+                         */
+                        toast.success('Bulk upload complete!');
+                        localStorage.removeItem('bulkUploadData');
+                        localStorage.removeItem('bulkUploadIndex');
+                        dispatch(QuestionFormActions.setBulkUploadMode(false));
+                        dispatch(QuestionFormActions.resetFormData());
+                        resetCkEditorInstances();
+                        dispatch(QuestionFormActions.setQuestionNumber(questionNumber));
+                    }
+                } else {
+                    dispatch(QuestionFormActions.resetFormData());
+                    resetCkEditorInstances();
+                    dispatch(QuestionFormActions.setQuestionNumber(questionNumber));
+                }
             }
         });
     }
@@ -151,7 +174,7 @@ const AddQuestionForm = () => {
                             </p>
                         )}
 
-                        <div className="flex justify-end m-3">
+                        <div className="flex justify-end m-3 fixed bottom-2 right-2 z-10 ">
                             <CButton
                                 className="flex justify-center items-center text-2xl"
                                 type="submit"

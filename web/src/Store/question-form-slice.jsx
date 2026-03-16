@@ -37,6 +37,9 @@ let initialState = {
     errors: {},
     isEdit: false,
     isQuestionPreview: false,
+    bulkMode: false,
+    bulkData: [],
+    bulkIndex: 0,
 };
 const QuestionFormSlice = createSlice({
     name: 'question-form-slice',
@@ -54,6 +57,43 @@ const QuestionFormSlice = createSlice({
         handleInputChange(state, action) {
             let { key, value } = action.payload;
             state.data[key] = value;
+        },
+
+        setBulkFormData(state, action) {
+            let rowData = action.payload;
+            state.data.mqs_question = rowData.q || '';
+            state.data.mqs_opt_one = rowData.q_a || '';
+            state.data.mqs_opt_two = rowData.q_b || '';
+            state.data.mqs_opt_three = rowData.q_c || '';
+            state.data.mqs_opt_four = rowData.q_d || '';
+
+            if (rowData.q_e !== undefined) {
+                state.data.mqs_opt_five = rowData.q_e;
+                state.data.showOptionE = true;
+            } else {
+                state.data.mqs_opt_five = null;
+                state.data.showOptionE = false;
+            }
+
+            state.data.mqs_ans = rowData.sol || '';
+            state.data.mqs_solution = '';
+        },
+
+        setBulkUploadMode(state, action) {
+            state.bulkMode = action.payload;
+            if (!action.payload) {
+                state.bulkData = [];
+                state.bulkIndex = 0;
+            }
+        },
+
+        setBulkDataList(state, action) {
+            state.bulkData = action.payload;
+            state.bulkIndex = 0;
+        },
+
+        advanceBulkIndex(state, action) {
+            state.bulkIndex += 1;
         },
 
         setQuestionsList(state, action) {
