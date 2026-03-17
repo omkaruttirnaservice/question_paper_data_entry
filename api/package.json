@@ -4,10 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=prod pm2 start ecosystem.config.cjs && pm2 log de.api",
-    "dev": "NODE_ENV=dev nodemon app.js",
-    "uat": "NODE_ENV=uat nodemon app.js",
-    "dbSync": "node ./bin/dbMigrate"
+    "start": "cross-env NODE_ENV=prod pm2 start ecosystem.config.cjs",
+    "dev": "cross-env NODE_ENV=dev nodemon app.js",
+    "uat": "cross-env NODE_ENV=uat nodemon app.js"
   },
   "nodemonConfig": {
     "ignore": [
