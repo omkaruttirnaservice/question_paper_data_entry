@@ -5,6 +5,11 @@ import upload from 'express-fileupload';
 import indexRoutes from './routes/indexRoutes.js';
 import cors from 'cors';
 import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -13,6 +18,8 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 dotenv.config();
 
 app.use(upload());
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
     cors({

@@ -2,9 +2,13 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { QuestionFormActions } from '../../Store/question-form-slice.jsx';
 import CButton from '../UI/CButton.jsx';
+import * as xlsx from 'xlsx';
+import { toast } from 'react-toastify';
+import { populateCkEditorFromExcel } from '../utils/utils.jsx';
+import { SERVER_IP } from '../utils/constants.jsx';
 
 function OptionsInput() {
-    const { data: _formData, errors, questionNumber } = useSelector((state) => state.questionForm);
+    const { data: _formData, errors, questionNumber, bulkMode, bulkData, bulkIndex } = useSelector((state) => state.questionForm);
     const dispatch = useDispatch();
     useEffect(() => {
         /**
@@ -133,8 +137,74 @@ function OptionsInput() {
         dispatch(QuestionFormActions.toggleShowOptionE());
     };
 
+    console.log(_formData)
     return (
         <div className="flex flex-col gap-3">
+            <div className="flex gap-4 items-center">
+                <label className="flex items-center gap-2 cursor-pointer font-semibold">
+                    <input
+                        type="radio"
+                        name="uploadMode"
+                        value="single"
+                        checked={!bulkMode}
+                        onChange={() => dispatch(QuestionFormActions.setBulkUploadMode(false))}
+                    />
+                    <span>Single Question</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer font-semibold">
+                    <input
+                        type="radio"
+                        name="uploadMode"
+                        value="bulk"
+                        checked={bulkMode}
+                        onChange={() => dispatch(QuestionFormActions.setBulkUploadMode(true))}
+                    />
+                    <span>Bulk Upload (Excel)</span>
+                </label>
+            </div>
+
+            {bulkMode && (
+                <div className="flex gap-4 items-center mb-1 p-3 border rounded-md bg-gray-50">
+                    <input
+                        type="file"
+                        accept=".xlsx, .xls"
+                        onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+
+                            const reader = new FileReader();
+                            reader.onload = (evt) => {
+                                const bstr = evt.target.result;
+                                const wb = xlsx.read(bstr, { type: 'binary' });
+                                const wsname = wb.SheetNames[0];
+                                const ws = wb.Sheets[wsname];
+                                const data = xlsx.utils.sheet_to_json(ws);
+
+                                if (data && data.length > 0) {
+                                    localStorage.setItem('bulkUploadData', JSON.stringify(data));
+                                    localStorage.setItem('bulkUploadIndex', '0');
+                                    dispatch(QuestionFormActions.setBulkDataList(data));
+                                    dispatch(QuestionFormActions.setBulkFormData(data[0]));
+                                    toast.success('Excel loaded successfully!');
+                                    populateCkEditorFromExcel(data[0]);
+                                } else {
+                                    toast.error('Empty or invalid excel file');
+                                }
+                            };
+                            reader.readAsBinaryString(file);
+                        }}
+                        className="input-el grow"
+                    />
+                    {bulkData.length > 0 && (
+                        <div className="font-bold text-blue-600 border px-3 py-1 bg-white rounded shadow-sm">
+                            Viewing: {bulkIndex + 1} / {bulkData.length}
+                        </div>
+                    )}
+
+                    <a href={`${SERVER_IP}/api/sample-bulk-upload-excel`} className='border-b-2 text-blue-400 hover:text-blue-700 text-sm'>Get Sample Excel</a>
+                </div>
+            )}
+
             <div className="flex flex-col gap-3 relative">
                 <div className="flex gap-6">
                     <label
@@ -367,7 +437,7 @@ function AnswerOptionRadioBox({ value, className }) {
         );
     };
 
-    useEffect(() => {}, []);
+    useEffect(() => { }, []);
 
     return (
         <input
