@@ -15,7 +15,7 @@ export default function CButton({
                 className={`cd-btn flex items-center gap-1 ${className} ${varient}  disabled:cursor-not-allowed  disabled:bg-gray-400 disabled:hover:cursor-wait`}
                 type={type}
                 onClick={onClick}
-                disabled={isLoading}>
+                disabled={isLoading || disabled}>
                 <span className="flex items-center gap-2">
                     {children} {!icon ? '' : icon}
                 </span>

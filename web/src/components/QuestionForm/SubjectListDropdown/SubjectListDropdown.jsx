@@ -26,10 +26,10 @@ function SubjectListDropdown({ isShowAddNewBtn = true }) {
     };
     return (
         <div className="flex flex-col gap-1 relative">
-            <label htmlFor="" className="input-label">
+            <label htmlFor="subject-id" className="input-label text-sm font-medium text-gray-700">
                 Subject *
             </label>
-            <div className="flex">
+            <div className="flex items-center gap-2">
                 {isShowAddNewBtn && <CButton onClick={handleSubjectAddModal} icon={<FaPlus />} />}
                 <select
                     id="subject-id"

@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react';
 import { BiReset } from 'react-icons/bi';
 
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { FaGripLinesVertical } from 'react-icons/fa';
-
-import { FaTrash } from 'react-icons/fa';
-
-import { FaAngleRight } from 'react-icons/fa';
+import { FaAngleRight, FaLayerGroup, FaBook, FaTags, FaSearch, FaTrash, FaUndoAlt, FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getPostListThunk,
@@ -158,181 +154,192 @@ function TrashQuestionsList() {
 
     return (
         <>
-            <div className="container mx-auto mt-6">
-                <div className="grid grid-cols-5 gap-3 mb-6">
-                    <PostListDropdown isShowAddNewBtn={false} />
-                    <SubjectListDropdown isShowAddNewBtn={false} />
-                    <TopicListDropdown isShowAddNewBtn={false} />
-                    <CButton className={'h-fit mt-auto'} onClick={handleGetQuestionsList}>
-                        Search
-                    </CButton>
+            <div className="max-w-[95%] mx-auto mt-6 bg-white/70 backdrop-blur-md border border-white/30 rounded-2xl shadow-xl overflow-hidden">
+                <div className="p-6">
+                    <div className="flex flex-col md:flex-row gap-4 mb-6 items-end">
+                        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                            <PostListDropdown isShowAddNewBtn={false} />
+                            <SubjectListDropdown isShowAddNewBtn={false} />
+                            <TopicListDropdown isShowAddNewBtn={false} />
+                        </div>
+
+                        <div className="flex gap-2">
+                            <CButton
+                                className="h-[42px] px-8 bg-[#4D96FF] hover:bg-[#3B82F6] shadow-lg shadow-blue-200 transition-all duration-300 rounded-full"
+                                onClick={handleGetQuestionsList}
+                            >
+                                <FaSearch className="text-sm" />
+                                <span>Search</span>
+                            </CButton>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="bg-cyan-100 px-4">
-                    <div className="flex items-center py-3 gap-3">
-                        <p>Total posts</p>
-                        <FaAngleRight />
-                        <span className="underline">{postsList.length}</span>
+                <div className="px-6 py-4 bg-[#4D96FF]/5 border-t border-[#4D96FF]/10">
+                    <div className="flex flex-wrap items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 bg-[#4D96FF]/10 rounded-lg text-[#4D96FF]">
+                                <FaLayerGroup size={14} />
+                            </div>
+                            <span className="text-sm font-medium text-black">Total Posts:</span>
+                            <span className="text-sm font-bold text-[#4D96FF] bg-[#4D96FF]/10 px-2.5 py-0.5 rounded-full">{postsList.length}</span>
+                        </div>
 
-                        <FaGripLinesVertical />
-                        <p>Total Subjets</p>
-                        <FaAngleRight />
-                        <span className="underline">{subjectsList.length}</span>
+                        <div className="hidden md:block w-[1px] h-4 bg-[#4D96FF]/20"></div>
 
-                        <FaGripLinesVertical />
-                        <p>Total Topics</p>
-                        <FaAngleRight />
-                        <span className="underline">{topicsList.length}</span>
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 bg-[#4D96FF]/10 rounded-lg text-[#4D96FF]">
+                                <FaBook size={14} />
+                            </div>
+                            <span className="text-sm font-medium text-black">Total Subjects:</span>
+                            <span className="text-sm font-bold text-[#4D96FF] bg-[#4D96FF]/10 px-2.5 py-0.5 rounded-full">{subjectsList.length}</span>
+                        </div>
+
+                        <div className="hidden md:block w-[1px] h-4 bg-[#4D96FF]/20"></div>
+
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 bg-[#4D96FF]/10 rounded-lg text-[#4D96FF]">
+                                <FaTags size={14} />
+                            </div>
+                            <span className="text-sm font-medium text-black">Total Topics:</span>
+                            <span className="text-sm font-bold text-[#4D96FF] bg-[#4D96FF]/10 px-2.5 py-0.5 rounded-full">{topicsList.length}</span>
+                        </div>
+
+                        <div className="ml-auto flex items-center gap-2 text-[10px] font-bold text-[#4D96FF]/60 uppercase tracking-widest">
+                            <div className="size-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                            Live Dataset
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto mt-6">
+            <div className="max-w-[95%] mx-auto mt-8 px-4 pb-12">
                 {isLoading && (
-                    <AiOutlineLoading3Quarters className="animate-spin text-2xl m-3 mx-auto" />
+                    <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                        <AiOutlineLoading3Quarters className="animate-spin text-4xl text-[#4D96FF]" />
+                        <p className="text-gray-500 font-medium animate-pulse">Fetching trash questions...</p>
+                    </div>
                 )}
                 {!isLoading && questionList.length === 0 && (
-                    <p className="text-center text-[#555]">Woops! no questions found!</p>
+                    <div className="flex flex-col items-center justify-center py-24 bg-white/50 backdrop-blur-sm rounded-3xl border border-dashed border-gray-300">
+                        <div className="size-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                            <FaTrash size={32} className="text-gray-300" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-700 mb-2">Trash is Empty</h3>
+                        <p className="text-gray-500 mb-8 max-w-md text-center">
+                            No deleted questions found in this category.
+                        </p>
+                    </div>
                 )}
                 <Accordion allowZeroExpanded={true} onChange={handleAccordionChange}>
                     {questionList.length >= 1 &&
                         questionList.map((el, idx) => {
                             return (
-                                <AccordionItem className="border  mb-1" key={idx} uuid={idx}>
+                                <AccordionItem
+                                    className={`mb-3 rounded-xl overflow-hidden border transition-all duration-300 ${expandedItem === idx ? 'ring-2 ring-[#4D96FF]/50 border-transparent shadow-lg' : 'border-gray-200 hover:border-blue-300 bg-white'}`}
+                                    key={idx}
+                                    uuid={idx}
+                                >
                                     <AccordionItemHeading
-                                        className={`border-b py-3 bg-gray-200 px-4 ${
-                                            expandedItem == idx ? 'bg-cyan-500' : ''
-                                        }`}>
-                                        <AccordionItemButton>
-                                            <div className="flex justify-between items-center ">
-                                                <div className=" w-full max-h-28 overflow-hidden">
-                                                    <span>Q: {el.id}</span>
-                                                    {expandedItem != idx && (
-                                                        <p
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: el.mqs_question,
-                                                            }}></p>
-                                                    )}
+                                        className={`transition-all duration-300 ${expandedItem == idx ? 'bg-[#4D96FF]' : 'bg-gray-50 hover:bg-gray-100'}`}>
+                                        <AccordionItemButton className="focus:outline-none">
+                                            <div className="flex justify-between items-center px-6 py-4">
+                                                <div className="flex-1 flex items-center gap-4 overflow-hidden">
+                                                    <div className={`flex flex-col items-center justify-center min-w-[54px] h-10 rounded-lg border leading-none ${expandedItem == idx ? 'bg-white/20 border-white/30 text-white' : 'bg-white border-gray-200 text-gray-500 shadow-sm'}`}>
+                                                        <span className="text-[9px] font-bold uppercase opacity-60 mb-0.5"># {idx + 1}</span>
+                                                        <span className="text-[10px] font-mono font-black uppercase">ID:{el.id}</span>
+                                                    </div>
+
+                                                    <div className="flex-1 truncate">
+                                                        {expandedItem != idx ? (
+                                                            <div
+                                                                className="text-sm font-bold text-black truncate"
+                                                                dangerouslySetInnerHTML={{ __html: el.mqs_question }}
+                                                            />
+                                                        ) : (
+                                                            <span className="text-sm font-bold text-white">Viewing Detailed View</span>
+                                                        )}
+                                                    </div>
                                                 </div>
 
-                                                <div className="flex items-center gap-5">
-                                                    <BiReset
-                                                        className="text-green-800 text-xl hover:scale-[1.2] transition-all duration-300"
+                                                <div className="flex items-center gap-3 ml-4">
+                                                    <button
+                                                        title="Restore Question"
+                                                        className={`size-10 flex items-center justify-center rounded-full transition-all duration-300 ${expandedItem == idx ? 'bg-green-500/30 text-green-100 hover:bg-green-500/50' : 'bg-green-50 text-green-600 hover:bg-green-600 hover:text-white shadow-sm border border-green-100'}`}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleRestoreQuestion(el.id);
-                                                        }}
-                                                    />
+                                                        }}>
+                                                        <FaUndoAlt size={14} />
+                                                    </button>
 
-                                                    <FaTrash
-                                                        className="text-red-800 hover:scale-[1.2] transition-all duration-300"
+                                                    <button
+                                                        title="Delete Permanently"
+                                                        className={`size-10 flex items-center justify-center rounded-full transition-all duration-300 ${expandedItem == idx ? 'bg-red-500/30 text-red-100 hover:bg-red-500/50' : 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white shadow-sm border border-red-100'}`}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleDeleteQuestion(el.id);
-                                                        }}
-                                                    />
+                                                        }}>
+                                                        <FaTrash size={14} />
+                                                    </button>
+
+                                                    <div className={`ml-1 transition-transform duration-300 ${expandedItem == idx ? 'rotate-180 text-white' : 'text-gray-400'}`}>
+                                                        <FaChevronDown size={14} />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </AccordionItemButton>
                                     </AccordionItemHeading>
 
-                                    <AccordionItemPanel className="py-3 px-4">
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Question
-                                            </span>
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_question,
-                                                }}></p>
-                                        </div>
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Option A
-                                            </span>
-
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_opt_one,
-                                                }}></p>
-                                        </div>
-
-                                        <hr />
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Option B
-                                            </span>
-
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_opt_two,
-                                                }}></p>
-                                        </div>
-
-                                        <hr />
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Option C
-                                            </span>
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_opt_three,
-                                                }}></p>
-                                        </div>
-
-                                        <hr />
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Option D
-                                            </span>
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_opt_four,
-                                                }}></p>
-                                        </div>
-
-                                        <hr />
-
-                                        {el.mqs_opt_five && (
-                                            <div className="py-3">
-                                                <span className="font-bold text-[#555] mb-4 block">
-                                                    Option E
-                                                </span>
-                                                <p
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: el.mqs_opt_five,
-                                                    }}></p>
+                                    <AccordionItemPanel className="p-0">
+                                        <div className="p-6 space-y-6 bg-white">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="size-2 bg-blue-500 rounded-full"></span>
+                                                    <span className="text-xs font-bold uppercase tracking-wider text-black opacity-60">
+                                                        Question Statement
+                                                    </span>
+                                                </div>
+                                                <div
+                                                    className="text-black font-semibold leading-relaxed prose prose-slate max-w-none"
+                                                    dangerouslySetInnerHTML={{ __html: el.mqs_question }}
+                                                />
                                             </div>
-                                        )}
 
-                                        <hr />
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 me-3">
-                                                Correct Option
-                                            </span>
-                                            <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
-                                                {el.mqs_ans}
-                                            </span>
-                                        </div>
-
-                                        <hr />
-
-                                        {el.mqs_solution && (
-                                            <div className="py-3">
-                                                <span className="font-bold text-[#555] my-4 block">
-                                                    Solution
-                                                </span>
-                                                <p
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: el.mqs_solution,
-                                                    }}></p>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {[
+                                                    { label: 'Option A', content: el.mqs_opt_one },
+                                                    { label: 'Option B', content: el.mqs_opt_two },
+                                                    { label: 'Option C', content: el.mqs_opt_three },
+                                                    { label: 'Option D', content: el.mqs_opt_four },
+                                                    { label: 'Option E', content: el.mqs_opt_five },
+                                                ].filter(opt => opt.content).map((opt, i) => (
+                                                    <div key={i} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all duration-200">
+                                                        <span className="text-xs font-bold text-black opacity-50 mb-2 block">{opt.label}</span>
+                                                        <div className="text-black font-medium" dangerouslySetInnerHTML={{ __html: opt.content }} />
+                                                    </div>
+                                                ))}
                                             </div>
-                                        )}
+
+                                            <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-gray-100">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-sm font-semibold text-gray-500">Correct Answer:</span>
+                                                    <span className="size-8 flex items-center justify-center bg-green-100 text-green-700 font-bold rounded-lg shadow-sm border border-green-200">
+                                                        {el.mqs_ans?.toUpperCase()}
+                                                    </span>
+                                                </div>
+
+                                                {el.mqs_solution && (
+                                                    <div className="flex-1 p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                                                        <span className="text-xs font-bold text-amber-700 mb-2 block uppercase">Detailed Solution</span>
+                                                        <div
+                                                            className="text-black font-medium text-sm leading-relaxed"
+                                                            dangerouslySetInnerHTML={{ __html: el.mqs_solution }}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
                                     </AccordionItemPanel>
                                 </AccordionItem>
                             );

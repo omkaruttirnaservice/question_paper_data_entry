@@ -1,6 +1,3 @@
-import { IoGridOutline, IoNewspaper } from 'react-icons/io5';
-import { TbSortAscending, TbSortDescending } from 'react-icons/tb';
-
 import { useEffect, useState } from 'react';
 import {
     FaArrowAltCircleLeft,
@@ -10,12 +7,22 @@ import {
     FaGripLinesVertical,
     FaListUl,
     FaPrint,
+    FaSearch,
+    FaSortAmountDown,
+    FaSortAmountUp,
+    FaThLarge,
+    FaFileAlt,
+    FaTrash,
+    FaTags,
+    FaBook,
+    FaLayerGroup,
+    FaChevronRight,
+    FaChevronDown,
 } from 'react-icons/fa';
 
-import { FaTrash } from 'react-icons/fa';
 import { FaPencil } from 'react-icons/fa6';
-
-import { FaAngleRight } from 'react-icons/fa';
+import { HiOutlineViewGrid, HiOutlineViewList, HiOutlineDocumentText } from 'react-icons/hi';
+import { TbSortAscending, TbSortDescending } from 'react-icons/tb';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getEditQuestionDetailsThunk,
@@ -138,14 +145,14 @@ function QuestionsList() {
     };
 
     const handleEditQuestion = (id) => {
-        dispatch(getEditQuestionDetailsThunk(id, sendRequest, _formData.post_id));
+        dispatch(getEditQuestionDetailsThunk(id, sendRequest, _formData.post_id, _formData.subject_id, _formData.topic_id));
     };
 
     useEffect(() => {
         if (isEdit) {
-            dispatch(ModalActions.toggleModal('edit-question-modal'));
+            navigate('/edit-question-form');
         }
-    }, [isEdit]);
+    }, [isEdit, navigate]);
 
     const [listMode, setListMode] = useState(_questionListView.LIST);
     const [isAscending, setIsAscending] = useState(true);
@@ -191,107 +198,133 @@ function QuestionsList() {
 
     return (
         <>
-            <CModal id={'edit-question-modal'} title={'Edit Question'} className={`min-w-[95vw]`}>
-                <EditQuestionForm />
-            </CModal>
-
             <CModal id={'view-pdf-modal'} title={'Questions Print List'} className={`min-w-[95vw]`}>
                 <PDFGenerator questions={questionsList} />
             </CModal>
 
-            <div className="container mx-auto mt-6 border p-2">
-                <div className="grid grid-cols-5 gap-3 mb-6 items-end">
-                    <PostListDropdown isShowAddNewBtn={false} />
-                    <SubjectListDropdown isShowAddNewBtn={false} />
-                    <TopicListDropdown isShowAddNewBtn={false} />
-                    <CButton className={'h-fit mt-auto'} onClick={handleGetQuestionsList}>
-                        Search
-                    </CButton>
-
-                    <div className="border w-fit flex items-center h-fit justify-self-end">
-                        {/* ASCENDING | DESCENGING FILTERS BUTTON */}
-                        <div
-                            className={`bg-white p-3 cursor-pointer`}
-                            onClick={() => setIsAscending(!isAscending)}>
-                            {!isAscending && <TbSortAscending className="" />}
-                            {isAscending && <TbSortDescending className="" />}
+            <div className="max-w-[95%] mx-auto mt-6 bg-white/70 backdrop-blur-md border border-white/30 rounded-2xl shadow-xl overflow-hidden">
+                <div className="p-6">
+                    <div className="flex flex-col md:flex-row gap-4 mb-6 items-end">
+                        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                            <PostListDropdown isShowAddNewBtn={false} />
+                            <SubjectListDropdown isShowAddNewBtn={false} />
+                            <TopicListDropdown isShowAddNewBtn={false} />
                         </div>
 
-                        {/* View Toggle button */}
-                        <div
-                            onClick={toggleListMode.bind(null, _questionListView.LIST)}
-                            className={`${
-                                listMode === _questionListView.LIST ? 'bg-gray-200' : 'bg-white'
-                            } p-3 cursor-pointer`}>
-                            <FaListUl className="" />
-                        </div>
-                        <div
-                            onClick={toggleListMode.bind(null, _questionListView.SPLIT)}
-                            className={`${
-                                listMode === _questionListView.SPLIT ? 'bg-gray-200' : 'bg-white'
-                            } p-3 cursor-pointer`}>
-                            <IoGridOutline />
-                        </div>
+                        <div className="flex gap-2">
+                            <CButton
+                                className="h-[42px] px-8 bg-[#4D96FF] hover:bg-[#3B82F6] shadow-lg shadow-blue-200 transition-all duration-300 rounded-full"
+                                onClick={handleGetQuestionsList}
+                            >
+                                <FaSearch className="text-sm" />
+                                <span>Search</span>
+                            </CButton>
 
-                        <div
-                            onClick={toggleListMode.bind(null, _questionListView.EXAM_THEME_1)}
-                            className={`${
-                                listMode === _questionListView.EXAM_THEME_1
-                                    ? 'bg-gray-200'
-                                    : 'bg-white'
-                            } p-3 cursor-pointer`}>
-                            <IoNewspaper />
-                        </div>
+                            <div className="flex items-center bg-gray-100/50 p-1 rounded-xl border border-gray-200/50">
+                                {/* ASCENDING | DESCENGING FILTERS BUTTON */}
+                                <button
+                                    title="Toggle Sort Order"
+                                    className={`p-2.5 rounded-lg transition-all duration-200 ${isAscending ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:bg-gray-200/50'}`}
+                                    onClick={() => setIsAscending(!isAscending)}>
+                                    {isAscending ? <TbSortDescending size={18} /> : <TbSortAscending size={18} />}
+                                </button>
 
-                        {/* Print buttons */}
-                        <div
-                            className="p-3 cursor-pointer"
-                            onClick={() => {
-                                dispatch(ModalActions.toggleModal('view-pdf-modal'));
-                                // navigate(`/print?post=${_formData.post_id}
-                                //                     &subject=${_formData.subject_id}
-                                //                     &topic=${_formData.topic_id}
-                                //                     &view=${listMode ? 'LIST' : 'SPLIT'}`);
-                            }}>
-                            <FaPrint />
+                                <div className="w-[1px] h-6 bg-gray-300 mx-1"></div>
+
+                                {/* View Toggle buttons */}
+                                <button
+                                    title="List View"
+                                    onClick={() => toggleListMode(_questionListView.LIST)}
+                                    className={`p-2.5 rounded-lg transition-all duration-200 ${listMode === _questionListView.LIST ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:bg-gray-200/50'}`}>
+                                    <HiOutlineViewList size={18} />
+                                </button>
+                                <button
+                                    title="Grid View"
+                                    onClick={() => toggleListMode(_questionListView.SPLIT)}
+                                    className={`p-2.5 rounded-lg transition-all duration-200 ${listMode === _questionListView.SPLIT ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:bg-gray-200/50'}`}>
+                                    <HiOutlineViewGrid size={18} />
+                                </button>
+                                <button
+                                    title="Exam View"
+                                    onClick={() => toggleListMode(_questionListView.EXAM_THEME_1)}
+                                    className={`p-2.5 rounded-lg transition-all duration-200 ${listMode === _questionListView.EXAM_THEME_1 ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:bg-gray-200/50'}`}>
+                                    <HiOutlineDocumentText size={18} />
+                                </button>
+
+                                <div className="w-[1px] h-6 bg-gray-300 mx-1"></div>
+
+                                {/* Print button */}
+                                <button
+                                    title="Print Questions"
+                                    className="p-2.5 rounded-lg text-gray-500 hover:bg-gray-200/50 hover:text-blue-600 transition-all duration-200"
+                                    onClick={() => {
+                                        dispatch(ModalActions.toggleModal('view-pdf-modal'));
+                                    }}>
+                                    <FaPrint size={16} />
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="bg-cyan-100 px-4">
-                    <div className="flex items-center py-3 gap-3">
-                        <p>Total posts</p>
-                        <FaAngleRight />
-                        <span className="underline">{postsList.length}</span>
+                    <div className="flex flex-wrap items-center gap-4 py-4 px-6 bg-[#4D96FF]/5 rounded-xl border border-[#4D96FF]/20">
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 bg-[#4D96FF]/10 rounded-lg text-[#4D96FF]">
+                                <FaLayerGroup size={14} />
+                            </div>
+                            <span className="text-sm font-medium text-black">Total Posts:</span>
+                            <span className="text-sm font-bold text-[#4D96FF] bg-[#4D96FF]/10 px-2.5 py-0.5 rounded-full">{postsList.length}</span>
+                        </div>
 
-                        <FaGripLinesVertical />
-                        <p>Total Subjets</p>
-                        <FaAngleRight />
-                        <span className="underline">{subjectsList.length}</span>
+                        <div className="hidden md:block w-[1px] h-4 bg-[#4D96FF]/20"></div>
 
-                        <FaGripLinesVertical />
-                        <p>Total Topics</p>
-                        <FaAngleRight />
-                        <span className="underline">{topicsList.length}</span>
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 bg-[#4D96FF]/10 rounded-lg text-[#4D96FF]">
+                                <FaBook size={14} />
+                            </div>
+                            <span className="text-sm font-medium text-black">Total Subjects:</span>
+                            <span className="text-sm font-bold text-[#4D96FF] bg-[#4D96FF]/10 px-2.5 py-0.5 rounded-full">{subjectsList.length}</span>
+                        </div>
+
+                        <div className="hidden md:block w-[1px] h-4 bg-[#4D96FF]/20"></div>
+
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 bg-[#4D96FF]/10 rounded-lg text-[#4D96FF]">
+                                <FaTags size={14} />
+                            </div>
+                            <span className="text-sm font-medium text-black">Total Topics:</span>
+                            <span className="text-sm font-bold text-[#4D96FF] bg-[#4D96FF]/10 px-2.5 py-0.5 rounded-full">{topicsList.length}</span>
+                        </div>
+
+                        <div className="ml-auto flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            <div className="size-2 bg-green-500 rounded-full animate-pulse"></div>
+                            Live Dataset
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto mt-6">
+            <div className="max-w-[95%] mx-auto mt-8 px-4 pb-12">
                 {isLoading && (
-                    <AiOutlineLoading3Quarters className="animate-spin text-2xl m-3 mx-auto" />
+                    <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                        <AiOutlineLoading3Quarters className="animate-spin text-4xl text-blue-600" />
+                        <p className="text-gray-500 font-medium animate-pulse">Fetching your questions...</p>
+                    </div>
                 )}
                 {!isLoading && questionsList.length === 0 && (
-                    <p className="text-center text-[#555]">
-                        Woops! no questions found!&nbsp;
-                        <span
-                            className="underline text-blue-600 cursor-pointer"
-                            onClick={() => {
-                                navigate('/question-form');
-                            }}>
-                            Add Question
-                        </span>
-                    </p>
+                    <div className="flex flex-col items-center justify-center py-24 bg-white/50 backdrop-blur-sm rounded-3xl border border-dashed border-gray-300">
+                        <div className="size-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                            <FaLayerGroup size={32} className="text-gray-300" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-700 mb-2">No Questions Found</h3>
+                        <p className="text-gray-500 mb-8 max-w-md text-center">
+                            We couldn't find any questions matching your filters. Try adjusting your search or add a new question.
+                        </p>
+                        <CButton
+                            className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200"
+                            onClick={() => navigate('/question-form')}>
+                            Add New Question
+                        </CButton>
+                    </div>
                 )}
 
                 {questionsList.length > 0 && listMode === _questionListView.LIST && (
@@ -313,7 +346,6 @@ function QuestionsList() {
                 {questionsList.length > 0 && listMode === _questionListView.EXAM_THEME_1 && (
                     <ExamThemeView
                         questionsList={questionsList}
-                        renderTopicHeader={''}
                         handleEditQuestion={handleEditQuestion}
                     />
                 )}
@@ -335,12 +367,16 @@ function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDelet
 
     return (
         <>
-            <div className={`overflow-auto h-[500px] border p-2`}>
+            <div className={`overflow-auto h-[550px] custom-scrollbar space-y-4 pr-2`}>
                 <Accordion allowZeroExpanded={true} onChange={handleAccordionChange}>
                     {questionsList.length >= 1 &&
                         questionsList.map((el, idx) => {
                             return (
-                                <AccordionItem className="border p-0.5 mb-1" key={idx} uuid={idx}>
+                                <AccordionItem
+                                    className={`mb-3 rounded-xl overflow-hidden border transition-all duration-300 ${expandedItem === idx ? 'ring-2 ring-blue-400 border-transparent shadow-lg' : 'border-gray-200 hover:border-blue-300 bg-white'}`}
+                                    key={idx}
+                                    uuid={idx}
+                                >
                                     <AccordionHeadingItem
                                         expandedItem={expandedItem}
                                         idx={idx}
@@ -348,103 +384,55 @@ function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDelet
                                         handleEditQuestion={handleEditQuestion}
                                         handleDeleteQuestion={handleDeleteQuestion}
                                     />
-                                    <AccordionItemPanel className="py-3 px-4">
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Question
-                                            </span>
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_question,
-                                                }}></p>
-                                        </div>
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Option A
-                                            </span>
-
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_opt_one,
-                                                }}></p>
-                                        </div>
-
-                                        <hr />
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Option B
-                                            </span>
-
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_opt_two,
-                                                }}></p>
-                                        </div>
-
-                                        <hr />
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Option C
-                                            </span>
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_opt_three,
-                                                }}></p>
-                                        </div>
-
-                                        <hr />
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block">
-                                                Option D
-                                            </span>
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_opt_four,
-                                                }}></p>
-                                        </div>
-
-                                        <hr />
-
-                                        {el.mqs_opt_five && (
-                                            <div className="py-3">
-                                                <span className="font-bold text-[#555] mb-4 block">
-                                                    Option E
-                                                </span>
-                                                <p
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: el.mqs_opt_five,
-                                                    }}></p>
+                                    <AccordionItemPanel className="p-0">
+                                        <div className="p-6 space-y-6 bg-white">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="size-2 bg-blue-500 rounded-full"></span>
+                                                    <span className="text-xs font-bold uppercase tracking-wider text-black opacity-60">
+                                                        Question Statement
+                                                    </span>
+                                                </div>
+                                                <div
+                                                    className="text-black font-semibold leading-relaxed prose prose-slate max-w-none"
+                                                    dangerouslySetInnerHTML={{ __html: el.mqs_question }}
+                                                />
                                             </div>
-                                        )}
 
-                                        <hr />
-
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 me-3">
-                                                Correct Option
-                                            </span>
-                                            <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
-                                                {el.mqs_ans}
-                                            </span>
-                                        </div>
-
-                                        <hr />
-
-                                        {el.mqs_solution && (
-                                            <div className="py-3">
-                                                <span className="font-bold text-[#555] my-4 block">
-                                                    Solution
-                                                </span>
-                                                <p
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: el.mqs_solution,
-                                                    }}></p>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {[
+                                                    { label: 'Option A', content: el.mqs_opt_one },
+                                                    { label: 'Option B', content: el.mqs_opt_two },
+                                                    { label: 'Option C', content: el.mqs_opt_three },
+                                                    { label: 'Option D', content: el.mqs_opt_four },
+                                                    { label: 'Option E', content: el.mqs_opt_five },
+                                                ].filter(opt => opt.content).map((opt, i) => (
+                                                    <div key={i} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all duration-200">
+                                                        <span className="text-xs font-bold text-black opacity-50 mb-2 block">{opt.label}</span>
+                                                        <div className="text-black font-medium" dangerouslySetInnerHTML={{ __html: opt.content }} />
+                                                    </div>
+                                                ))}
                                             </div>
-                                        )}
+
+                                            <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-gray-100">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-sm font-semibold text-gray-500">Correct Answer:</span>
+                                                    <span className="size-8 flex items-center justify-center bg-green-100 text-green-700 font-bold rounded-lg shadow-sm border border-green-200">
+                                                        {el.mqs_ans?.toUpperCase()}
+                                                    </span>
+                                                </div>
+
+                                                {el.mqs_solution && (
+                                                    <div className="flex-1 p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                                                        <span className="text-xs font-bold text-amber-700 mb-2 block uppercase">Detailed Solution</span>
+                                                        <div
+                                                            className="text-black font-medium text-sm leading-relaxed"
+                                                            dangerouslySetInnerHTML={{ __html: el.mqs_solution }}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
                                     </AccordionItemPanel>
                                 </AccordionItem>
                             );
@@ -456,45 +444,53 @@ function QuestionsListAccordion({ questionsList, handleEditQuestion, handleDelet
 }
 
 function AccordionHeadingItem({ expandedItem, idx, el, handleEditQuestion, handleDeleteQuestion }) {
-    console.log(expandedItem);
-    console.log(idx);
     return (
         <>
             <AccordionItemHeading
-                className={`border-b py-3 max-h-[7rem] overflow-hidden bg-gray-200 px-4 ${
-                    expandedItem == idx ? 'bg-cyan-500' : ''
-                }`}>
-                <AccordionItemButton>
-                    <div className="flex justify-between items-center  ">
-                        <div className={` w-full overflow-hidden`}>
-                            <p className="font-bold text-[#555] mb-4 block text-start">
-                                (<span>#{idx + 1}</span>) (
-                                <span className="text-slate-500 ">Qid:{el.id}</span>)
-                            </p>
-                            {expandedItem != idx && (
-                                <p
-                                    dangerouslySetInnerHTML={{
-                                        __html: el.mqs_question,
-                                    }}></p>
-                            )}
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-5">
-                                <FaPencil
-                                    className="text-green-800 hover:scale-[1.2] transition-all duration-300"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleEditQuestion(el.id);
-                                    }}
-                                />
+                className={`transition-all duration-300 ${expandedItem == idx ? 'bg-blue-600' : 'bg-gray-50 hover:bg-gray-100'}`}>
+                <AccordionItemButton className="focus:outline-none">
+                    <div className="flex justify-between items-center px-6 py-4">
+                        <div className="flex-1 flex items-center gap-4 overflow-hidden">
+                            <div className={`flex flex-col items-center justify-center min-w-[54px] h-10 rounded-lg border leading-none ${expandedItem == idx ? 'bg-white/20 border-white/30 text-white' : 'bg-white border-gray-200 text-gray-500 shadow-sm'}`}>
+                                <span className="text-[9px] font-bold uppercase opacity-60 mb-0.5"># {idx + 1}</span>
+                                <span className="text-[10px] font-mono font-black uppercase">ID:{el.id}</span>
+                            </div>
 
-                                <FaTrash
-                                    className="text-red-800 hover:scale-[1.2] transition-all duration-300"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDeleteQuestion(el.id);
-                                    }}
-                                />
+                            <div className="flex-1 truncate">
+                                {expandedItem != idx ? (
+                                    <div
+                                        className="text-sm font-bold text-black truncate"
+                                        dangerouslySetInnerHTML={{ __html: el.mqs_question }}
+                                    />
+                                ) : (
+                                    <span className="text-sm font-bold text-white">Viewing Detailed View</span>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 ml-4">
+                            <button
+                                title="Edit Question"
+                                className={`size-10 flex items-center justify-center rounded-full transition-all duration-300 ${expandedItem == idx ? 'bg-blue-400/30 text-blue-100 hover:bg-blue-400/50' : 'bg-[#4D96FF]/10 text-[#4D96FF] hover:bg-[#4D96FF] hover:text-white shadow-sm border border-blue-100'}`}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditQuestion(el.id);
+                                }}>
+                                <FaEdit size={14} />
+                            </button>
+
+                            <button
+                                title="Delete Question"
+                                className={`size-10 flex items-center justify-center rounded-full transition-all duration-300 ${expandedItem == idx ? 'bg-red-500/30 text-red-100 hover:bg-red-500/50' : 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white shadow-sm border border-red-100'}`}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteQuestion(el.id);
+                                }}>
+                                <FaTrash size={14} />
+                            </button>
+
+                            <div className={`ml-1 transition-transform duration-300 ${expandedItem == idx ? 'rotate-180 text-white' : 'text-gray-400'}`}>
+                                <FaChevronDown size={14} />
                             </div>
                         </div>
                     </div>
@@ -506,156 +502,113 @@ function AccordionHeadingItem({ expandedItem, idx, el, handleEditQuestion, handl
 
 function QuestionsListIEEFormat({ questionsList, handleEditQuestion, handleDeleteQuestion }) {
     return (
-        <>
-            <div className="h-[500px] overflow-auto border p-2">
-                <div className="columns-2">
-                    {questionsList.map((el, idx) => {
-                        return (
-                            <div
-                                className={`border transition-all duration-300  mb-5 shadow-sm bg-gray-100 relative que-container`}
-                                key={idx}>
-                                <CButton
-                                    icon={<FaEdit />}
-                                    onClick={handleEditQuestion.bind(null, el.id)}
-                                    className={'absolute top-0 right-0 edit-que-btn'}>
-                                    Edit
-                                </CButton>
-                                <div className="py-3 px-4 text-start">
-                                    <div className="py-3">
-                                        <p className="font-bold text-[#555] mb-4 block text-start">
-                                            (<span>#{idx + 1}</span>) (
-                                            <span className="text-slate-500 ">Qid:{el.id}</span>)
-                                        </p>
-                                        <p
-                                            className="text-start"
-                                            dangerouslySetInnerHTML={{
-                                                __html: el.mqs_question,
-                                            }}></p>
-                                    </div>
+        <div className="h-[750px] overflow-auto custom-scrollbar p-6 border border-gray-200/60 rounded-3xl bg-gray-50/50 backdrop-blur-sm shadow-inner">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {questionsList.map((el, idx) => {
+                    return (
+                        <div
+                            className="flex flex-col h-[550px] bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-2xl hover:border-[#4D96FF]/50 transition-all duration-500 group overflow-hidden shining-card"
+                            key={idx}>
 
-                                    <div className="py-3">
-                                        <span className="font-bold text-[#555] mb-4 block text-start">
-                                            Option A
-                                        </span>
+                            {/* Header / ID Badge - Fixed at top */}
+                            <div className="flex justify-between items-center px-5 py-3 bg-gray-50/90 border-b border-gray-200 shrink-0">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-[10px] font-black bg-[#4D96FF] text-white px-2 py-0.5 rounded-md uppercase tracking-wider">
+                                        #{idx + 1}
+                                    </span>
+                                    <span className="text-xs font-bold text-black font-mono">QID: {el.id}</span>
+                                </div>
+                                <div className="flex gap-2 opacity-100 transition-opacity duration-300">
+                                    <button
+                                        onClick={() => handleEditQuestion(el.id)}
+                                        className="size-8 flex items-center justify-center rounded-lg bg-[#4D96FF]/10 text-[#4D96FF] hover:bg-[#4D96FF] hover:text-white transition-all shadow-sm">
+                                        <FaPencil size={12} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteQuestion(el.id)}
+                                        className="size-8 flex items-center justify-center rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                                        <FaTrash size={12} />
+                                    </button>
+                                </div>
+                            </div>
 
-                                        <p
-                                            dangerouslySetInnerHTML={{
-                                                __html: el.mqs_opt_one,
-                                            }}></p>
-                                    </div>
+                            {/* Scrollable Content Area */}
+                            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-5">
+                                {/* Question */}
+                                <div className="space-y-2">
+                                    <div
+                                        className="text-black font-bold leading-relaxed"
+                                        dangerouslySetInnerHTML={{ __html: el.mqs_question }}
+                                    />
+                                </div>
 
-                                    <hr />
-
-                                    <div className="py-3">
-                                        <span className="font-bold text-[#555] mb-4 block text-start">
-                                            Option B
-                                        </span>
-
-                                        <p
-                                            dangerouslySetInnerHTML={{
-                                                __html: el.mqs_opt_two,
-                                            }}></p>
-                                    </div>
-
-                                    <hr />
-
-                                    <div className="py-3">
-                                        <span className="font-bold text-[#555] mb-4 block text-start">
-                                            Option C
-                                        </span>
-                                        <p
-                                            dangerouslySetInnerHTML={{
-                                                __html: el.mqs_opt_three,
-                                            }}></p>
-                                    </div>
-
-                                    <hr />
-
-                                    <div className="py-3">
-                                        <span className="font-bold text-[#555] mb-4 block text-start">
-                                            Option D
-                                        </span>
-                                        <p
-                                            dangerouslySetInnerHTML={{
-                                                __html: el.mqs_opt_four,
-                                            }}></p>
-                                    </div>
-
-                                    <hr />
-
-                                    {el.mqs_opt_five && (
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] mb-4 block text-start">
-                                                Option E
+                                {/* Options Grid */}
+                                <div className="grid grid-cols-1 gap-2.5">
+                                    {[
+                                        { label: 'A', content: el.mqs_opt_one },
+                                        { label: 'B', content: el.mqs_opt_two },
+                                        { label: 'C', content: el.mqs_opt_three },
+                                        { label: 'D', content: el.mqs_opt_four },
+                                        { label: 'E', content: el.mqs_opt_five },
+                                    ].filter(opt => opt.content).map((opt, i) => (
+                                        <div key={i} className="flex gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50/50 group/opt hover:bg-white hover:border-[#4D96FF]/30 hover:shadow-sm transition-all">
+                                            <span className="size-6 shrink-0 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-[10px] font-black text-black group-hover/opt:border-blue-200 group-hover/opt:text-blue-500 shadow-sm transition-all">
+                                                {opt.label}
                                             </span>
-                                            <p
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_opt_five,
-                                                }}></p>
+                                            <div className="text-sm text-black font-semibold" dangerouslySetInnerHTML={{ __html: opt.content }} />
                                         </div>
-                                    )}
+                                    ))}
+                                </div>
 
-                                    <hr />
-
-                                    <div className="py-3">
-                                        <span className="font-bold text-[#555] mb-4 me-3">
-                                            Correct Option
-                                        </span>
-                                        <span className="mb-6 bg-blue-200 px-2 py-1 w-fit">
+                                {/* Answer & Solution */}
+                                <div className="flex items-center gap-4 pt-4 border-t border-gray-50">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold text-black opacity-40 uppercase">Correct:</span>
+                                        <span className="px-2 py-0.5 bg-green-100 text-green-700 font-bold rounded text-xs">
                                             {el.mqs_ans?.toUpperCase()}
                                         </span>
                                     </div>
-
-                                    <hr />
-
                                     {el.mqs_solution && (
-                                        <div className="py-3">
-                                            <span className="font-bold text-[#555] my-4 block text-start">
-                                                Solution
-                                            </span>
-                                            <p
-                                                className="text-start"
-                                                dangerouslySetInnerHTML={{
-                                                    __html: el.mqs_solution,
-                                                }}></p>
+                                        <div className="flex-1 flex items-center gap-2 p-2 bg-amber-50 rounded-lg border border-amber-100/50">
+                                            <HiOutlineDocumentText size={14} className="text-amber-600" />
+                                            <span className="text-[10px] font-bold text-amber-700 uppercase">Has Solution</span>
                                         </div>
                                     )}
-
-                                    <hr />
-
-                                    <div className=" bg-gray-300 p-3 ">
-                                        <h3>Publication Info</h3>
-
-                                        <table className="w-full">
-                                            <thead>
-                                                <th className="border px-2 py-1">Pub. Name</th>
-                                                <th className="border px-2 py-1">Book Name</th>
-                                                <th className="border px-2 py-1">Pg No</th>
-                                            </thead>
-                                            <tr className="text-center">
-                                                <td className="border px-2 py-1">
-                                                    {el?.msq_publication_name || el?.pub_name
-                                                        ? el.msq_publication_name || el?.pub_name
-                                                        : 'NA'}
-                                                </td>
-                                                <td className="border px-2 py-1">
-                                                    {el.msq_book_name ? el.msq_book_name : 'NA'}
-                                                </td>
-                                                <td className="border px-2 py-1">
-                                                    {el?.maq_page_number || el?.pg_no
-                                                        ? el?.maq_page_number || el?.pg_no
-                                                        : 'NA'}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
                                 </div>
                             </div>
-                        );
-                    })}
-                </div>
+
+                            {/* Publication Info Table - Fixed at bottom */}
+                            <div className="px-6 pb-6 shrink-0">
+                                <div className="rounded-xl border border-gray-200 overflow-hidden bg-gray-100/30">
+                                    <table className="w-full text-[10px]">
+                                        <thead>
+                                            <tr className="bg-gray-100/50 text-black font-bold uppercase tracking-wider border-b border-gray-100">
+                                                <th className="px-3 py-2 text-left">Publication</th>
+                                                <th className="px-3 py-2 text-left">Book</th>
+                                                <th className="px-3 py-2 text-center">Page</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-black font-bold">
+                                            <tr>
+                                                <td className="px-3 py-2 border-r border-gray-100">
+                                                    {el?.msq_publication_name || el?.pub_name || 'NA'}
+                                                </td>
+                                                <td className="px-3 py-2 border-r border-gray-100 font-bold">
+                                                    {el.msq_book_name || 'NA'}
+                                                </td>
+                                                <td className="px-3 py-2 text-center">
+                                                    {el?.maq_page_number || el?.pg_no || 'NA'}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
-        </>
+        </div>
     );
 }
 
@@ -672,14 +625,15 @@ export function ExamThemeView({ questionsList, handleEditQuestion, isEdit = true
     return (
         <>
             {/* Trigger button */}
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-20">
                 <CButton
-                    icon={<FaEye />}
+                    icon={<FaEye size={20} />}
                     disabled={questionsList.length === 0}
+                    className="px-12 py-5 text-xl font-bold bg-[#4D96FF] hover:bg-[#3B82F6] shadow-2xl shadow-blue-200/50 transform hover:scale-110 transition-all duration-300 rounded-full"
                     onClick={() => {
                         dispatch(ModalActions.toggleModal('exam-theme-1-modal'));
                     }}>
-                    <span>View</span>
+                    <span>Launch Exam View</span>
                 </CButton>
             </div>
 
@@ -697,28 +651,30 @@ export function ExamThemeView({ questionsList, handleEditQuestion, isEdit = true
                             </div>
 
                             {/* Navigation buttons */}
-                            <div className="flex justify-between mt-4">
+                            <div className="flex justify-between items-center mt-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                 <CButton
                                     disabled={idx === 0}
-                                    className="btn--success bg-blue-500 text-white hover:bg-blue-600"
-                                    icon={<FaArrowAltCircleLeft />}
+                                    className="px-6 bg-white border border-gray-200 text-gray-700 hover:bg-gray-100 shadow-sm"
                                     onClick={() => setIdx((prev) => prev - 1)}>
-                                    Prev
+                                    <FaArrowAltCircleLeft />
+                                    <span>Previous</span>
                                 </CButton>
+
                                 {isEdit && (
                                     <CButton
-                                        icon={<FaPencil />}
                                         onClick={handleEditQuestion.bind(null, currentQuestion.id)}
-                                        className="bg-yellow-400 hover:bg-yellow-500 text-sm px-4 py-2 rounded">
-                                        Edit
+                                        className="bg-[#4D96FF] text-white hover:bg-[#3B82F6] shadow-md shadow-blue-200 border border-[#4D96FF] rounded-full">
+                                        <FaPencil />
+                                        <span>Edit</span>
                                     </CButton>
                                 )}
+
                                 <CButton
                                     disabled={questionsList.length === idx + 1}
-                                    className="bg-blue-500 text-white hover:bg-blue-600"
-                                    icon={<FaArrowAltCircleRight />}
+                                    className="px-6 bg-[#4D96FF] text-white hover:bg-[#3B82F6] shadow-md shadow-blue-200 rounded-full"
                                     onClick={() => setIdx((prev) => prev + 1)}>
-                                    Next
+                                    <span>Next</span>
+                                    <FaArrowAltCircleRight />
                                 </CButton>
                             </div>
                         </div>
@@ -729,11 +685,10 @@ export function ExamThemeView({ questionsList, handleEditQuestion, isEdit = true
                                 {questionsList.map((_q, _i) => (
                                     <div
                                         key={_i}
-                                        className={`border rounded-md size-10 flex items-center justify-center cursor-pointer transition ${
-                                            idx === _i
-                                                ? 'bg-blue-500 text-white shadow-md'
-                                                : 'bg-white hover:bg-gray-100'
-                                        }`}
+                                        className={`border rounded-md size-10 flex items-center justify-center cursor-pointer transition ${idx === _i
+                                            ? 'bg-blue-500 text-white shadow-md'
+                                            : 'bg-white hover:bg-gray-100'
+                                            }`}
                                         onClick={() => setIdx(_i)}>
                                         {_i + 1}
                                     </div>
@@ -778,9 +733,9 @@ function QuestionUi({ idx, q }) {
                 )}
             </div>
 
-            <div className="mt-3 text-sm text-gray-700 border-t pt-2 flex justify-center">
+            <div className="mt-3 text-sm text-black border-t pt-2 flex justify-center">
                 Correct Answer:&nbsp;
-                <strong>{q?.q_ans?.toUpperCase() || q?.mqs_ans?.toUpperCase() || '-'}</strong>
+                <strong className="text-green-700">{q?.q_ans?.toUpperCase() || q?.mqs_ans?.toUpperCase() || '-'}</strong>
             </div>
         </div>
     );
@@ -789,9 +744,9 @@ function QuestionUi({ idx, q }) {
 function QuestionOption({ option, html }) {
     return (
         <div className="flex gap-2 items-start">
-            <span className="font-semibold text-gray-700">{option}.</span>
+            <span className="font-bold text-black">{option}.</span>
             <span
-                className="inline-block text-gray-800"
+                className="inline-block text-black font-semibold"
                 dangerouslySetInnerHTML={{
                     __html: html,
                 }}

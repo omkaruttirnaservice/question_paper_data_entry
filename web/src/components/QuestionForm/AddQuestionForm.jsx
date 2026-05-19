@@ -133,7 +133,7 @@ const AddQuestionForm = () => {
     // }, []);
 
     return (
-        <div className="">
+        <div className="bg-gray-50/50 pb-10">
             <AddPostModal />
             <AddSubjectModal />
             <AddTopicFormModal />
@@ -142,11 +142,17 @@ const AddQuestionForm = () => {
 
             <form
                 id="add-question-form"
-                className="grid grid-cols-1 md:grid-cols-2 gap-5 ms-5"
+                className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 max-w-screen-2xl mx-auto"
                 onSubmit={handleSaveQuestion}>
-                <div>
-                    <div className={`bg-white pb-2 sticky top-0 z-30 my-1 border p-2`}>
-                        <div className="grid grid-cols-3 gap-y-2 gap-x-2">
+
+                {/* Left Column - Form Controls */}
+                <div className="flex flex-col gap-6 lg:col-span-2">
+                    {/* Sticky Metadata Header */}
+                    <div className="bg-white/95 backdrop-blur-md sticky top-0 z-40 border border-gray-100 rounded-xl shadow-sm p-5 transition-all min-h-[240px]">
+                        <div className="mb-4 pb-2 border-b border-gray-100">
+                            <h2 className="text-lg font-semibold text-gray-800">Question Metadata</h2>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-4">
                             <PostListDropdown />
                             <SubjectListDropdown />
                             <TopicListDropdown />
@@ -155,37 +161,54 @@ const AddQuestionForm = () => {
                             <PublicationNameDropdown />
                             <BookNameDropdown />
                             <QuestionPgNo />
-                            {/* <QuestionMonthDropdown /> */}
                             <QuestionYearDropdown />
                         </div>
                     </div>
-                    <OptionsInput />
 
-                    <OptionsDropdown />
+                    {/* Question and Options Content */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                        <OptionsInput />
 
-                    <hr />
+                        <div className="mt-6 pt-6 border-t border-gray-100">
+                            <OptionsDropdown />
+                        </div>
+                    </div>
 
-                    <ExplanationInput />
+                    {/* Explanation Content */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                        <ExplanationInput />
+                    </div>
 
                     <div className="flex items-center justify-center flex-col">
                         {Object.values(errors).length > 0 && (
-                            <p className="error text-center mt-4">
-                                Some errors are there in form please check{' '}
-                            </p>
+                            <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg w-full text-center border border-red-100 mt-2 mb-4">
+                                Please check the form for errors.
+                            </div>
                         )}
+                    </div>
+                </div>
 
-                        <div className="flex justify-end m-3 fixed bottom-2 right-2 z-10 ">
-                            <CButton
-                                className="flex justify-center items-center text-2xl"
-                                type="submit"
-                                isLoading={useSelector((state) => state.loader.isLoading)}>
-                                Save
-                            </CButton>
+                {/* Right Column - Preview */}
+                <div className="lg:sticky lg:top-0 h-fit lg:col-span-1">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[240px]">
+                        <div className="bg-gray-50/80 px-5 py-3 border-b border-gray-100">
+                            <h2 className="text-lg font-semibold text-gray-800">Live Preview</h2>
+                        </div>
+                        <div className="p-5">
+                            <QuestionPreview />
                         </div>
                     </div>
                 </div>
 
-                <QuestionPreview />
+                {/* Save Button */}
+                <div className="fixed bottom-6 right-6 z-40">
+                    <CButton
+                        className="flex justify-center items-center text-lg px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all"
+                        type="submit"
+                        isLoading={useSelector((state) => state.loader.isLoading)}>
+                        Save Question
+                    </CButton>
+                </div>
             </form>
         </div>
     );

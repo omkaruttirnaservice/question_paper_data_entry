@@ -27,10 +27,10 @@ function PostListDropdown({ isShowAddNewBtn = true }) {
     console.log('rendering post list dropdown');
     return (
         <div className="flex flex-col gap-1 relative">
-            <label htmlFor="" className="input-label">
+            <label htmlFor="post-id" className="input-label text-sm font-medium text-gray-700">
                 Post *
             </label>
-            <div className="flex">
+            <div className="flex items-center gap-2">
                 {isShowAddNewBtn && <CButton onClick={handlePostAddModal} icon={<FaPlus />} />}
                 <select
                     id="post-id"

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import CButton from './UI/CButton';
+import { FaPrint, FaClock, FaCalendarAlt, FaChevronDown } from 'react-icons/fa';
 
 const CIRCLE = 'CIRCLE';
 const TEXT = 'TEXT';
@@ -11,16 +12,14 @@ const optionsInputEnum = [NUMBER, CIRCLE, TEXT, ROMAN];
 const PDFGenerator = ({ questions, testDetails }) => {
     const _pdfConfig = {
         isShowCorrectAns: false,
-        title: testDetails?.test_name || 'Title',
+        title: testDetails?.test_name || 'Question Paper',
         isListView: true,
         duration: testDetails?.test_duration || 90,
         isNegativeMarking: testDetails?.is_negative_marking || false,
         negativeMarks: testDetails?.negative_mark || 0,
-        examDate: '2025-01-01',
+        examDate: new Date().toISOString().split('T')[0],
         totalQuestions: questions?.length || 0,
-
-        isShowExtraConfig: false,
-        optionInput: optionsInputEnum[0],
+        optionInput: optionsInputEnum[1], // Default to Circle
     };
 
     const printContainerRef = useRef(null);
@@ -33,230 +32,164 @@ const PDFGenerator = ({ questions, testDetails }) => {
             printWindow.document.write(`
                 <html>
                     <head>
-                        <title>Print</title>
+                        <title>${pdfConfig.title}</title>
                         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+                        <style>
+                            @page { margin: 15mm; }
+                            body { font-family: 'Inter', sans-serif; }
+                            .break-inside-avoid { break-inside: avoid; }
+                        </style>
                     </head>
                     <body>
-                        ${printContent}
+                        <div class="p-8">
+                            ${printContent}
+                        </div>
                     </body>
                 </html>
             `);
+            printWindow.document.close();
+            setTimeout(() => printWindow.print(), 500);
         }
     };
 
     return (
-        <div className="p-6 space-y-4">
-            <CButton onClick={handlePrint}>Print</CButton>
-
-            <div className="grid grid-cols-3   gap-3 ">
-                {/* Title Input */}
-                <div>
-                    <label className="block text-gray-700 mb-1">Title</label>
-                    <input
-                        type="text"
-                        className="border rounded px-3 py-2 w-full max-w-sm"
-                        placeholder="Title"
-                        value={pdfConfig.title}
-                        onChange={(e) =>
-                            setPdfConfig((prev) => ({
-                                ...prev,
-                                title: e.target.value,
-                            }))
-                        }
-                    />
+        <div className="bg-gray-100 min-h-screen p-4 md:p-8">
+            {/* Simple & Complete Control Panel */}
+            <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-xl shadow-sm mb-8 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                    <div className="flex items-center gap-3">
+                        <div className="size-10 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                            <FaPrint size={18} />
+                        </div>
+                        <h2 className="text-lg font-bold text-gray-800 tracking-tight">Print Setup</h2>
+                    </div>
+                    <CButton
+                        className="h-10 px-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 font-bold text-sm shadow-sm transition-all active:scale-95"
+                        onClick={handlePrint}
+                    >
+                        <FaPrint />
+                        <span>Print Document</span>
+                    </CButton>
                 </div>
-                {/* add here */}
 
-                {pdfConfig.isShowExtraConfig && (
-                    <>
-                        {/* Duration Input */}
-                        <div>
-                            <label className="block text-gray-700 mb-1">Duration (Minutes)</label>
+                <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {/* Column 1: Basics */}
+                    <div className="space-y-4">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Paper Title</label>
                             <input
                                 type="text"
-                                className="border rounded px-3 py-2 w-full max-w-sm"
-                                value={pdfConfig.duration}
-                                onChange={(e) =>
-                                    setPdfConfig((prev) => ({
-                                        ...prev,
-                                        duration: Number(e.target.value),
-                                    }))
-                                }
+                                className="h-10 px-4 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:bg-white outline-none transition-all font-medium"
+                                value={pdfConfig.title}
+                                onChange={(e) => setPdfConfig(p => ({ ...p, title: e.target.value }))}
                             />
                         </div>
-
-                        {/* Exam Date Input */}
-                        <div>
-                            <label className="block text-gray-700 mb-1">Exam Date</label>
-                            <input
-                                type="date"
-                                className="border rounded px-3 py-2 w-full max-w-sm"
-                                value={pdfConfig.examDate}
-                                onChange={(e) =>
-                                    setPdfConfig((prev) => ({
-                                        ...prev,
-                                        examDate: e.target.value,
-                                    }))
-                                }
-                            />
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Option Label Style</label>
+                            <div className="relative">
+                                <select
+                                    className="h-10 px-4 w-full bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:bg-white outline-none appearance-none font-medium"
+                                    value={pdfConfig.optionInput}
+                                    onChange={(e) => setPdfConfig(p => ({ ...p, optionInput: e.target.value }))}
+                                >
+                                    <option value={NUMBER}>Number (1, 2, 3)</option>
+                                    <option value={TEXT}>Text (A, B, C)</option>
+                                    <option value={ROMAN}>Roman (i, ii, iii)</option>
+                                    <option value={CIRCLE}>Circle (○)</option>
+                                </select>
+                                <FaChevronDown className="absolute right-3 top-3.5 text-gray-400 pointer-events-none text-[10px]" />
+                            </div>
                         </div>
+                    </div>
 
-                        {/* Negative Marking Toggle */}
-                        <ToggleButtonUi
-                            title={'Negative Marking'}
-                            onClick={() => {
-                                setPdfConfig((prev) => ({
-                                    ...prev,
-                                    isNegativeMarking: !prev.isNegativeMarking,
-                                }));
-                            }}
-                            status={pdfConfig?.isNegativeMarking || false}
-                        />
-
-                        {/* Negative Marks Input */}
-                        {pdfConfig.isNegativeMarking && (
-                            <div>
-                                <label className="block text-gray-700 mb-1">Negative Marks</label>
+                    {/* Column 2: Date & Duration */}
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Duration (Min)</label>
                                 <input
-                                    type="text"
-                                    step="0.01"
-                                    className="border rounded px-3 py-2 w-full max-w-sm"
+                                    type="number"
+                                    className="h-10 px-4 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:bg-white outline-none transition-all font-medium"
+                                    value={pdfConfig.duration}
+                                    onChange={(e) => setPdfConfig(p => ({ ...p, duration: e.target.value }))}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Exam Date</label>
+                                <input
+                                    type="date"
+                                    className="h-10 px-4 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:bg-white outline-none transition-all font-medium"
+                                    value={pdfConfig.examDate}
+                                    onChange={(e) => setPdfConfig(p => ({ ...p, examDate: e.target.value }))}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">View Layout</label>
+                            <div className="flex items-center gap-6 h-10 px-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                <label className="flex items-center gap-2 cursor-pointer group">
+                                    <input type="radio" name="vtype" checked={pdfConfig.isListView} onChange={() => setPdfConfig(p => ({ ...p, isListView: true }))} className="w-4 h-4 text-blue-600 focus:ring-blue-500" />
+                                    <span className="text-sm font-semibold text-gray-600 group-hover:text-blue-600">List View</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer group">
+                                    <input type="radio" name="vtype" checked={!pdfConfig.isListView} onChange={() => setPdfConfig(p => ({ ...p, isListView: false }))} className="w-4 h-4 text-blue-600 focus:ring-blue-500" />
+                                    <span className="text-sm font-semibold text-gray-600 group-hover:text-blue-600">Split View</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 3: Toggles */}
+                    <div className="space-y-4 pt-1">
+                        <ToggleButtonUi
+                            title="Show Correct Answer"
+                            onClick={() => setPdfConfig(p => ({ ...p, isShowCorrectAns: !p.isShowCorrectAns }))}
+                            status={pdfConfig.isShowCorrectAns}
+                        />
+                        <ToggleButtonUi
+                            title="Negative Marking"
+                            onClick={() => setPdfConfig(p => ({ ...p, isNegativeMarking: !p.isNegativeMarking }))}
+                            status={pdfConfig.isNegativeMarking}
+                        />
+                        {pdfConfig.isNegativeMarking && (
+                            <div className="animate-in fade-in duration-300">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Negative Value</label>
+                                <input
+                                    type="number"
+                                    step="0.25"
+                                    className="h-8 px-3 w-full bg-red-50 border border-red-100 rounded-lg text-sm focus:border-red-500 outline-none transition-all font-bold text-red-600"
                                     value={pdfConfig.negativeMarks}
-                                    onChange={(e) =>
-                                        setPdfConfig((prev) => ({
-                                            ...prev,
-                                            negativeMarks: parseFloat(e.target.value) || 0,
-                                        }))
-                                    }
+                                    onChange={(e) => setPdfConfig(p => ({ ...p, negativeMarks: e.target.value }))}
                                 />
                             </div>
                         )}
-                    </>
-                )}
-                {/* Radio Buttons for View Type */}
-                <div className="flex items-center space-x-6">
-                    <span className="text-gray-700">View Type:</span>
-
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                        <input
-                            type="radio"
-                            name="viewType"
-                            value="list"
-                            checked={pdfConfig.isListView}
-                            onChange={() =>
-                                setPdfConfig((prev) => ({
-                                    ...prev,
-                                    isListView: true,
-                                }))
-                            }
-                            className="form-radio text-blue-600 focus:ring-blue-500"
-                        />
-                        <span>List View</span>
-                    </label>
-
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                        <input
-                            type="radio"
-                            name="viewType"
-                            value="split"
-                            checked={!pdfConfig.isListView}
-                            onChange={() =>
-                                setPdfConfig((prev) => ({
-                                    ...prev,
-                                    isListView: false,
-                                }))
-                            }
-                            className="form-radio text-blue-600 focus:ring-blue-500"
-                        />
-                        <span>Split View</span>
-                    </label>
+                    </div>
                 </div>
-                {/* Toggle for Show Correct Answer */}
-                <ToggleButtonUi
-                    title={'Show Correct Option'}
-                    onClick={() => {
-                        setPdfConfig((prev) => ({
-                            ...prev,
-                            isShowCorrectAns: !prev.isShowCorrectAns,
-                        }));
-                    }}
-                    status={pdfConfig?.isShowCorrectAns || false}
-                />
-                {/* Option Label Type */}
-                <div>
-                    <label className="block text-gray-700 mb-1">Option Label Type</label>
-                    <select
-                        className="border rounded px-3 py-2 w-full max-w-sm"
-                        value={pdfConfig.optionInput}
-                        onChange={(e) =>
-                            setPdfConfig((prev) => ({
-                                ...prev,
-                                optionInput: e.target.value,
-                            }))
-                        }>
-                        <option value={NUMBER}>Number (1, 2, 3)</option>
-                        <option value={TEXT}>Text (A, B, C)</option>
-                        <option value={ROMAN}>Roman (i, ii, iii)</option>
-                        <option value={CIRCLE}>Circle (○)</option>
-                    </select>
+
+                <div className="bg-blue-600/5 px-6 py-3 border-t border-gray-100 flex flex-wrap gap-6 text-[11px] font-black text-gray-500 tracking-widest uppercase">
+                    <span className="flex items-center gap-2"><div className="size-1.5 bg-blue-600 rounded-full" /> Total Questions: {questions.length}</span>
+                    <span className="flex items-center gap-2"><div className="size-1.5 bg-indigo-600 rounded-full" /> Total Marks: {questions.length}</span>
+                    <span className="flex items-center gap-2 text-blue-600"><div className="size-1.5 bg-blue-600 rounded-full animate-pulse" /> Live Preview</span>
                 </div>
             </div>
 
-            {/* Component to be captured */}
-            <div ref={printContainerRef}>
-                <div className="p-4 bg-white shadow-md rounded-md w-full max-w-4xl mx-auto space-y-6">
-                    <h2 className="text-2xl font-bold mb-4 text-center">{pdfConfig.title}</h2>
-
-                    {pdfConfig.isShowExtraConfig && (
-                        <>
-                            <div className="grid grid-cols-3 gap-3 mb-6 text-sm">
-                                {/* Left column */}
-                                <p>
-                                    <strong>Exam Duration :</strong> {pdfConfig.duration} Minutes
-                                </p>
-                                <p>
-                                    <strong>Total Questions :</strong> {pdfConfig.totalQuestions}
-                                </p>
-
-                                <p>
-                                    <strong>Exam Date :</strong>{' '}
-                                    {new Date(pdfConfig?.examDate).toLocaleDateString()}
-                                </p>
-                                <p>
-                                    <strong>Mark Per Question :</strong> 1
-                                </p>
-                                <p>
-                                    <strong>Negative Marking :</strong>{' '}
-                                    {pdfConfig.isNegativeMarking ? 'Yes' : 'No'}
-                                </p>
-
-                                {pdfConfig.isNegativeMarking && (
-                                    <p>
-                                        <strong>Negative Marks :</strong> {pdfConfig.negativeMarks}
-                                    </p>
-                                )}
-                            </div>
-                        </>
-                    )}
-                    {/* List View */}
-                    {pdfConfig.isListView && (
-                        <div>
-                            {questions.length > 0 &&
-                                questions.map((q, idx) => (
-                                    <QuestionUi key={idx} idx={idx} q={q} pdfConfig={pdfConfig} />
-                                ))}
+            {/* Simple Document Preview */}
+            <div className="max-w-5xl mx-auto bg-white shadow-2xl border border-gray-200 min-h-[1100px] mb-20">
+                <div ref={printContainerRef} className="p-16 text-black">
+                    <div className="text-center mb-10 pb-6 border-b border-gray-200">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight">{pdfConfig.title}</h2>
+                        <div className="flex justify-center gap-12 text-[13px] font-semibold text-gray-500 uppercase tracking-wider">
+                            <span>Time: {pdfConfig.duration}m</span>
+                            <span>Max Marks: {questions.length}</span>
+                            <span>Questions: {questions.length}</span>
                         </div>
-                    )}
+                    </div>
 
-                    {/* Split View */}
-                    {!pdfConfig.isListView && (
-                        <div className="columns-2">
-                            {questions.length > 0 &&
-                                questions.map((q, idx) => (
-                                    <QuestionUi key={idx} idx={idx} q={q} pdfConfig={pdfConfig} />
-                                ))}
-                        </div>
-                    )}
+                    <div className={`${!pdfConfig.isListView ? 'columns-2 gap-12' : 'space-y-8'}`}>
+                        {questions.map((q, idx) => (
+                            <QuestionUi key={idx} idx={idx} q={q} pdfConfig={pdfConfig} />
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
@@ -265,107 +198,73 @@ const PDFGenerator = ({ questions, testDetails }) => {
 
 function QuestionUi({ idx, q, pdfConfig }) {
     return (
-        <div className="border p-4 rounded-md shadow-sm break-inside-avoid mb-4">
-            <div className="font-medium mb-2">
-                Q {idx + 1}.{' '}
-                <div
-                    className="inline-block"
-                    dangerouslySetInnerHTML={{
-                        __html: q?.q || q?.mqs_question || '-',
-                    }}
-                />
-            </div>
-
-            {/* Options */}
-            <div className="pl-4 space-y-1">
-                {(q?.q_a || q?.mqs_opt_one) && (
-                    <QuestionOption
-                        idx={0}
-                        option="A"
-                        html={q?.q_a || q?.mqs_opt_one || '-'}
-                        pdfConfig={pdfConfig}
+        <div className="break-inside-avoid mb-8">
+            <div className="flex gap-4">
+                <span className="font-bold text-gray-900 min-w-[28px]">{idx + 1}.</span>
+                <div className="flex-1 space-y-4">
+                    <div
+                        className="font-bold text-gray-800 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: q?.q || q?.mqs_question || '-' }}
                     />
-                )}
-                {(q?.q_b || q?.mqs_opt_two) && (
-                    <QuestionOption
-                        idx={1}
-                        option="B"
-                        html={q?.q_b || q?.mqs_opt_two || '-'}
-                        pdfConfig={pdfConfig}
-                    />
-                )}
-                {(q?.q_c || q?.mqs_opt_three) && (
-                    <QuestionOption
-                        idx={2}
-                        option="C"
-                        html={q?.q_c || q?.mqs_opt_three || '-'}
-                        pdfConfig={pdfConfig}
-                    />
-                )}
-                {(q?.q_d || q?.mqs_opt_four) && (
-                    <QuestionOption
-                        idx={3}
-                        option="D"
-                        html={q?.q_d || q?.mqs_opt_four || '-'}
-                        pdfConfig={pdfConfig}
-                    />
-                )}
-                {(q?.q_e || q?.mqs_opt_five) && (
-                    <QuestionOption
-                        idx={4}
-                        option="E"
-                        html={q?.q_e || q?.mqs_opt_five || '-'}
-                        pdfConfig={pdfConfig}
-                    />
-                )}
-            </div>
-
-            {/* Correct Answer Toggle */}
-            {pdfConfig.isShowCorrectAns && (
-                <div className="mt-2 text-sm text-gray-800 border justify-center flex items-center gap-6">
-                    <p>
-                        Correct Answer:{' '}
-                        <strong>
-                            {q?.q_ans?.toUpperCase() || q?.mqs_ans?.toUpperCase() || '-'}
-                        </strong>
-                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mt-4">
+                        {[
+                            { key: 'A', val: q?.q_a || q?.mqs_opt_one },
+                            { key: 'B', val: q?.q_b || q?.mqs_opt_two },
+                            { key: 'C', val: q?.q_c || q?.mqs_opt_three },
+                            { key: 'D', val: q?.q_d || q?.mqs_opt_four },
+                            { key: 'E', val: q?.q_e || q?.mqs_opt_five },
+                        ].filter(o => o.val).map((opt, i) => (
+                            <QuestionOption
+                                key={opt.key}
+                                idx={i}
+                                option={opt.key}
+                                html={opt.val}
+                                pdfConfig={pdfConfig}
+                                isCorrect={pdfConfig.isShowCorrectAns && (q?.q_ans?.toLowerCase() === opt.key.toLowerCase() || q?.mqs_ans?.toLowerCase() === opt.key.toLowerCase())}
+                            />
+                        ))}
+                    </div>
+                    {pdfConfig.isShowCorrectAns && (
+                        <div className="text-sm font-bold text-blue-600 mt-2">
+                            Ans : {(() => {
+                                const ans = (q?.q_ans || q?.mqs_ans || '').toUpperCase();
+                                const index = ans.charCodeAt(0) - 65;
+                                if (index < 0 || index > 4) return ans;
+                                
+                                switch (pdfConfig.optionInput) {
+                                    case NUMBER: return index + 1;
+                                    case CIRCLE: return index + 1;
+                                    case ROMAN: return ['i', 'ii', 'iii', 'iv', 'v'][index];
+                                    default: return ans;
+                                }
+                            })()}
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
 
-function QuestionOption({ option, html, pdfConfig, idx }) {
-    // Generate label based on pdfConfig.optionInput
+function QuestionOption({ option, html, pdfConfig, idx, isCorrect }) {
     const getOptionLabel = () => {
         switch (pdfConfig.optionInput) {
-            case NUMBER:
-                return (idx + 1).toString(); // 1,2,3...
-            case TEXT:
-                return String.fromCharCode(65 + idx); // A,B,C...
-            case ROMAN:
-                const romans = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
-                return romans[idx] || idx + 1;
-            case CIRCLE:
-                return ''; // Just a circle
-            default:
-                return option; // fallback
+            case NUMBER: return (idx + 1).toString();
+            case TEXT: return String.fromCharCode(65 + idx);
+            case ROMAN: return ['i', 'ii', 'iii', 'iv', 'v'][idx] || idx + 1;
+            case CIRCLE: return '';
+            default: return option;
         }
     };
 
     return (
-        <div className="flex items-start space-x-2">
-            {/* Option label */}
-            <span className="h-6 w-6 flex items-center justify-center border rounded-full border-gray-500 text-sm font-medium">
+        <div className={`flex items-start gap-2.5 p-1 rounded-lg ${isCorrect ? 'bg-green-50' : ''}`}>
+            <span className={`h-5 w-5 flex flex-shrink-0 items-center justify-center border rounded-full text-[10px] font-black ${isCorrect ? 'border-green-600 bg-green-600 text-white' : 'border-gray-800 text-gray-800'}`}>
                 {getOptionLabel()}
             </span>
-
-            {/* Option text */}
             <div
-                className="inline-block"
-                dangerouslySetInnerHTML={{
-                    __html: html,
-                }}
+                className={`text-[13px] leading-tight pt-0.5 ${isCorrect ? 'text-green-800 font-bold' : 'text-gray-700 font-medium'}`}
+                dangerouslySetInnerHTML={{ __html: html }}
             />
         </div>
     );
@@ -373,20 +272,11 @@ function QuestionOption({ option, html, pdfConfig, idx }) {
 
 function ToggleButtonUi({ title, onClick, status }) {
     return (
-        <div className="flex items-center space-x-2">
-            <span className="text-gray-700">{title}</span>
-            <button
-                type="button"
-                onClick={onClick}
-                className={`w-8 h-4 flex items-center rounded-full transition-colors ${
-                    status ? 'bg-green-500' : 'bg-gray-300'
-                }`}>
-                <span
-                    className={`w-3 h-2 bg-white rounded-full shadow transform transition-transform ${
-                        status ? 'translate-x-4' : 'translate-x-1'
-                    }`}
-                />
-            </button>
+        <div className="flex items-center justify-between group cursor-pointer h-10 px-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-white transition-all" onClick={onClick}>
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-tight">{title}</span>
+            <div className={`w-8 h-4 flex items-center rounded-full px-1 transition-all ${status ? 'bg-blue-600' : 'bg-gray-300'}`}>
+                <div className={`size-2.5 bg-white rounded-full shadow transition-transform ${status ? 'translate-x-3.5' : 'translate-x-0'}`} />
+            </div>
         </div>
     );
 }

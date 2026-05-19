@@ -229,7 +229,6 @@ export const getPostListThunk = (sendRequest) => {
 
 export const getSubjectsListThunk = (post_id, sendRequest) => {
     return async (dispatch) => {
-        dispatch(QuestionFormActions.setSubjectsList([]));
         const reqData = {
             url: SERVER_IP + '/api/subject/list',
             method: 'POST',
@@ -251,7 +250,6 @@ export const getSubjectsListThunk = (post_id, sendRequest) => {
 
 export const getTopicsListThunk = (subject_id, sendRequest) => {
     return async (dispatch) => {
-        dispatch(QuestionFormActions.setTopicsList([]));
         const requestData = {
             url: SERVER_IP + '/api/topic/list',
             method: 'POST',
@@ -270,7 +268,7 @@ export const getTopicsListThunk = (subject_id, sendRequest) => {
     };
 };
 
-export const getEditQuestionDetailsThunk = (questionId, sendRequest, post_id) => {
+export const getEditQuestionDetailsThunk = (questionId, sendRequest, post_id, subject_id, topic_id) => {
     return async (dispatch) => {
         let requestData = {
             url: SERVER_IP + '/api/questions/edit-question-data',
@@ -280,6 +278,23 @@ export const getEditQuestionDetailsThunk = (questionId, sendRequest, post_id) =>
 
         sendRequest(requestData, ({ data }) => {
             data[0]['post_id'] = post_id;
+            data[0]['subject_id'] = subject_id;
+            data[0]['topic_id'] = topic_id;
+            
+            let yearData = data[0]['year'];
+            if (yearData) {
+                try {
+                    while (typeof yearData === 'string') {
+                        yearData = JSON.parse(yearData);
+                    }
+                    data[0]['year'] = Array.isArray(yearData) ? yearData : [];
+                } catch (e) {
+                    data[0]['year'] = Array.isArray(yearData) ? yearData : [];
+                }
+            } else {
+                data[0]['year'] = [];
+            }
+            
             dispatch(QuestionFormActions.setEditQuestionDetails(data[0]));
         });
     };

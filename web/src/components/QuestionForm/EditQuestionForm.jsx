@@ -12,6 +12,7 @@ import { FaAngleDoubleRight } from 'react-icons/fa';
 import { FaAngleRight } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 import { OptionsDropdown } from './AddQuestionForm.jsx';
 import BookNameDropdown from './BookNameDropdown/BookNameDropdown.jsx';
 import DifficultyLevelDropdown from './DifficultyLevelDropdown/DifficultyLevelDropdown.jsx';
@@ -70,16 +71,9 @@ const EditQuestionForm = () => {
         };
         sendRequest(reqData, (data) => {
             if (data.success == 1) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Question has been updated.',
-                    icon: 'success',
-                });
-                // resetCkEditorInstances();
-                // dispatch(QuestionFormActions.resetFormData());
+                toast('Question has been updated.');
                 updateQuestionInReduxState(_formData);
                 setTimeout(() => {
-                    dispatch(ModalActions.toggleModal('edit-question-modal'));
                     dispatch(QuestionFormActions.setEditingFalse());
                 }, 1);
             }
@@ -91,48 +85,54 @@ const EditQuestionForm = () => {
         if (editedQuestionIndex !== -1) {
             let updatedData = [...questionsList];
             updatedData[editedQuestionIndex] = { ..._formData };
-            console.log(updatedData, '==updated state');
             dispatch(QuestionFormActions.setQuestionsList(updatedData));
         }
     }
 
     function resetCkEditorInstances() {
-        window.CKEDITOR.instances[`mqs_question`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_one`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_two`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_three`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_four`].setData('');
-        window.CKEDITOR.instances[`mqs_opt_five`].setData('');
-        window.CKEDITOR.instances[`mqs_solution`].setData('');
+        if (window.CKEDITOR && window.CKEDITOR.instances) {
+            if (window.CKEDITOR.instances[`mqs_question`]) window.CKEDITOR.instances[`mqs_question`].setData('');
+            if (window.CKEDITOR.instances[`mqs_opt_one`]) window.CKEDITOR.instances[`mqs_opt_one`].setData('');
+            if (window.CKEDITOR.instances[`mqs_opt_two`]) window.CKEDITOR.instances[`mqs_opt_two`].setData('');
+            if (window.CKEDITOR.instances[`mqs_opt_three`]) window.CKEDITOR.instances[`mqs_opt_three`].setData('');
+            if (window.CKEDITOR.instances[`mqs_opt_four`]) window.CKEDITOR.instances[`mqs_opt_four`].setData('');
+            if (window.CKEDITOR.instances[`mqs_opt_five`]) window.CKEDITOR.instances[`mqs_opt_five`].setData('');
+            if (window.CKEDITOR.instances[`mqs_solution`]) window.CKEDITOR.instances[`mqs_solution`].setData('');
+        }
     }
 
     return (
-        <>
+        <div className="bg-gray-50/50 pb-10">
             <div className="container mx-auto sticky top-0 bg-white z-50"></div>
 
             <form
-                id="add-question-form"
-                className="grid grid-cols-1 md:grid-cols-2 gap-5 ms-5"
+                id="edit-question-form"
+                className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 max-w-screen-2xl mx-auto"
                 onSubmit={handleUpdateQuestion}>
-                <div>
-                    <div className={`bg-white pb-2 sticky top-0 z-30 shadow-md my-2`}>
-                        <div className="flex items-center py-3 gap-3">
-                            <p>Edit data for</p>
-                            <FaAngleRight />
-                            <span className="underline">Post Name</span>
-                            <FaAngleDoubleRight />
-                            <span className="underline">{_formData.subject_name}</span>
-                            <FaAngleDoubleRight />
-                            <span className="underline">{_formData.topic_name}</span>
+
+                {/* Left Column - Form Controls */}
+                <div className="flex flex-col gap-6 lg:col-span-2">
+                    {/* Sticky Metadata Header */}
+                    <div className="bg-white/95 backdrop-blur-md sticky top-0 z-40 border border-gray-100 rounded-xl shadow-sm p-5 transition-all min-h-[240px]">
+                        <div className="mb-4 pb-2 border-b border-gray-100">
+                            <h2 className="text-lg font-semibold text-gray-800 flex flex-wrap items-center gap-2">
+                                Edit data for <FaAngleRight className="text-gray-400" />
+                                <span className="underline decoration-indigo-200">Post Name</span>
+                                <FaAngleDoubleRight className="text-gray-400" />
+                                <span className="underline decoration-indigo-200">{_formData.subject_name}</span>
+                                <FaAngleDoubleRight className="text-gray-400" />
+                                <span className="underline decoration-indigo-200">{_formData.topic_name}</span>
+                            </h2>
                         </div>
 
-                        <div className="flex justify-end py-3 items-center gap-3">
-                            [<span>{_formData.pub_name}</span>] [<span>{_formData.book_name}</span>]
-                            [<span>Pg. No. {_formData.pg_no}</span>]
+                        <div className="flex justify-end mb-4 text-sm text-gray-600 font-medium">
+                            <span className="bg-indigo-50 text-indigo-700 px-2 py-1 rounded mx-1 border border-indigo-100">{_formData.pub_name}</span>
+                            <span className="bg-indigo-50 text-indigo-700 px-2 py-1 rounded mx-1 border border-indigo-100">{_formData.book_name}</span>
+                            <span className="bg-indigo-50 text-indigo-700 px-2 py-1 rounded mx-1 border border-indigo-100">Pg. {_formData.pg_no}</span>
                         </div>
-                        <div className="grid grid-cols-3 gap-y-6 gap-x-2">
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-4">
                             <DifficultyLevelDropdown />
-
                             <PublicationNameDropdown isShowAddNewBtn={false} />
                             <BookNameDropdown />
                             <QuestionPgNo />
@@ -140,25 +140,44 @@ const EditQuestionForm = () => {
                         </div>
                     </div>
 
-                    <EditOptionsInput />
-                    <OptionsDropdown />
+                    {/* Question and Options Content */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                        <EditOptionsInput />
 
-                    <hr />
+                        <div className="mt-6 pt-6 border-t border-gray-100">
+                            <OptionsDropdown />
+                        </div>
+                    </div>
 
-                    <ExplanationInput />
+                    {/* Explanation Content */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                        <ExplanationInput />
+                    </div>
                 </div>
 
-                <QuestionPreview />
-                <div className="flex justify-end m-3 sticky bottom-0 right-5 z-50">
+                {/* Right Column - Preview */}
+                <div className="lg:sticky lg:top-0 h-fit lg:col-span-1">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[240px]">
+                        <div className="bg-gray-50/80 px-5 py-3 border-b border-gray-100">
+                            <h2 className="text-lg font-semibold text-gray-800">Live Preview</h2>
+                        </div>
+                        <div className="p-5">
+                            <QuestionPreview />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Save Button */}
+                <div className="fixed bottom-6 right-6 z-40">
                     <CButton
-                        className="flex justify-center items-center text-xl shadow-lg"
+                        className="flex justify-center items-center text-lg px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all"
                         type="submit"
                         isLoading={useSelector((state) => state.loader.isLoading)}>
-                        Update
+                        Update Question
                     </CButton>
                 </div>
             </form>
-        </>
+        </div>
     );
 };
 

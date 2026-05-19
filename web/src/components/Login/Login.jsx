@@ -52,7 +52,7 @@ function LoginPage() {
                         userId: userId,
                     }),
                 );
-                navigate('/question-form');
+                navigate('/dashboard');
             } else {
                 setError('Invalid login credentials');
             }
@@ -79,59 +79,81 @@ function LoginPage() {
     }, []);
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="flex justify-center items-center min-h-screen bg-slate-50" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)' }}>
             <form
                 onSubmit={handleSubmit}
-                className="bg-white p-8 rounded shadow-md w-full max-w-sm">
-                <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+                className="bg-white/80 backdrop-blur-xl p-6 rounded-3xl shadow-2xl w-full max-w-md border border-white/50">
+                <div className="flex flex-col items-center mb-6">
+                    <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200 mb-3">
+                        <i className="fa-solid fa-lock text-white text-xl"></i>
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-800">Welcome Back</h2>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Sign in to your account data entry panel</p>
+                </div>
 
-                {error && <p className="text-red-600 mb-4 text-sm text-center">{error}</p>}
+                {error && (
+                    <div className="bg-rose-50 border border-rose-100 text-rose-600 p-3 rounded-xl mb-6 text-sm flex items-center gap-2">
+                        <i className="fa-solid fa-circle-exclamation"></i>
+                        {error}
+                    </div>
+                )}
+
+                <div className="mb-5">
+                    <label className="block text-slate-700 text-sm font-bold mb-2 ml-1">Username</label>
+                    <div className="relative">
+                        <i className="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input
+                            type="text"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            placeholder="Enter your username"
+                            className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div className="mb-6">
+                    <label className="block text-slate-700 text-sm font-bold mb-2 ml-1">Password</label>
+                    <div className="relative">
+                        <i className="fa-solid fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            placeholder="••••••••"
+                            className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                            required
+                        />
+                    </div>
+                </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700 mb-2">Username</label>
-                    <input
-                        type="text"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                        required
-                    />
-                </div>
-
-                <div className="mb-6">
-                    <label className="block text-gray-700 mb-2">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                        required
-                    />
-                </div>
-
-                <div className="mb-6">
-                    <label className="block text-gray-700 mb-2">Select Database</label>
-                    {databases.length > 0 && (
+                    <label className="block text-slate-700 text-sm font-bold mb-2 ml-1">Database Instance</label>
+                    <div className="relative">
+                        <i className="fa-solid fa-database absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <select
-                            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+                            className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none"
                             value={selectedDb}
                             onChange={(e) => setSelectedDb(e.target.value)}
                             required>
-                            <option value="">-- Select Database --</option>
+                            <option value="">Select a database...</option>
                             {databases.map((db, index) => (
                                 <option key={index} value={JSON.stringify(db)}>
                                     {db.processName} ({db.dbName})
                                 </option>
                             ))}
                         </select>
-                    )}
+                        <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                    </div>
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200">
+                    className="w-full bg-blue-600 text-white py-3.5 rounded-2xl font-bold hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-blue-200 flex items-center justify-center gap-2">
+                    <i className="fa-solid fa-right-to-bracket"></i>
                     Sign In
                 </button>
             </form>
