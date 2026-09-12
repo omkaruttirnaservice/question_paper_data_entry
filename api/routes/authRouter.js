@@ -20,7 +20,7 @@ router.get('/databases', async (req, res, next) => {
 
 const getDatabasesList = async ({ db_type }) => {
     try {
-        console.log('Getting database list from uttirn.in');
+        console.log('Getting database list from uttir.in');
 
   const resp = await fetch('https://lab.uttirna.in/api/get-db-list', {
             method: 'POST',
