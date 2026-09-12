@@ -42,7 +42,7 @@ const loginController = {
                 JWT_SECRET,
                 { expiresIn: '7d' }
             );
-
+            console.log(token,'---------------');
             res.cookie('token', token, {
                 httpOnly: true,
                 secure: false, // local dev

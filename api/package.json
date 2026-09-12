@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "cross-env NODE_ENV=prod pm2 start ecosystem.config.cjs",
+    "start": "cross-env pm2 start ecosystem.config.cjs",
     "dev": "cross-env NODE_ENV=dev nodemon app.js",
     "uat": "cross-env NODE_ENV=uat nodemon app.js"
   },

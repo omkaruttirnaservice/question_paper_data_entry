@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+    api:
+        build: ./api
+        environment:
+            - PORT=5002
+            - JWT_SECRET=my-secert__
+            - NODE_ENV=dev
+        ports:
+            - 5002:5002
+    web:
+        build: ./web
+        environment:
+            - VITE_API_IP=api:5002
+            - VITE_ENV=DEV
+        ports:
+            - 3000:80

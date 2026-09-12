@@ -20,7 +20,9 @@ router.get('/databases', async (req, res, next) => {
 
 const getDatabasesList = async ({ db_type }) => {
     try {
-        const resp = await fetch('https://uttirna.in/api/get-db-list', {
+        console.log('Getting database list from uttirn.in');
+
+  const resp = await fetch('https://lab.uttirna.in/api/get-db-list', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -31,12 +33,15 @@ const getDatabasesList = async ({ db_type }) => {
                 is_show_in_qpde_panel: 1,
             }),
         });
+        console.log(resp, '=resp');
+
         if (!resp.ok) {
             throw new Error('Failed to fetch database list');
         }
         const data = await resp.json();
         return data?.data || [];
     } catch (error) {
+        console.log(error, 'In getting db list');
         throw error;
     }
 };
